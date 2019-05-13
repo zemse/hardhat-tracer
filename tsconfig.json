@@ -10,10 +10,10 @@
     "rootDirs": ["./src", "./test"],
     "esModuleInterop": true
   },
-  "exclude": ["dist"],
+  // "files": [], // Any Buidler plugin's main .d.ts has to be added here
+  "exclude": ["dist", "node_modules"],
   "include": [
     "./test",
-    "./src"
-    // Any Buidler plugin's main .d.ts has to be added here
+    "./src"    
   ]
 }
