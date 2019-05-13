@@ -25,6 +25,12 @@ And add the following statement to your `buidler.config.js`:
 usePlugin("@nomiclabs/buidler-example-plugin");
 ```
 
+## Required plugins
+
+_A list of all the plugins that are required by this one_
+
+- [@nomiclabs/buidler-web3](https://github.com/nomiclabs/buidler/tree/master/packages/buidler-web3)
+
 ## Tasks
 
 _A description of each task added by this plugin. It it just overrides internal 
