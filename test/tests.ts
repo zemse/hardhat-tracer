@@ -1,30 +1,34 @@
-import { BuidlerRuntimeEnvironment } from "@nomiclabs/buidler/types";
+// tslint:disable-next-line no-implicit-dependencies
 import { assert } from "chai";
 
-import { ExampleBuidlerRuntimeEnvironmentField } from "../src/index";
+import { ExampleBuidlerRuntimeEnvironmentField } from "../src/ExampleBuidlerRuntimeEnvironmentField";
 
-declare module "mocha" {
-  interface Context {
-    env: BuidlerRuntimeEnvironment;
-  }
-}
+import { useEnvironment } from "./helpers";
 
-describe("BuidlerRuntimeEnvironment extension", function() {
-  beforeEach("Buidler project setup", function() {
-    process.chdir(__dirname + "/buidler-project");
-    process.env.BUIDLER_NETWORK = "develop";
+describe("Integration tests examples", function() {
+  describe("Buidler Runtime Environment extension", function() {
+    useEnvironment(__dirname + "/buidler-project");
 
-    // We first clear any cache
-    delete require.cache[require.resolve("@nomiclabs/buidler")];
+    it("It should add the example field", function() {
+      assert.instanceOf(
+        this.env.example,
+        ExampleBuidlerRuntimeEnvironmentField
+      );
+    });
 
-    this.env = require("@nomiclabs/buidler");
+    it("The example filed should say hello", function() {
+      assert.equal(this.env.example.sayHello(), "hello");
+    });
   });
+});
 
-  it("It should add the example field", function() {
-    assert.instanceOf(this.env.example, ExampleBuidlerRuntimeEnvironmentField);
-  });
-
-  it("The example filed should say hello", function() {
-    assert.equal(this.env.example.sayHello(), "hello");
+describe("Unit tests examples", function() {
+  describe("ExampleBuidlerRuntimeEnvironmentField", function() {
+    describe("sayHello", function() {
+      it("Should say hello", function() {
+        const field = new ExampleBuidlerRuntimeEnvironmentField();
+        assert.equal(field.sayHello(), "hello");
+      });
+    });
   });
 });

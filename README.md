@@ -1,6 +1,11 @@
 # Buidler TypeScript plugin boilerplate
 
-This is a sample Buidler plugin written in TypeScript. Creating a Buidler plugin can be as easy as extracting part of your config into a different file, but this sample project comes with many more features:
+This is a sample Buidler plugin written in TypeScript. Creating a Buidler plugin
+can be as easy as extracting a part of your config into a different file, 
+wrapping it in a function and publishing it to npm.
+
+This sample project contains an example on how to do that, but also comes with 
+many more features:
 
 - A mocha test suit ready to use
 - TravisCI already setup
@@ -9,40 +14,44 @@ This is a sample Buidler plugin written in TypeScript. Creating a Buidler plugin
 
 ## Installation
 
-We recommend developing Buidler plugins using yarn. To start working on your project, just run
+We recommend developing Buidler plugins using yarn. To start working on your 
+project, just run
 
-- `yarn`
-- `yarn add --peer @nomiclabs/buidler@^1.0.0-beta.2`
+```bash
+npm install
+```
 
 ## Plugin development
 
-Make sure to read our [Plugin Development Guide](https://github.com/nomiclabs/buidler/wiki/Plugin-development-guide) to learn how to build a high-quality plugin.
-
-## Updating Buidler or other peer dependencies
-
-When updating/adding Buidler or other peer dependencies, you should update the `.travis.yml` file's install section. The right version of all of them has to be installed in a single line, after `yarn`.
+Make sure to read our [Plugin Development Guide](https://buidler.dev/guides/create-plugin.html) 
+to learn how to build a plugin, and our 
+[best practices to create high-quality plugins](https://buidler.dev/documentation/#plugin-development-best-practices).
 
 ## Testing
 
-Running `yarn test` will run every test located in the `test/` folder. They use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/), but you can customize them.
+Running `npm run test` will run every test located in the `test/` folder. They 
+use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/), 
+but you can customize them.
 
-We recommend creating unit tests for your own modules, and integration tests for the interaction of the plugin with Buidler and its dependencies.
+We recommend creating unit tests for your own modules, and integration tests for 
+the interaction of the plugin with Buidler and its dependencies.
 
 ## Linting and autoformat
 
-All all of Buidler projects use [prettier](https://prettier.io/) and [tslint](https://palantir.github.io/tslint/).
+All all of Buidler projects use [prettier](https://prettier.io/) and 
+[tslint](https://palantir.github.io/tslint/).
 
-You can check if your code style is correct by running `yarn lint`, and fix it with `yarn lint:fix`.
+You can check if your code style is correct by running `npm run lint`, and fix 
+it with `npm run lint:fix`.
 
 ## Building the project
 
-Just run `yarn buidl` ️👷‍
+Just run `npm run buidl` ️👷‍
 
 ## README file
 
-We recommend writing a README that contains the following information:
+This README describes this boilerplate project, but won't be very useful to your
+plugin users.
 
-* What is it
-* How to install it
-* New tasks
-* Environment extensions
+Take a look at `README-TEMPLATE.md` for an exmaple of how a Buidler plugin's
+README should look.
