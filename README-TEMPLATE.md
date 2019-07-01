@@ -8,35 +8,39 @@ _A one line description of the plugin_
 
 _A longer, one paragraph, description of the plugin_
 
-This plugin is just an example. It was created to teach how to build plugins and
-doesn't do much appart from that.
+This plugin will help you with world domination as by implementing a simple tic-tac-toe in the terminal.
 
 ## Installation
 
-_A step-by-step guide on how to install the plugin_
+<_A step-by-step guide on how to install the plugin_>
 
 ```bash
-npm install @nomiclabs/buidler-example-plugin any-peer-dep
+npm install <your npm package name> [list of peer dependencies]
 ```
 
 And add the following statement to your `buidler.config.js`:
 
 ```js
-usePlugin("@nomiclabs/buidler-example-plugin");
+usePlugin("<your plugin npm package name>");
 ```
 
 ## Required plugins
 
-_A list of all the plugins that are required by this one_
+<_The list of all the required Buidler plugins if there are any_>
 
 - [@nomiclabs/buidler-web3](https://github.com/nomiclabs/buidler/tree/master/packages/buidler-web3)
 
 ## Tasks
 
-_A description of each task added by this plugin. It it just overrides internal 
-tasks, this may no be needed_
+<_A description of each task added by this plugin. If it just overrides internal 
+tasks, this may not be needed_>
 
 This plugin creates no additional tasks.
+<_or_>
+This plugin adds the _example_ task to Buidler:
+```
+output of npx buidler help example
+``` 
 
 ## Environment extensions
 
@@ -64,7 +68,7 @@ module.exports = {
 
 ## Usage
 
-_A description on how to use this plugin, for example, how to run its tasks_
+<_A description of how to use this plugin. How to use the tasks if there are any, etc._>
 
 There are no additional steps you need to take for this plugin to work.
 
@@ -73,7 +77,7 @@ you need it (tasks, scripts, tests, etc).
 
 ## TypeScript support
 
-_This section is needed if you are extending types in your plugin_
+<_This section is needed if you are extending types in your plugin_>
 
 You need to add this to your `tsconfig.json`'s `files` array: 
-`"node_modules/@nomiclabs/buidler-example-plugin/src/type-extensions.d.ts"`
+`"node_modules/<npm package name>/src/type-extensions.d.ts"`
