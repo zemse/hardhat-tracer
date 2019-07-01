@@ -44,14 +44,14 @@ output of npx buidler help example
 
 ## Environment extensions
 
-_A description of each extension to the Buidler Runtime Environment_
+<_A description of each extension to the Buidler Runtime Environment_>
 
 This plugin extends the Buidler Runtime Environment by adding an `example` field
 whose type is `ExampleBuidlerRuntimeEnvironmentField`.
 
 ## Configuration
 
-_A description of each extension to the BuidlerConfig or to its fields_
+<_A description of each extension to the BuidlerConfig or to its fields_>
 
 This plugin extends the `BuidlerConfig`'s `ProjectPaths` object with an optional 
 `newPath` field.
