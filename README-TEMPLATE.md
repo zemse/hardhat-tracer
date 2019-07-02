@@ -1,3 +1,4 @@
+![buidler](https://buidler.dev/buidler-plugin-badge.svg)
 # buidler-example-plugin
 
 _A one line description of the plugin_
@@ -6,9 +7,9 @@ _A one line description of the plugin_
 
 ## What
 
-_A longer, one paragraph, description of the plugin_
+<_A longer, one paragraph, description of the plugin_>
 
-This plugin will help you with world domination as by implementing a simple tic-tac-toe in the terminal.
+This plugin will help you with world domination by implementing a simple tic-tac-toe in the terminal.
 
 ## Installation
 
