@@ -1,4 +1,4 @@
-![buidler](https://buidler.dev/buidler-plugin-badge.svg)
+[![buidler](https://buidler.dev/buidler-plugin-badge.svg?1)](https://buidler.dev)
 # buidler-example-plugin
 
 _A one line description of the plugin_
