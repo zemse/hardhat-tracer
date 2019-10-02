@@ -28,7 +28,7 @@
     "README.md"
   ],
   "devDependencies": {
-    "@nomiclabs/buidler": "^1.0.0",
+    "@nomiclabs/buidler": "^1.0.1",
     "@types/chai": "^4.1.7",
     "@types/fs-extra": "^5.0.4",
     "@types/mocha": "^5.2.5",
@@ -45,6 +45,6 @@
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
-    "@nomiclabs/buidler": "^1.0.0"
+    "@nomiclabs/buidler": "^1.0.1"
   }
 }
