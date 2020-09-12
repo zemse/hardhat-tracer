@@ -1,4 +1,5 @@
 --require dotenv/config
 --require ts-node/register
+--require @nomiclabs/buidler/register
 --require source-map-support/register
 --recursive test/**/*.ts
