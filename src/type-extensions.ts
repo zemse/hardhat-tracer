@@ -1,5 +1,6 @@
 import "hardhat/types/config";
 import "hardhat/types/runtime";
+
 import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEnvironmentField";
 
 // This file is used to extend Hardhat's types. Most plugins contain a
