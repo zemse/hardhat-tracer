@@ -18,7 +18,6 @@ For example, you would import the `extendEnvironment` function this way:
 
 ```typescript
 import { extendEnvironment } from "hardhat/config";
-
 ```
 
 

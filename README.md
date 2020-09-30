@@ -7,7 +7,7 @@ wrapping it in a function and publishing it to npm.
 This sample project contains an example on how to do that, but also comes with 
 many more features:
 
-- A mocha test suit ready to use
+- A mocha test suite ready to use
 - TravisCI already setup
 - A package.json with scripts and publishing info
 - Examples on how to do different things
@@ -55,3 +55,7 @@ plugin users.
 
 Take a look at `README-TEMPLATE.md` for an example of what a Hardhat plugin's
 README should look like.
+
+## Migrating from Buidler?
+
+Take a look at [the migration guide](MIGRATION.md)!
