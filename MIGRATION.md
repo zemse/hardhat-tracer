@@ -35,11 +35,25 @@ Apart from updating types and names, fixture projects need their `buidler.config
 
 The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://usehardhat.com/compilation).
 
+If your compiler configuration specifies the optimizer settings, then you'll need to do so like this:
+
+```js
+module.exports = {
+    solidity: {
+        version: "0.7.2"
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 200
+            }
+        }
+    }
+}
+```
+
 ## Type extensions
 
-Type extensions need to be updated to extend the corresponding module where the type is declared.
-
-For example, to extend the `HardhatRuntimeEnvironment`, the following would suffice:
+While you can import all the necessary types from `hardhat/types`, this doesn't work for extending interfaces. For example, you can do something like `import { HardhatRuntimeEnvironment } from "hardhat/types";`, but if you want to extend that interface you need to do something like this:
 
 ```typescript
 import "hardhat/types/runtime";
@@ -55,6 +69,7 @@ declare module "hardhat/types/runtime" {
 ```
 
 Extending a configuration type can be done in a similar fashion:
+
 ```typescript
 import "hardhat/types/config";
 
@@ -68,11 +83,16 @@ declare module "hardhat/types/config" {
 
 ### User side
 
-Type extensions are now loaded by plugin users through an annotation in a Typescript module like this:
+Previously, type extensions were loaded by plugin users by adding references to a plugin-owned `type-extensions.d.ts` in their `tsconfig.json`.
+
+Now, they're loaded by plugin users through an annotation in a Typescript module like this:
+
 ```typescript
 /// <reference types="<npm package name>" />
 ```
 
+This typescript module needs to be added to their `tsconfig.json`.
+
 ## README.md
 
-Make sure to update the README to point to the Hardhat URL (https://usehardhat.com) instead of buidler.
+Make sure to update the README to point to the new Hardhat site (https://usehardhat.com).
