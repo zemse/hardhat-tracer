@@ -1,6 +1,6 @@
-# Buidler TypeScript plugin boilerplate
+# Hardhat TypeScript plugin boilerplate
 
-This is a sample Buidler plugin written in TypeScript. Creating a Buidler plugin
+This is a sample Hardhat plugin written in TypeScript. Creating a Hardhat plugin
 can be as easy as extracting a part of your config into a different file, 
 wrapping it in a function and publishing it to npm.
 
@@ -14,7 +14,7 @@ many more features:
 
 ## Installation
 
-We recommend developing Buidler plugins using yarn. To start working on your 
+We recommend developing Hardhat plugins using yarn. To start working on your 
 project, just run
 
 ```bash
@@ -23,9 +23,9 @@ npm install
 
 ## Plugin development
 
-Make sure to read our [Plugin Development Guide](https://buidler.dev/guides/create-plugin.html) 
+Make sure to read our [Plugin Development Guide](https://usehardhat.com/guides/create-plugin.html) 
 to learn how to build a plugin, and our 
-[best practices to create high-quality plugins](https://buidler.dev/documentation/#plugin-development-best-practices).
+[best practices to create high-quality plugins](https://usehardhat.com/documentation/#plugin-development-best-practices).
 
 ## Testing
 
@@ -34,11 +34,11 @@ use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/),
 but you can customize them.
 
 We recommend creating unit tests for your own modules, and integration tests for 
-the interaction of the plugin with Buidler and its dependencies.
+the interaction of the plugin with Hardhat and its dependencies.
 
 ## Linting and autoformat
 
-All all of Buidler projects use [prettier](https://prettier.io/) and 
+All all of Hardhat projects use [prettier](https://prettier.io/) and 
 [tslint](https://palantir.github.io/tslint/).
 
 You can check if your code style is correct by running `npm run lint`, and fix 
@@ -53,5 +53,5 @@ Just run `npm run buidl` ️👷‍
 This README describes this boilerplate project, but won't be very useful to your
 plugin users.
 
-Take a look at `README-TEMPLATE.md` for an example of what a Buidler plugin's
+Take a look at `README-TEMPLATE.md` for an example of what a Hardhat plugin's
 README should look like.

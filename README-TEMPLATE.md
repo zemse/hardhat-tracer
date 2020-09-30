@@ -1,9 +1,8 @@
-[![buidler](https://buidler.dev/buidler-plugin-badge.svg?1)](https://buidler.dev)
-# buidler-example-plugin
+# hardhat-example-plugin
 
 _A one line description of the plugin_
 
-[Buidler](http://getbuidler.com) plugin example. 
+[Hardhat](https://usehardhat.com/) plugin example. 
 
 ## What
 
@@ -19,7 +18,7 @@ This plugin will help you with world domination by implementing a simple tic-tac
 npm install <your npm package name> [list of peer dependencies]
 ```
 
-And add the following statement to your `buidler.config.js`:
+And add the following statement to your `hardhat.config.js`:
 
 ```js
 usePlugin("<your plugin npm package name>");
@@ -27,9 +26,9 @@ usePlugin("<your plugin npm package name>");
 
 ## Required plugins
 
-<_The list of all the required Buidler plugins if there are any_>
+<_The list of all the required Hardhat plugins if there are any_>
 
-- [@nomiclabs/buidler-web3](https://github.com/nomiclabs/buidler/tree/master/packages/buidler-web3)
+- [@nomiclabs/hardhat-web3](https://github.com/nomiclabs/hardhat/tree/master/packages/hardhat-web3)
 
 ## Tasks
 
@@ -38,23 +37,23 @@ tasks, this may not be needed_>
 
 This plugin creates no additional tasks.
 <_or_>
-This plugin adds the _example_ task to Buidler:
+This plugin adds the _example_ task to Hardhat:
 ```
-output of npx buidler help example
+output of npx hh help example
 ``` 
 
 ## Environment extensions
 
-<_A description of each extension to the Buidler Runtime Environment_>
+<_A description of each extension to the Hardhat Runtime Environment_>
 
-This plugin extends the Buidler Runtime Environment by adding an `example` field
-whose type is `ExampleBuidlerRuntimeEnvironmentField`.
+This plugin extends the Hardhat Runtime Environment by adding an `example` field
+whose type is `ExampleHardhatRuntimeEnvironmentField`.
 
 ## Configuration
 
-<_A description of each extension to the BuidlerConfig or to its fields_>
+<_A description of each extension to the HardhatConfig or to its fields_>
 
-This plugin extends the `BuidlerConfig`'s `ProjectPaths` object with an optional 
+This plugin extends the `HardhatConfig`'s `ProjectPaths` object with an optional 
 `newPath` field.
 
 This is an example of how to set it:
@@ -73,12 +72,17 @@ module.exports = {
 
 There are no additional steps you need to take for this plugin to work.
 
-Install it and access ethers through the Buidler Runtime Environment anywhere 
+Install it and access ethers through the Hardhat Runtime Environment anywhere 
 you need it (tasks, scripts, tests, etc).
 
 ## TypeScript support
 
 <_This section is needed if you are extending types in your plugin_>
 
-You need to add this to your `tsconfig.json`'s `files` array: 
-`"node_modules/<npm package name>/src/type-extensions.d.ts"`
+You need to reference this plugin to get type extensions.
+To do so, create a typescript module, e.g. `plugin-types.d.ts`, that looks like this:
+
+```typescript
+/// <reference types="<your npm package name>" />
+```
+and include it in your `tsconfig.json`'s `files` array.
