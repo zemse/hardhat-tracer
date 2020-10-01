@@ -2,13 +2,16 @@ import { extendEnvironment } from "hardhat/config";
 import { lazyObject } from "hardhat/plugins";
 
 import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEnvironmentField";
+// This import is needed to let the TypeScript compiler know that it should include your type
+// extensions in your npm package's types file.
+import "./type-extensions.ts";
 
 // Everything in a plugin must happen inside an exported function
 export default function() {
-  extendEnvironment(env => {
+  extendEnvironment(hre => {
     // We add a field to the Hardhat Runtime Environment here.
     // We use lazyObject to avoid initializing things until they are actually
     // needed.
-    env.example = lazyObject(() => new ExampleHardhatRuntimeEnvironmentField());
+    hre.example = lazyObject(() => new ExampleHardhatRuntimeEnvironmentField());
   });
 }

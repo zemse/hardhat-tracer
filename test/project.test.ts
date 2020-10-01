@@ -11,13 +11,13 @@ describe("Integration tests examples", function() {
 
     it("It should add the example field", function() {
       assert.instanceOf(
-        this.env.example,
+        this.hre.example,
         ExampleHardhatRuntimeEnvironmentField
       );
     });
 
     it("The example filed should say hello", function() {
-      assert.equal(this.env.example.sayHello(), "hello");
+      assert.equal(this.hre.example.sayHello(), "hello");
     });
   });
 });

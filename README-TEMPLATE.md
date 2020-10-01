@@ -79,10 +79,8 @@ you need it (tasks, scripts, tests, etc).
 
 <_This section is needed if you are extending types in your plugin_>
 
-You need to reference this plugin to get type extensions.
-To do so, create a typescript module, e.g. `plugin-types.d.ts`, that looks like this:
 
+To use this plugin with TypeScript, you need to add this line at the top of your `hardhat.config.ts`, before any import or other statement.
 ```typescript
 /// <reference types="<your npm package name>" />
 ```
-and include it in your `tsconfig.json`'s `files` array.

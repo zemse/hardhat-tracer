@@ -3,7 +3,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 declare module "mocha" {
   interface Context {
-    env: HardhatRuntimeEnvironment;
+    hre: HardhatRuntimeEnvironment;
   }
 }
 
@@ -14,7 +14,7 @@ export function useEnvironment(projectPath: string) {
     previousCWD = process.cwd();
     process.chdir(projectPath);
 
-    this.env = require("hardhat");
+    this.hre = require("hardhat");
   });
 
   afterEach("Resetting hardhat", function() {
