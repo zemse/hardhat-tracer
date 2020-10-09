@@ -1,5 +1,4 @@
-// If your plugin depends on other plugins, you should add their triple-slash references here.
-// See https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html#-reference-types-
+// If your plugin extends types from another plugin, you should import the plugin here.
 
 // To extend one of Hardhat's types, you need to import the module where it has been defined, and redeclare it.
 import "hardhat/types/config";
