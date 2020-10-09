@@ -8,6 +8,17 @@ Replace all types or imported names that include `Buidler` with `Hardhat` in you
 
 For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
 
+### Artifacts
+
+The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRuntimeEnvironment` so you must replace their uses like this:
+
+```js
+const tokenArtifact = await hre.artifacts.readArtifact("Token");
+```
+
+The artifact format is now supplemented with build information and debug artifacts in Hardhat which allows you to read things like contract symbols. See the [documentation](https://usehardhat.com/docs/artifacts) for more information.
+
+
 ## Updating its dependencies
 
 ### Core
@@ -31,7 +42,7 @@ Apart from updating types and names, fixture projects need their `buidler.config
 
 ### Changes needed to your test projects' config
 
-The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://usehardhat.com/compilation).
+The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://usehardhat.com/docs/compilation).
 
 If your compiler configuration specifies the `optimizer` setting, then you'll need to do so like this:
 
@@ -56,7 +67,7 @@ are the necessary to update your plugin.
 
 First, you need rename your `src/type-extenstions.d.ts` file to `src/type-extensions.ts`.
 
-Then, you need to add an `import "./type-extensions";` in your `src/index.ts` file.
+Then, you need to add an `import "./type-extensions";` in your `src/index.ts` file, or the main entrypoint to your plugin as defined in your `package.json`.
 
 If your plugin depends on other plugins, you need to remove their `type-extension.d.ts` references
 from your `tsconfig.json`. You also need to add a line like this to `src/type-extensions.ts`,
@@ -93,13 +104,13 @@ declare module "hardhat/types/runtime" {
 
 Previously, type extensions were loaded by plugin users by adding references to a plugin-owned `type-extensions.d.ts` in their `tsconfig.json`.
 
-Now, they're loaded by plugin users through an annotation in the user's config like this:
+Now, they're loaded by plugin users by importing the plugin in their hardhat config. E.g:
 
 ```typescript
-/// <reference types="<npm package name>" />
+import "@nomiclabs/hardhat-ethers"
 ```
 
-Note that these annotations need to be at the beginning of the file, before any other statements.
+This is enough to import the type extensions included in the `@nomiclabs/hardhat-ethers` plugin.
 
 ## Adapting your `README.md`
 
