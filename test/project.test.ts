@@ -7,7 +7,7 @@ import { useEnvironment } from "./helpers";
 
 describe("Integration tests examples", function() {
   describe("Hardhat Runtime Environment extension", function() {
-    useEnvironment(__dirname + "/hardhat-project");
+    useEnvironment("hardhat-project");
 
     it("It should add the example field", function() {
       assert.instanceOf(
