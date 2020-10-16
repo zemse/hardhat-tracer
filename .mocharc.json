@@ -1,5 +1,5 @@
 {
-  "require": ["dotenv/config", "ts-node/register", "source-map-support/register"],
+  "require": "ts-node/register/files",
   "recursive": true,
   "ignore": ["test/fixture-projects/**/*"],
   "timeout": 6000
