@@ -18,7 +18,6 @@
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "mocha --exit 'test/**/*.test.ts'",
     "build": "tsc",
-    "buidl": "tsc",
     "watch": "tsc -w"
   },
   "files": [

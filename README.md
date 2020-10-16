@@ -1,10 +1,10 @@
 # Hardhat TypeScript plugin boilerplate
 
 This is a sample Hardhat plugin written in TypeScript. Creating a Hardhat plugin
-can be as easy as extracting a part of your config into a different file, 
-wrapping it in a function and publishing it to npm.
+can be as easy as extracting a part of your config into a different file and
+publishing it to npm.
 
-This sample project contains an example on how to do that, but also comes with 
+This sample project contains an example on how to do that, but also comes with
 many more features:
 
 - A mocha test suite ready to use
@@ -14,8 +14,7 @@ many more features:
 
 ## Installation
 
-We recommend developing Hardhat plugins using yarn. To start working on your 
-project, just run
+To start working on your project, just run
 
 ```bash
 npm install
@@ -23,30 +22,30 @@ npm install
 
 ## Plugin development
 
-Make sure to read our [Plugin Development Guide](https://usehardhat.com/guides/create-plugin.html) 
-to learn how to build a plugin, and our 
+Make sure to read our [Plugin Development Guide](https://usehardhat.com/guides/create-plugin.html)
+to learn how to build a plugin, and our
 [best practices to create high-quality plugins](https://usehardhat.com/documentation/#plugin-development-best-practices).
 
 ## Testing
 
-Running `npm run test` will run every test located in the `test/` folder. They 
-use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/), 
+Running `npm run test` will run every test located in the `test/` folder. They
+use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/),
 but you can customize them.
 
-We recommend creating unit tests for your own modules, and integration tests for 
+We recommend creating unit tests for your own modules, and integration tests for
 the interaction of the plugin with Hardhat and its dependencies.
 
 ## Linting and autoformat
 
-All all of Hardhat projects use [prettier](https://prettier.io/) and 
+All of Hardhat projects use [prettier](https://prettier.io/) and
 [tslint](https://palantir.github.io/tslint/).
 
-You can check if your code style is correct by running `npm run lint`, and fix 
+You can check if your code style is correct by running `npm run lint`, and fix
 it with `npm run lint:fix`.
 
 ## Building the project
 
-Just run `npm run buidl` ️👷‍
+Just run `npm run build` ️👷
 
 ## README file
 
