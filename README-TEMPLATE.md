@@ -39,8 +39,8 @@ This plugin creates no additional tasks.
 <_or_>
 This plugin adds the _example_ task to Hardhat:
 ```
-output of npx hh help example
-``` 
+output of `npx hardhat help example`
+```
 
 ## Environment extensions
 
@@ -72,15 +72,5 @@ module.exports = {
 
 There are no additional steps you need to take for this plugin to work.
 
-Install it and access ethers through the Hardhat Runtime Environment anywhere 
+Install it and access ethers through the Hardhat Runtime Environment anywhere
 you need it (tasks, scripts, tests, etc).
-
-## TypeScript support
-
-<_This section is needed if you are extending types in your plugin_>
-
-
-To use this plugin with TypeScript, you need to add this line at the top of your `hardhat.config.ts`, before any import or other statement.
-```typescript
-/// <reference types="<your npm package name>" />
-```
