@@ -33,7 +33,7 @@ The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRu
 const tokenArtifact = await hre.artifacts.readArtifact("Token");
 ```
 
-The artifact format is now supplemented with build information and debug artifacts in Hardhat which allows you to read things like contract symbols. See the [documentation](https://usehardhat.com/docs/artifacts) for more information.
+The artifact format is now supplemented with build information and debug artifacts in Hardhat which allows you to read things like contract symbols. See the [documentation](https://hardhat.org/docs/artifacts) for more information.
 
 ## Updating your plugin's tests
 
@@ -41,7 +41,7 @@ Apart from updating types and names, fixture projects need their `buidler.config
 
 ### Changes needed to your test projects' config
 
-The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://usehardhat.com/docs/compilation).
+The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://hardhat.org/docs/compilation).
 
 Besides that, the compiler settings now go inside a `settings` field. For example, a configuration like this:
 
@@ -120,4 +120,4 @@ This is enough to import the type extensions included in the `@nomiclabs/hardhat
 
 ## Adapting your `README.md`
 
-Make sure to update the README to point to the new Hardhat site (https://usehardhat.com), and that the Typescript Support section has been updated.
+Make sure to update the README to point to the new Hardhat site (https://hardhat.org), and that the Typescript Support section has been updated.

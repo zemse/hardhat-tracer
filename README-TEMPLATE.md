@@ -2,7 +2,7 @@
 
 _A one line description of the plugin_
 
-[Hardhat](https://usehardhat.com/) plugin example. 
+[Hardhat](https://hardhat.org) plugin example. 
 
 ## What
 
