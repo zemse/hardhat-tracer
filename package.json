@@ -33,6 +33,7 @@
     "@types/node": "^8.10.38",
     "chai": "^4.2.0",
     "dotenv": "^6.2.0",
+    "hardhat": "0.1.0-rc.0",
     "mocha": "^7.1.2",
     "prettier": "^1.17.0",
     "source-map-support": "^0.5.12",
