@@ -2,23 +2,6 @@
 
 This is a short guide explaining how to turn a Buidler plugin into a Hardhat one.
 
-## Adapting your plugin's source code
-
-Replace all types or imported names that include `Buidler` with `Hardhat` in your plugin source code.
-
-For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
-
-### Artifacts
-
-The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRuntimeEnvironment` so you must replace their uses like this:
-
-```js
-const tokenArtifact = await hre.artifacts.readArtifact("Token");
-```
-
-The artifact format is now supplemented with build information and debug artifacts in Hardhat which allows you to read things like contract symbols. See the [documentation](https://usehardhat.com/docs/artifacts) for more information.
-
-
 ## Updating its dependencies
 
 ### Core
@@ -35,6 +18,22 @@ import { extendEnvironment } from "hardhat/config";
 
 Similarly, references to buidler plugins should be replaced with their corresponding hardhat plugins.
 For example, `@nomiclabs/buidler-ethers` would be `@nomiclabs/hardhat-ethers`.
+
+## Adapting your plugin's source code
+
+Replace all types or imported names that include `Buidler` with `Hardhat` in your plugin source code.
+
+For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
+
+### Artifacts
+
+The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRuntimeEnvironment` so you must replace their uses like this:
+
+```js
+const tokenArtifact = await hre.artifacts.readArtifact("Token");
+```
+
+The artifact format is now supplemented with build information and debug artifacts in Hardhat which allows you to read things like contract symbols. See the [documentation](https://usehardhat.com/docs/artifacts) for more information.
 
 ## Updating your plugin's tests
 
