@@ -43,7 +43,21 @@ Apart from updating types and names, fixture projects need their `buidler.config
 
 The compiler configuration is now expected in the `solidity` field instead of `solc`. Note that Hardhat projects allow multiple solidity versions in its compilation pipeline. For more information see its [documentation](https://usehardhat.com/docs/compilation).
 
-If your compiler configuration specifies the `optimizer` setting, then you'll need to do so like this:
+Besides that, the compiler settings now go inside a `settings` field. For example, a configuration like this:
+
+```
+module.exports = {
+    solc: {
+        version: "0.7.2"
+        optimizer: {
+            enabled: true,
+            runs: 200
+        }
+    }
+}
+```
+
+needs to be replaced with this:
 
 ```js
 module.exports = {
@@ -68,26 +82,19 @@ First, you need rename your `src/type-extenstions.d.ts` file to `src/type-extens
 
 Then, you need to add an `import "./type-extensions";` in your `src/index.ts` file, or the main entrypoint to your plugin as defined in your `package.json`.
 
-If your plugin depends on other plugins, you need to remove their `type-extension.d.ts` references
-from your `tsconfig.json`. You also need to add a line like this to `src/type-extensions.ts`,
-before any import or other statements:
-
-```typescript
-/// <reference types="<plugin name>" />
-```
-
-Finally, you need to adapt the imports in your `src/type-extensions.ts` file.
+### Extending Hardhat types
 
 Hardhat types are meant to be imported from `hardhat/types`, but when extending them,
 you should import them from the module that declares them.
 
-For example, if you want you use the `HardhatRuntimeEnvironment` type, you should import it with
+For example, if you want you use the `HardhatRuntimeEnvironment` type, you should import it with:
 
 ```typescript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 ```
 
-To extend it, you should import the module that declares it, which is `hardhat/types/runtime`.
+But if you want to extend it, you should import the module that declares it
+instead, which is `hardhat/types/runtime`.
 
 ```typescript
 import "hardhat/types/runtime";
@@ -103,7 +110,7 @@ declare module "hardhat/types/runtime" {
 
 Previously, type extensions were loaded by plugin users by adding references to a plugin-owned `type-extensions.d.ts` in their `tsconfig.json`.
 
-Now, they're loaded by plugin users by importing the plugin in their hardhat config. E.g:
+Now, they're loaded by plugin users by importing the plugin in their hardhat config. For example:
 
 ```typescript
 import "@nomiclabs/hardhat-ethers"
