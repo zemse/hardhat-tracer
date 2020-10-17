@@ -8,7 +8,7 @@ import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEn
 
 declare module "hardhat/types/config" {
   // This is an example of an extension to one of the Hardhat config values.
-  export interface ProjectPaths {
+  export interface ProjectPathsUserConfig {
     newPath?: string;
   }
 }

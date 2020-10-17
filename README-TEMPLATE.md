@@ -53,7 +53,7 @@ whose type is `ExampleHardhatRuntimeEnvironmentField`.
 
 <_A description of each extension to the HardhatConfig or to its fields_>
 
-This plugin extends the `HardhatConfig`'s `ProjectPaths` object with an optional 
+This plugin extends the `HardhatUserConfig`'s `ProjectPathsUserConfig` object with an optional
 `newPath` field.
 
 This is an example of how to set it:
