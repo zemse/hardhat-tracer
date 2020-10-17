@@ -25,6 +25,17 @@ Replace all types or imported names that include `Buidler` with `Hardhat` in you
 
 For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
 
+Besides, the names of some other types were modified. For example,
+`ResolvedBuidlerConfig` is now `HardhatConfig` and `BuidlerConfig` is now
+`HardhatUserConfig`. More generally, types that correspond to how the user's
+config is entered are suffixed with `UserConfig`, while their resolved
+versions end with just `Config`. Another examples are:
+
+- `ProjectPaths` is now `ProjectPathsUserConfig`
+- `Networks` is now `NetworksUserConfig`
+- Both have their resolved versions: `ProjectPathsConfig` and
+  `NetworksConfig`, respectively.
+
 ### Artifacts
 
 The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRuntimeEnvironment` so you must replace their uses like this:
