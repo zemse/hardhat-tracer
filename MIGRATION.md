@@ -4,7 +4,7 @@ This is a short guide explaining how to turn a Buidler plugin into a Hardhat one
 
 ## Updating its dependencies
 
-### Core
+### Core package
 
 References to the `@nomiclabs/buidler` package should be replaced with the `hardhat` package in your `package.json`, and your `import`s or `require`s.
 
@@ -24,21 +24,6 @@ For example, `@nomiclabs/buidler-ethers` would be `@nomiclabs/hardhat-ethers`.
 Replace all types or imported names that include `Buidler` with `Hardhat` in your plugin source code.
 
 For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
-
-Besides, the names of some other types were modified. For example,
-`ResolvedBuidlerConfig` is now `HardhatConfig` and `BuidlerConfig` is now
-`HardhatUserConfig`. More generally, types that correspond to how the user's
-config is entered are suffixed with `UserConfig`, while their resolved
-versions end with just `Config`. Another examples are:
-
-- `ProjectPaths` is now `ProjectPathsUserConfig`
-- `Networks` is now `NetworksUserConfig`
-- Both have their resolved versions: `ProjectPathsConfig` and
-  `NetworksConfig`, respectively.
-
-You can find an example of how to properly extend these types, 
-resolve/normalize the users's config, and apply default values in the
-`src/type-extensions.ts` and `src/index.ts` files.
 
 ### Artifacts
 
@@ -90,8 +75,9 @@ module.exports = {
 
 ## Adapting your type extensions
 
-Hardhat introduced a few changes in how type extensions are created and used. These
-are the necessary to update your plugin.
+Hardhat introduced a few changes in how type extensions are created and used.
+
+These are the necessary changes to update your plugin.
 
 First, you need rename your `src/type-extenstions.d.ts` file to `src/type-extensions.ts`.
 
@@ -121,11 +107,39 @@ declare module "hardhat/types/runtime" {
 }
 ```
 
+### Adapting your config extensions
+
+Config types are handled slightly differently in Harhdat.
+
+For each config element/type, there's to Typescript types defined. One
+that ends with `UserConfig`, that represents the user's input, and another
+one that ends with just `Config`, which represents the configuration values
+after any resolution and default values have been applied. The first kind of
+types is used by users when writing their config. The second one is used
+during the execution of tasks, tests and scripts, and is present in the
+Hardhat Runtime Environment.
+
+For example, `HardhatUserConfig` represents the entire config written by the
+user, and all of its fields are optional. `HardhatConfig`, is the result
+of resolving/normalizing it, and applying default values. None of its fields
+are optional.
+
+Some types have been renamed to match this new pattern:
+
+- `ProjectPaths` is now `ProjectPathsUserConfig`
+- `Networks` is now `NetworksUserConfig`
+- Both have their resolved versions: `ProjectPathsConfig` and
+  `NetworksConfig`, respectively.
+
+You can find an example of how to properly extend these types,
+resolve/normalize the users's config, and apply default values in the
+`src/type-extensions.ts` and `src/index.ts` files.
+
 ### How type extensions are loaded in Hardhat
 
 Previously, type extensions were loaded by plugin users by adding references to a plugin-owned `type-extensions.d.ts` in their `tsconfig.json`.
 
-Now, they're loaded by plugin users by importing the plugin in their hardhat config. For example:
+Now, they're loaded automatically when importing the plugin in a hardhat config file. For example:
 
 ```typescript
 import "@nomiclabs/hardhat-ethers"
