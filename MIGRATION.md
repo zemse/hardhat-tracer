@@ -36,6 +36,10 @@ versions end with just `Config`. Another examples are:
 - Both have their resolved versions: `ProjectPathsConfig` and
   `NetworksConfig`, respectively.
 
+You can find an example of how to properly extend these types, 
+resolve/normalize the users's config, and apply default values in the
+`src/type-extensions.ts` and `src/index.ts` files.
+
 ### Artifacts
 
 The `readArtifact` and `readArtifactSync` functions were moved to the `HardhatRuntimeEnvironment` so you must replace their uses like this:

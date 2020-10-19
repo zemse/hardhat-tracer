@@ -1,6 +1,5 @@
 {
   "require": "ts-node/register/files",
-  "recursive": true,
   "ignore": ["test/fixture-projects/**/*"],
   "timeout": 6000
 }
