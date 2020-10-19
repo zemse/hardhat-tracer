@@ -24,7 +24,7 @@ npm install
 
 Make sure to read our [Plugin Development Guide](https://hardhat.org/guides/create-plugin.html)
 to learn how to build a plugin, and our
-[best practices to create high-quality plugins](https://hardhat.org/documentation/#plugin-development-best-practices).
+[best practices to create high-quality plugins](https://hardhat.org/advanced/building-plugins.html).
 
 ## Testing
 
