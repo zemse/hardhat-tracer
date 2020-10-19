@@ -18,11 +18,18 @@ This plugin will help you with world domination by implementing a simple tic-tac
 npm install <your npm package name> [list of peer dependencies]
 ```
 
-And add the following statement to your `hardhat.config.js`:
+Import the plugin in your `hardhat.config.js`:
 
 ```js
-usePlugin("<your plugin npm package name>");
+require("<your plugin npm package name>");
 ```
+
+Or if you are using TypeScript, in your `hardhat.config.ts`:
+
+```ts
+import "<your plugin npm package name>";
+```
+
 
 ## Required plugins
 
@@ -36,7 +43,9 @@ usePlugin("<your plugin npm package name>");
 tasks, this may not be needed_>
 
 This plugin creates no additional tasks.
+
 <_or_>
+
 This plugin adds the _example_ task to Hardhat:
 ```
 output of `npx hardhat help example`
@@ -61,7 +70,7 @@ This is an example of how to set it:
 ```js
 module.exports = {
   paths: {
-    newPath: "./new-path"
+    newPath: "new-path"
   }
 };
 ```
