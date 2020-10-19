@@ -23,14 +23,21 @@ extendConfig(
     // state for its type, including its extentions. For example, you may
     // need to apply a default value, like in this example.
     const userPath = userConfig.paths?.newPath;
-    const defaultPath = path.join(config.paths.root, "newPath");
 
-    config.paths.newPath =
-      userPath !== undefined
-        ? path.isAbsolute(userPath)
-          ? userPath
-          : path.join(config.paths.root, userPath)
-        : defaultPath;
+    let newPath: string;
+    if (userPath === undefined) {
+      newPath = path.join(config.paths.root, "newPath");
+    } else {
+      if (path.isAbsolute(userPath)) {
+        newPath = userPath;
+      } else {
+        // We resolve relative paths starting from the project's root.
+        // Please keep this convention to avoid confusion.
+        newPath = path.normalize(path.join(config.paths.root, userPath));
+      }
+    }
+
+    config.paths.newPath = newPath;
   }
 );
 
