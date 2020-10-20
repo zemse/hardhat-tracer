@@ -109,9 +109,9 @@ declare module "hardhat/types/runtime" {
 
 ### Adapting your config extensions
 
-Config types are handled slightly differently in Harhdat.
+Config types are handled slightly differently in Hardhat.
 
-For each config element/type, there's to Typescript types defined. One
+For each config element/type, there's two Typescript types defined. One
 that ends with `UserConfig`, that represents the user's input, and another
 one that ends with just `Config`, which represents the configuration values
 after any resolution and default values have been applied. The first kind of
