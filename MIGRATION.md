@@ -21,7 +21,9 @@ For example, `@nomiclabs/buidler-ethers` would be `@nomiclabs/hardhat-ethers`.
 
 ## Adapting your plugin's source code
 
-Replace all types or imported names that include `Buidler` with `Hardhat` in your plugin source code.
+The first change you need to make, is to stop exporting a function in your plugin's `index.ts`. Place your function's body at the top-level of your `index.ts` file.
+
+Then, replace all types or imported names that include `Buidler` with `Hardhat` in your plugin source code.
 
 For example, the `BuidlerRuntimeEnvironment` should be replaced with the `HardhatRuntimeEnvironment`. We suggest using `hre` instead of `bre` as its variable name.
 
