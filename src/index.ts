@@ -1,9 +1,21 @@
-import { extendEnvironment } from "hardhat/config";
-import { JsonRpcRequest, JsonRpcResponse } from "hardhat/types";
+import { task } from "hardhat/config";
+import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { printLogs } from "./logs";
+import {
+  HardhatRuntimeEnvironment,
+  JsonRpcRequest,
+  JsonRpcResponse,
+} from "hardhat/types";
 import "./type-extensions";
 
-extendEnvironment((hre) => {
+task(TASK_TEST, "Runs mocha tests")
+  .addFlag("trace", "trace logs and calls in transactions")
+  .setAction(async (args, hre, runSuper) => {
+    if (args.trace) addTracerToHre(hre);
+    return runSuper(args);
+  });
+
+function addTracerToHre(hre: HardhatRuntimeEnvironment) {
   const originalSend = hre.network.provider.send;
   async function newSend(method: string, params?: any[]): Promise<any> {
     const result = await originalSend(method, params);
@@ -25,4 +37,5 @@ extendEnvironment((hre) => {
     return originalSendAsync(payload, callback);
   }
   hre.network.provider.sendAsync = newSendAsync;
-});
+  hre.is_hardhat_tracer_active = true;
+}

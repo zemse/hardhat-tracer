@@ -1,5 +1,9 @@
 import "hardhat/types/config";
 
+interface TracerConfig {
+  includeCalls?: string[];
+}
+
 declare module "hardhat/types/config" {
   interface HardhatUserConfig {
     tracer?: TracerConfig;
@@ -10,6 +14,8 @@ declare module "hardhat/types/config" {
   }
 }
 
-interface TracerConfig {
-  includeCalls?: string[];
+declare module "hardhat/types/runtime" {
+  export interface HardhatRuntimeEnvironment {
+    is_hardhat_tracer_active: boolean;
+  }
 }
