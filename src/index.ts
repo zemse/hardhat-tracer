@@ -1,49 +1,28 @@
-import { extendConfig, extendEnvironment } from "hardhat/config";
-import { lazyObject } from "hardhat/plugins";
-import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
-import path from "path";
-
-import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEnvironmentField";
-// This import is needed to let the TypeScript compiler know that it should include your type
-// extensions in your npm package's types file.
+import { extendEnvironment } from "hardhat/config";
+import { JsonRpcRequest, JsonRpcResponse } from "hardhat/types";
+import { printLogs } from "./logs";
 import "./type-extensions";
 
-extendConfig(
-  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
-    // We apply our default config here. Any other kind of config resolution
-    // or normalization should be placed here.
-    //
-    // `config` is the resolved config, which will be used during runtime and
-    // you should modify.
-    // `userConfig` is the config as provided by the user. You should not modify
-    // it.
-    //
-    // If you extended the `HardhatConfig` type, you need to make sure that
-    // executing this function ensures that the `config` object is in a valid
-    // state for its type, including its extentions. For example, you may
-    // need to apply a default value, like in this example.
-    const userPath = userConfig.paths?.newPath;
-
-    let newPath: string;
-    if (userPath === undefined) {
-      newPath = path.join(config.paths.root, "newPath");
-    } else {
-      if (path.isAbsolute(userPath)) {
-        newPath = userPath;
-      } else {
-        // We resolve relative paths starting from the project's root.
-        // Please keep this convention to avoid confusion.
-        newPath = path.normalize(path.join(config.paths.root, userPath));
-      }
-    }
-
-    config.paths.newPath = newPath;
-  }
-);
-
 extendEnvironment((hre) => {
-  // We add a field to the Hardhat Runtime Environment here.
-  // We use lazyObject to avoid initializing things until they are actually
-  // needed.
-  hre.example = lazyObject(() => new ExampleHardhatRuntimeEnvironmentField());
+  const originalSend = hre.network.provider.send;
+  async function newSend(method: string, params?: any[]): Promise<any> {
+    const result = await originalSend(method, params);
+    if (method === "eth_sendTransaction") {
+      // TODO: Check if result is a valid bytes32 string
+      await printLogs(result, hre.network.provider, hre.artifacts);
+    }
+    return result;
+  }
+  hre.network.provider.send = newSend;
+
+  const originalSendAsync = hre.network.provider.sendAsync;
+  function newSendAsync(
+    payload: JsonRpcRequest,
+    callback: (error: any, response: JsonRpcResponse) => void
+  ): void {
+    console.log("payload", payload);
+
+    return originalSendAsync(payload, callback);
+  }
+  hre.network.provider.sendAsync = newSendAsync;
 });
