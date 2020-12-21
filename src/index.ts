@@ -1,6 +1,7 @@
 import { task } from "hardhat/config";
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { printLogs } from "./logs";
+import { printCalls } from "./calls";
 import {
   HardhatRuntimeEnvironment,
   JsonRpcRequest,
@@ -22,6 +23,10 @@ function addTracerToHre(hre: HardhatRuntimeEnvironment) {
     if (method === "eth_sendTransaction") {
       // TODO: Check if result is a valid bytes32 string
       await printLogs(result, hre.network.provider, hre.artifacts);
+
+      try {
+        await printCalls(result, hre.network.provider, hre.artifacts);
+      } catch {}
     }
     return result;
   }
