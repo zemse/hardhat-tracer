@@ -1,4 +1,5 @@
 import { task } from "hardhat/config";
+import { HardhatPluginError } from "hardhat/plugins";
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { printLogs } from "./logs";
 import { printCalls } from "./calls";
@@ -12,7 +13,22 @@ import "./type-extensions";
 task(TASK_TEST, "Runs mocha tests")
   .addFlag("trace", "trace logs and calls in transactions")
   .setAction(async (args, hre, runSuper) => {
-    if (args.trace) addTracerToHre(hre);
+    if (args.trace) {
+      addTracerToHre(hre);
+
+      const defaultTracerConfig = {
+        network: hre.config.defaultNetwork,
+      };
+      hre.config.tracer = hre.config.tracer ?? {};
+      hre.config.tracer = { ...defaultTracerConfig, ...hre.config.tracer };
+      if (!hre.config.networks[hre.config.tracer.network]) {
+        throw new HardhatPluginError(
+          "Tracer",
+          `Network "${hre.config.tracer.network}" not declared in hardhat config networks`
+        );
+      }
+      hre.config.defaultNetwork = hre.config.tracer.network; // somehow this is not enough to change the network, since ganache or whatever is already started
+    }
     return runSuper(args);
   });
 

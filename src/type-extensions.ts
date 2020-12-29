@@ -1,7 +1,7 @@
 import "hardhat/types/config";
 
 interface TracerConfig {
-  includeCalls?: string[];
+  network: string;
 }
 
 declare module "hardhat/types/config" {
