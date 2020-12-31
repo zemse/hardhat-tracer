@@ -43,6 +43,7 @@ export async function printLogs(
             addressLabels
           )})`
         );
+        break;
       } catch {}
     }
   }
