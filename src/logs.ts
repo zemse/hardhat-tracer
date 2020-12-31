@@ -3,6 +3,7 @@ import { Artifacts } from "hardhat/types";
 import { Interface } from "ethers/lib/utils";
 import chalk from "chalk";
 import { formatEventArgs, stringifyValue } from "./formatter";
+import { setInAddressLabel } from "./utils";
 
 export async function printLogs(
   txHash: string,
@@ -12,11 +13,16 @@ export async function printLogs(
   const receipt = await network.send("eth_getTransactionReceipt", [txHash]);
   if (!receipt || !receipt?.logs) return;
 
-  const addressLabels: { [key: string]: string } = {};
-  if (typeof receipt.to === "string")
-    addressLabels[receipt.to.toLowerCase()] = "Receiver";
-  if (typeof receipt.from === "string")
-    addressLabels[receipt.from.toLowerCase()] = "Sender";
+  const addressLabels: { [key: string]: string } = {
+    ...global._tracer_address_names,
+  };
+  if (typeof receipt.to === "string") {
+    setInAddressLabel(addressLabels, receipt.to, "Receiver");
+  }
+
+  if (typeof receipt.from === "string") {
+    setInAddressLabel(addressLabels, receipt.from, "Sender");
+  }
 
   const names = await artifacts.getAllFullyQualifiedNames();
 
@@ -31,10 +37,8 @@ export async function printLogs(
 
         console.log(
           `${
-            addressLabels[receipt.logs[i]?.address?.toLowerCase()]
-              ? stringifyValue(receipt.logs[i].address, addressLabels) + " "
-              : ""
-          }${name.split(":")[1]}.${chalk.green(parsed.name)}(${formatEventArgs(
+            stringifyValue(receipt.logs[i].address, addressLabels) + " "
+          }${chalk.green(parsed.name)}(${formatEventArgs(
             parsed,
             addressLabels
           )})`

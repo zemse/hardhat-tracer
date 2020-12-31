@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { ethers } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
+import { getFromAddressLabel } from "./utils";
 
 export function formatEventArgs(
   parsed: LogDescription,
@@ -31,8 +32,8 @@ export function stringifyValue(
     value.length === 42
   ) {
     return `${
-      addressLabels[value.toLowerCase()]
-        ? chalk.italic(`[${addressLabels[value.toLowerCase()]}]`)
+      getFromAddressLabel(addressLabels, value)
+        ? chalk.italic(`[${getFromAddressLabel(addressLabels, value)}]`)
         : value
     }`;
   } else if (Array.isArray(value)) {

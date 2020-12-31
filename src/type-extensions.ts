@@ -19,3 +19,11 @@ declare module "hardhat/types/runtime" {
     is_hardhat_tracer_active: boolean;
   }
 }
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      _tracer_address_names: { [key: string]: string };
+    }
+  }
+}
