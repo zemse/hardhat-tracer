@@ -17,13 +17,18 @@ export function setInAddressLabel(
   address: string,
   value: string
 ) {
-  if (addressLabels[address]) {
-    addressLabels[address] = value;
-  } else if (addressLabels[address.toLowerCase()]) {
-    addressLabels[address.toLowerCase()] = value;
-  } else if (addressLabels[address.toUpperCase()]) {
-    addressLabels[address.toUpperCase()] = value;
-  } else {
-    addressLabels[ethers.utils.getAddress(address)] = value;
+  replaceIfExists(address, value) ||
+    replaceIfExists(address.toLowerCase(), value) ||
+    replaceIfExists(address.toUpperCase(), value) ||
+    replaceIfExists(ethers.utils.getAddress(address), value) ||
+    (addressLabels[ethers.utils.getAddress(address)] = value);
+
+  function replaceIfExists(key: string, value: string) {
+    if (addressLabels[key]) {
+      addressLabels[key] = `${value} / ${addressLabels[key]}`;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
