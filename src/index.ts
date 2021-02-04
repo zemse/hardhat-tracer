@@ -44,7 +44,9 @@ function addTracerToHre(hre: HardhatRuntimeEnvironment) {
 
       try {
         await printCalls(result, hre.network.provider, hre.artifacts);
-      } catch {}
+      } catch (e) {
+        console.log(e);
+      }
     }
     return result;
   }
