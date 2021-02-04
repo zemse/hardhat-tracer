@@ -31,11 +31,14 @@ export function stringifyValue(
     value.slice(0, 2) === "0x" &&
     value.length === 42
   ) {
-    return `${
-      getFromAddressLabel(addressLabels, value)
-        ? chalk.italic(`[${getFromAddressLabel(addressLabels, value)}]`)
-        : value
-    }`;
+    if (getFromAddressLabel(addressLabels, value)) {
+      return chalk.italic(`[${getFromAddressLabel(addressLabels, value)}]`);
+    } else {
+      if (global._tracer_print_name_tag_tip === undefined) {
+        global._tracer_print_name_tag_tip = "print it";
+      }
+      return value;
+    }
   } else if (Array.isArray(value)) {
     return (
       "[" + value.map((v) => stringifyValue(v, addressLabels)).join(", ") + "]"

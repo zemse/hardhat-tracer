@@ -28,6 +28,10 @@ declare global {
   namespace NodeJS {
     interface Global {
       tracer_name_tags: { [address: string]: string };
+      _tracer_print_name_tag_tip:
+        | undefined // meaning "no need to print"
+        | "print it"
+        | "already printed";
     }
   }
 }

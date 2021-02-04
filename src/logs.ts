@@ -47,4 +47,15 @@ export async function printLogs(
       } catch {}
     }
   }
+  if (global._tracer_print_name_tag_tip === "print it") {
+    global._tracer_print_name_tag_tip = "already printed";
+    // print only occassionally (20% probability)
+    if (Math.random() < 0.2) {
+      console.log(
+        chalk.yellow(
+          `Tip: You can set name tags for addresses by adding a key to global.tracer_name_tags object`
+        )
+      );
+    }
+  }
 }
