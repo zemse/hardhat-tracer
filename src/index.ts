@@ -47,9 +47,18 @@ function addTracerToHre(hre: HardhatRuntimeEnvironment) {
     payload: JsonRpcRequest,
     callback: (error: any, response: JsonRpcResponse) => void
   ): void {
-    console.log("payload", payload);
-
-    return originalSendAsync(payload, callback);
+    return originalSendAsync(payload, (error, response) => {
+      if (payload.method === "eth_sendTransaction") {
+        const result = response.result;
+        if (result) {
+          // TODO: Check if result is a valid bytes32 string
+          printLogs(result, hre.network.provider, hre.artifacts).catch(
+            console.error
+          );
+        }
+      }
+      callback(error, response);
+    });
   }
   hre.network.provider.sendAsync = newSendAsync;
   hre.is_hardhat_tracer_active = true;
