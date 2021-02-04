@@ -17,19 +17,6 @@ task(TASK_TEST, "Runs mocha tests")
   .setAction(async (args, hre, runSuper) => {
     if (args.trace) {
       addTracerToHre(hre);
-
-      const defaultTracerConfig = {
-        network: hre.config.defaultNetwork,
-      };
-      hre.config.tracer = hre.config.tracer ?? {};
-      hre.config.tracer = { ...defaultTracerConfig, ...hre.config.tracer };
-      if (!hre.config.networks[hre.config.tracer.network]) {
-        throw new HardhatPluginError(
-          "Tracer",
-          `Network "${hre.config.tracer.network}" not declared in hardhat config networks`
-        );
-      }
-      hre.config.defaultNetwork = hre.config.tracer.network; // somehow this is not enough to change the network, since ganache or whatever is already started
     }
     return runSuper(args);
   });
@@ -42,11 +29,14 @@ function addTracerToHre(hre: HardhatRuntimeEnvironment) {
       // TODO: Check if result is a valid bytes32 string
       await printLogs(result, hre.network.provider, hre.artifacts);
 
-      try {
-        await printCalls(result, hre.network.provider, hre.artifacts);
-      } catch (e) {
-        console.log(e);
-      }
+      /**
+       * Temporarily commenting printCalls, since a this needs to be worked on based on hh opcodes
+       */
+      // try {
+      //   await printCalls(result, hre.network.provider, hre.artifacts);
+      // } catch (e) {
+      //   console.log(e);
+      // }
     }
     return result;
   }
