@@ -14,7 +14,7 @@ export async function printLogs(
   if (!receipt || !receipt?.logs) return;
 
   const addressLabels: { [key: string]: string } = {
-    ...global._tracer_address_names,
+    ...global.tracer_name_tags,
   };
   if (typeof receipt.to === "string") {
     setInAddressLabel(addressLabels, receipt.to, "Receiver");

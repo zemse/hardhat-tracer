@@ -27,7 +27,7 @@ declare module "hardhat/types/runtime" {
 declare global {
   namespace NodeJS {
     interface Global {
-      _tracer_address_names: { [key: string]: string };
+      tracer_name_tags: { [address: string]: string };
     }
   }
 }

@@ -8,7 +8,7 @@ import {
 } from "hardhat/types";
 import "./type-extensions";
 
-if (!global._tracer_address_names) global._tracer_address_names = {};
+if (!global.tracer_name_tags) global.tracer_name_tags = {};
 
 task(TASK_TEST, "Runs mocha tests")
   .addFlag("trace", "trace logs and calls in transactions")
