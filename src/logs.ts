@@ -14,7 +14,7 @@ export async function printLogs(
   if (!receipt || !receipt?.logs) return;
 
   const addressLabels: { [key: string]: string } = {
-    ...global.tracer_name_tags,
+    ...global.TRACER_NAME_TAGS,
   };
   if (typeof receipt.to === "string") {
     setInAddressLabel(addressLabels, receipt.to, "Receiver");
@@ -47,8 +47,8 @@ export async function printLogs(
       } catch {}
     }
   }
-  if (global._tracer_print_name_tag_tip === "print it") {
-    global._tracer_print_name_tag_tip = "already printed";
+  if (global.__tracerPrintNameTagTip === "print it") {
+    global.__tracerPrintNameTagTip = "already printed";
     // print only occassionally (20% probability)
     if (Math.random() < 0.2) {
       console.log(

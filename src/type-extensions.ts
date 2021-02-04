@@ -27,8 +27,8 @@ declare module "hardhat/types/runtime" {
 declare global {
   namespace NodeJS {
     interface Global {
-      tracer_name_tags: { [address: string]: string };
-      _tracer_print_name_tag_tip:
+      TRACER_NAME_TAGS: { [address: string]: string };
+      __tracerPrintNameTagTip:
         | undefined // meaning "no need to print"
         | "print it"
         | "already printed";

@@ -34,8 +34,8 @@ export function stringifyValue(
     if (getFromAddressLabel(addressLabels, value)) {
       return chalk.italic(`[${getFromAddressLabel(addressLabels, value)}]`);
     } else {
-      if (global._tracer_print_name_tag_tip === undefined) {
-        global._tracer_print_name_tag_tip = "print it";
+      if (global.__tracerPrintNameTagTip === undefined) {
+        global.__tracerPrintNameTagTip = "print it";
       }
       return value;
     }
