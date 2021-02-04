@@ -12,14 +12,15 @@ if (!global._tracer_address_names) global._tracer_address_names = {};
 
 task(TASK_TEST, "Runs mocha tests")
   .addFlag("trace", "trace logs and calls in transactions")
+  .addFlag("logs", "print logs emmitted during transactions")
   .setAction(async (args, hre, runSuper) => {
-    if (args.trace) {
-      addTracerToHre(hre);
+    if (args.trace || args.logs) {
+      addLogsPrinterToHre(hre);
     }
     return runSuper(args);
   });
 
-function addTracerToHre(hre: HardhatRuntimeEnvironment) {
+function addLogsPrinterToHre(hre: HardhatRuntimeEnvironment) {
   const originalSend = hre.network.provider.send;
   async function newSend(method: string, params?: any[]): Promise<any> {
     const result = await originalSend(method, params);
