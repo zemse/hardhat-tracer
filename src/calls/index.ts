@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { EthereumProvider, Artifacts } from "hardhat/types";
 import { stringifyValue } from "../formatter";
 import { getCalls } from "./debug_traceTransaction";
@@ -15,8 +16,20 @@ export async function printCalls(
   if (typeof receipt.from === "string")
     addressLabels[receipt.from.toLowerCase()] = "Sender";
 
-  const call = await getCalls(txHash, network);
-  printCall(call, 0, addressLabels);
+  try {
+    const call = await getCalls(txHash, network);
+    // console.log("call", call);
+
+    printCall(call, 0, addressLabels);
+  } catch (err) {
+    if (err.message.includes("debug_traceTransaction")) {
+      console.log(
+        chalk.yellow(`Warning! Debug Transaction not supported on this network`)
+      );
+    } else {
+      console.error(err);
+    }
+  }
 }
 
 function printCall(
@@ -26,10 +39,9 @@ function printCall(
 ) {
   console.log(
     "  ".repeat(depth) +
-      `${call.type}: ${stringifyValue(
-        call.from,
-        addressLabels
-      )} to ${stringifyValue(call.to, addressLabels)}`
+      `${call.type}: ${stringifyValue(call.from, addressLabels)} ${
+        call.type === "CREATE" || call.type === "CREATE2" ? "deployed" : "to"
+      } ${stringifyValue(call.to, addressLabels)}`
   );
   call.calls?.forEach((c) => printCall(c, depth + 1, addressLabels));
 }

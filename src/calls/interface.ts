@@ -1,5 +1,5 @@
 export interface Call {
-  type:
+  type?:
     | "CALL"
     | "CALLCODE"
     | "STATICCALL"
