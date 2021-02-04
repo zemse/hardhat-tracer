@@ -1,8 +1,6 @@
 import { task } from "hardhat/config";
-import { HardhatPluginError } from "hardhat/plugins";
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { printLogs } from "./logs";
-import { printCalls } from "./calls";
 import {
   HardhatRuntimeEnvironment,
   JsonRpcRequest,
