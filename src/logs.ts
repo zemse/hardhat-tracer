@@ -34,13 +34,23 @@ export async function printLogs(
 
       try {
         const parsed = iface.parseLog(receipt.logs[i]);
+        let decimals = -1;
+        if (parsed.signature === "Transfer(address,address,uint256)") {
+          try {
+            const res = await network.send("eth_call", [
+              { data: "0x313ce567", to: receipt.logs[i].address },
+            ]);
+            decimals = +res;
+          } catch {}
+        }
 
         console.log(
           `${
             stringifyValue(receipt.logs[i].address, addressLabels) + " "
           }${chalk.green(parsed.name)}(${formatEventArgs(
             parsed,
-            addressLabels
+            addressLabels,
+            decimals
           )})`
         );
         break;

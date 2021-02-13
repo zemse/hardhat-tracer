@@ -5,13 +5,19 @@ import { getFromAddressLabel } from "./utils";
 
 export function formatEventArgs(
   parsed: LogDescription,
-  addressLabels: { [key: string]: string }
+  addressLabels: { [key: string]: string },
+  decimals: number
 ) {
   const stringifiedArgs: [string, string][] = [];
   for (let i = 0; i < parsed.eventFragment.inputs.length; i++) {
     const input = parsed.eventFragment.inputs[i];
     const name = input.name ?? `arg_${i}`;
-    stringifiedArgs.push([name, stringifyValue(parsed.args[i], addressLabels)]);
+    stringifiedArgs.push([
+      name,
+      decimals !== -1 && i === 2 // display formatted value for erc20 transfer events
+        ? ethers.utils.formatUnits(parsed.args[2], decimals)
+        : stringifyValue(parsed.args[i], addressLabels),
+    ]);
   }
   return `${stringifiedArgs
     .map((entry) => `${chalk.magenta(`${entry[0]}=`)}${entry[1]}`)
