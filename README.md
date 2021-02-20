@@ -25,3 +25,11 @@ npx hardhat test --logs
 ```
 
 ![Console test](https://imgur.com/download/KB72yBV/)
+
+### Address name tags
+
+You can set display names / name tags for address by adding new entry to `hre.tracer.nameTags` object in your test cases, see following example:
+
+```ts
+hre.tracer.nameTags[this.arbitrager.address] = "Arbitrager";
+```
