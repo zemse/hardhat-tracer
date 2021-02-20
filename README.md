@@ -1,6 +1,6 @@
 # hardhat-tracer 🕵️
 
-Allows you to see emitted events
+Allows you to see emitted events when running your tests.
 
 ## Installation
 
@@ -18,8 +18,10 @@ require("hardhat-tracer");
 
 ## Usage
 
+Just add the `--logs` after your test command.
+
 ```
-yarn test --logs
+npx hardhat test --logs
 ```
 
 ![Console test](https://imgur.com/download/KB72yBV/)
