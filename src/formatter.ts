@@ -1,12 +1,13 @@
 import chalk from "chalk";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
-import { getFromAddressLabel } from "./utils";
+import { getFromNameTags } from "./utils";
 
 export function formatEventArgs(
   parsed: LogDescription,
-  addressLabels: { [key: string]: string },
-  decimals: number
+  decimals: number,
+  hre: HardhatRuntimeEnvironment
 ) {
   const stringifiedArgs: [string, string][] = [];
   for (let i = 0; i < parsed.eventFragment.inputs.length; i++) {
@@ -16,7 +17,7 @@ export function formatEventArgs(
       name,
       decimals !== -1 && i === 2 // display formatted value for erc20 transfer events
         ? ethers.utils.formatUnits(parsed.args[2], decimals)
-        : stringifyValue(parsed.args[i], addressLabels),
+        : stringifyValue(parsed.args[i], hre),
     ]);
   }
   return `${stringifiedArgs
@@ -26,7 +27,7 @@ export function formatEventArgs(
 
 export function stringifyValue(
   value: any,
-  addressLabels: { [key: string]: string }
+  hre: HardhatRuntimeEnvironment
 ): string {
   if (value?._isBigNumber) {
     return ethers.BigNumber.from(value).toString();
@@ -37,18 +38,16 @@ export function stringifyValue(
     value.slice(0, 2) === "0x" &&
     value.length === 42
   ) {
-    if (getFromAddressLabel(addressLabels, value)) {
-      return chalk.italic(`[${getFromAddressLabel(addressLabels, value)}]`);
+    if (getFromNameTags(value, hre)) {
+      return chalk.italic(`[${getFromNameTags(value, hre)}]`);
     } else {
-      if (global.__tracerPrintNameTagTip === undefined) {
-        global.__tracerPrintNameTagTip = "print it";
+      if (hre.tracer._internal.printNameTagTip === undefined) {
+        hre.tracer._internal.printNameTagTip = "print it";
       }
       return value;
     }
   } else if (Array.isArray(value)) {
-    return (
-      "[" + value.map((v) => stringifyValue(v, addressLabels)).join(", ") + "]"
-    );
+    return "[" + value.map((v) => stringifyValue(v, hre)).join(", ") + "]";
   } else if (typeof value === "object" && value !== null) {
     // let newObj: any = {};
     // console.log("a");
@@ -59,7 +58,7 @@ export function stringifyValue(
         .map((entry) => {
           // console.log("b");
           // newObj[entry[0]] = stringifyValue(entry[1]);
-          return `${entry[0]}:${stringifyValue(entry[1], addressLabels)}`;
+          return `${entry[0]}:${stringifyValue(entry[1], hre)}`;
         })
         .join(", ") +
       "}"

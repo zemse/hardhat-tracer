@@ -37,11 +37,11 @@ function printCall(
   depth: number,
   addressLabels: { [key: string]: string }
 ) {
-  console.log(
-    "  ".repeat(depth) +
-      `${call.type}: ${stringifyValue(call.from, addressLabels)} ${
-        call.type === "CREATE" || call.type === "CREATE2" ? "deployed" : "to"
-      } ${stringifyValue(call.to, addressLabels)}`
-  );
+  // console.log(
+  //   "  ".repeat(depth) +
+  //     `${call.type}: ${stringifyValue(call.from, addressLabels)} ${
+  //       call.type === "CREATE" || call.type === "CREATE2" ? "deployed" : "to"
+  //     } ${stringifyValue(call.to, addressLabels)}`
+  // );
   call.calls?.forEach((c) => printCall(c, depth + 1, addressLabels));
 }

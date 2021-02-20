@@ -8,12 +8,16 @@ import {
 } from "hardhat/types";
 import "./type-extensions";
 
-if (!global.TRACER_NAME_TAGS) global.TRACER_NAME_TAGS = {};
-
 task(TASK_TEST, "Runs mocha tests")
   .addFlag("trace", "trace logs and calls in transactions")
   .addFlag("logs", "print logs emmitted during transactions")
   .setAction(async (args, hre, runSuper) => {
+    if (!hre.tracer)
+      hre.tracer = {
+        nameTags: {},
+        _internal: { printNameTagTip: undefined },
+      };
+
     if (args.trace || args.logs) {
       addLogsPrinterToHre(hre);
     }
@@ -26,7 +30,8 @@ function addLogsPrinterToHre(hre: HardhatRuntimeEnvironment) {
     const result = await originalSend(method, params);
     if (method === "eth_sendTransaction") {
       // TODO: Check if result is a valid bytes32 string
-      await printLogs(result, hre.network.provider, hre.artifacts);
+      await printLogs(result, hre);
+      //.network.provider, hre.artifacts
 
       /**
        * Temporarily commenting printCalls, since a this needs to be worked on based on hh opcodes
@@ -51,14 +56,11 @@ function addLogsPrinterToHre(hre: HardhatRuntimeEnvironment) {
         const result = response.result;
         if (result) {
           // TODO: Check if result is a valid bytes32 string
-          printLogs(result, hre.network.provider, hre.artifacts).catch(
-            console.error
-          );
+          printLogs(result, hre).catch(console.error);
         }
       }
       callback(error, response);
     });
   }
   hre.network.provider.sendAsync = newSendAsync;
-  hre.is_hardhat_tracer_active = true;
 }

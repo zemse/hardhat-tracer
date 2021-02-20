@@ -1,31 +1,32 @@
 import { ethers } from "ethers";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-export function getFromAddressLabel(
-  addressLabels: { [key: string]: string },
-  address: string
+export function getFromNameTags(
+  address: string,
+  hre: HardhatRuntimeEnvironment
 ) {
   return (
-    addressLabels[address] ||
-    addressLabels[address.toLowerCase()] ||
-    addressLabels[address.toUpperCase()] ||
-    addressLabels[ethers.utils.getAddress(address)]
+    hre.tracer.nameTags[address] ||
+    hre.tracer.nameTags[address.toLowerCase()] ||
+    hre.tracer.nameTags[address.toUpperCase()] ||
+    hre.tracer.nameTags[ethers.utils.getAddress(address)]
   );
 }
 
-export function setInAddressLabel(
-  addressLabels: { [key: string]: string },
+export function setInNameTags(
   address: string,
-  value: string
+  value: string,
+  hre: HardhatRuntimeEnvironment
 ) {
   replaceIfExists(address, value) ||
     replaceIfExists(address.toLowerCase(), value) ||
     replaceIfExists(address.toUpperCase(), value) ||
     replaceIfExists(ethers.utils.getAddress(address), value) ||
-    (addressLabels[ethers.utils.getAddress(address)] = value);
+    (hre.tracer.nameTags[ethers.utils.getAddress(address)] = value);
 
   function replaceIfExists(key: string, value: string) {
-    if (addressLabels[key]) {
-      addressLabels[key] = `${value} / ${addressLabels[key]}`;
+    if (hre.tracer.nameTags[key]) {
+      hre.tracer.nameTags[key] = `${value} / ${hre.tracer.nameTags[key]}`;
       return true;
     } else {
       return false;

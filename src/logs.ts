@@ -1,43 +1,40 @@
 import { EthereumProvider } from "hardhat/src/types/provider";
-import { Artifacts } from "hardhat/types";
+import { Artifacts, HardhatRuntimeEnvironment } from "hardhat/types";
 import { Interface } from "ethers/lib/utils";
 import chalk from "chalk";
 import { formatEventArgs, stringifyValue } from "./formatter";
-import { setInAddressLabel } from "./utils";
+import { setInNameTags } from "./utils";
 
 export async function printLogs(
   txHash: string,
-  network: EthereumProvider,
-  artifacts: Artifacts
+  hre: HardhatRuntimeEnvironment
 ) {
-  const receipt = await network.send("eth_getTransactionReceipt", [txHash]);
+  const receipt = await hre.network.provider.send("eth_getTransactionReceipt", [
+    txHash,
+  ]);
   if (!receipt || !receipt?.logs) return;
 
-  const addressLabels: { [key: string]: string } = {
-    ...global.TRACER_NAME_TAGS,
-  };
   if (typeof receipt.to === "string") {
-    setInAddressLabel(addressLabels, receipt.to, "Receiver");
+    setInNameTags(receipt.to, "Receiver", hre);
   }
 
   if (typeof receipt.from === "string") {
-    setInAddressLabel(addressLabels, receipt.from, "Sender");
+    setInNameTags(receipt.from, "Sender", hre);
   }
 
-  const names = await artifacts.getAllFullyQualifiedNames();
+  const names = await hre.artifacts.getAllFullyQualifiedNames();
 
   for (let i = 0; i < receipt.logs.length; i++) {
     for (const name of names) {
-      const artifact = await artifacts.readArtifact(name);
+      const artifact = await hre.artifacts.readArtifact(name);
       const iface = new Interface(artifact.abi);
-      // for (const [i, logs] of Object.entries(receipt?.logs)) {
 
       try {
         const parsed = iface.parseLog(receipt.logs[i]);
         let decimals = -1;
         if (parsed.signature === "Transfer(address,address,uint256)") {
           try {
-            const res = await network.send("eth_call", [
+            const res = await hre.network.provider.send("eth_call", [
               { data: "0x313ce567", to: receipt.logs[i].address },
             ]);
             decimals = +res;
@@ -45,20 +42,17 @@ export async function printLogs(
         }
 
         console.log(
-          `${
-            stringifyValue(receipt.logs[i].address, addressLabels) + " "
-          }${chalk.green(parsed.name)}(${formatEventArgs(
-            parsed,
-            addressLabels,
-            decimals
-          )})`
+          `${stringifyValue(receipt.logs[i].address, hre) + " "}${chalk.green(
+            parsed.name
+          )}(${formatEventArgs(parsed, decimals, hre)})`
         );
         break;
       } catch {}
     }
   }
-  if (global.__tracerPrintNameTagTip === "print it") {
-    global.__tracerPrintNameTagTip = "already printed";
+
+  if (hre.tracer._internal.printNameTagTip === "print it") {
+    hre.tracer._internal.printNameTagTip = "already printed";
     // print only occassionally (20% probability)
     if (Math.random() < 0.2) {
       console.log(
