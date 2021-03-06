@@ -25,7 +25,10 @@ export function setInNameTags(
     (hre.tracer.nameTags[ethers.utils.getAddress(address)] = value);
 
   function replaceIfExists(key: string, value: string) {
-    if (hre.tracer.nameTags[key]) {
+    if (
+      hre.tracer.nameTags[key] &&
+      !hre.tracer.nameTags[key].split(" / ").includes(value)
+    ) {
       hre.tracer.nameTags[key] = `${value} / ${hre.tracer.nameTags[key]}`;
       return true;
     } else {
