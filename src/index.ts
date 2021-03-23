@@ -1,11 +1,7 @@
 import { task } from "hardhat/config";
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
-import { printLogs } from "./logs";
-import {
-  HardhatRuntimeEnvironment,
-  JsonRpcRequest,
-  JsonRpcResponse,
-} from "hardhat/types";
+import { BackwardsCompatibilityProviderAdapter } from "hardhat/internal/core/providers/backwards-compatibility";
+import { TracerProvider } from "./tracer-provider";
 import "./type-extensions";
 
 task(TASK_TEST, "Runs mocha tests")
@@ -19,48 +15,10 @@ task(TASK_TEST, "Runs mocha tests")
       };
 
     if (args.trace || args.logs) {
-      addLogsPrinterToHre(hre);
+      const tracerProvider = new TracerProvider(hre.network.provider, hre);
+      hre.network.provider = new BackwardsCompatibilityProviderAdapter(
+        tracerProvider
+      );
     }
     return runSuper(args);
   });
-
-function addLogsPrinterToHre(hre: HardhatRuntimeEnvironment) {
-  const originalSend = hre.network.provider.send;
-  async function newSend(method: string, params?: any[]): Promise<any> {
-    const result = await originalSend(method, params);
-    if (method === "eth_sendTransaction") {
-      // TODO: Check if result is a valid bytes32 string
-      await printLogs(result, hre);
-      //.network.provider, hre.artifacts
-
-      /**
-       * Temporarily commenting printCalls, since a this needs to be worked on based on hh opcodes
-       */
-      // try {
-      //   await printCalls(result, hre.network.provider, hre.artifacts);
-      // } catch (e) {
-      //   console.log(e);
-      // }
-    }
-    return result;
-  }
-  hre.network.provider.send = newSend;
-
-  const originalSendAsync = hre.network.provider.sendAsync;
-  function newSendAsync(
-    payload: JsonRpcRequest,
-    callback: (error: any, response: JsonRpcResponse) => void
-  ): void {
-    return originalSendAsync(payload, (error, response) => {
-      if (payload.method === "eth_sendTransaction") {
-        const result = response.result;
-        if (result) {
-          // TODO: Check if result is a valid bytes32 string
-          printLogs(result, hre).catch(console.error);
-        }
-      }
-      callback(error, response);
-    });
-  }
-  hre.network.provider.sendAsync = newSendAsync;
-}
