@@ -57,7 +57,7 @@ export async function printLogs(
     if (Math.random() < 0.2) {
       console.log(
         chalk.yellow(
-          `Tip: You can set name tags for addresses by adding a key to global.tracer_name_tags object`
+          `Tip: You can set name tags for addresses by adding a key to hre.tracer.nameTags object in your test cases.\ne.g. hre.tracer.nameTags["0x1234567890123456789012345678901234567890"] = "MyTreasury";`
         )
       );
     }
