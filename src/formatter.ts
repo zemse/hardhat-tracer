@@ -3,13 +3,12 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
 import { getFromNameTags } from "./utils";
-import { NameTags } from "./type-extensions";
+import { TracerDependenciesExtended } from "./types";
 
 export function formatEventArgs(
   parsed: LogDescription,
   decimals: number,
-  hre: HardhatRuntimeEnvironment,
-  nameTags: NameTags
+  dependencies: TracerDependenciesExtended
 ) {
   const stringifiedArgs: [string, string][] = [];
   for (let i = 0; i < parsed.eventFragment.inputs.length; i++) {
@@ -19,7 +18,7 @@ export function formatEventArgs(
       name,
       decimals !== -1 && i === 2 // display formatted value for erc20 transfer events
         ? ethers.utils.formatUnits(parsed.args[2], decimals)
-        : stringifyValue(parsed.args[i], hre, nameTags),
+        : stringifyValue(parsed.args[i], dependencies),
     ]);
   }
   return `${stringifiedArgs
@@ -29,8 +28,7 @@ export function formatEventArgs(
 
 export function stringifyValue(
   value: any,
-  hre: HardhatRuntimeEnvironment,
-  nameTags: NameTags
+  dependencies: TracerDependenciesExtended
 ): string {
   if (value?._isBigNumber) {
     return ethers.BigNumber.from(value).toString();
@@ -41,16 +39,18 @@ export function stringifyValue(
     value.slice(0, 2) === "0x" &&
     value.length === 42
   ) {
-    if (getFromNameTags(value, nameTags)) {
-      return chalk.italic(`[${getFromNameTags(value, nameTags)}]`);
+    if (getFromNameTags(value, dependencies)) {
+      return chalk.italic(`[${getFromNameTags(value, dependencies)}]`);
     } else {
-      if (hre.tracer._internal.printNameTagTip === undefined) {
-        hre.tracer._internal.printNameTagTip = "print it";
+      if (dependencies.tracerEnv._internal.printNameTagTip === undefined) {
+        dependencies.tracerEnv._internal.printNameTagTip = "print it";
       }
       return value;
     }
   } else if (Array.isArray(value)) {
-    return "[" + value.map((v) => stringifyValue(v, hre, nameTags)).join(", ") + "]";
+    return (
+      "[" + value.map((v) => stringifyValue(v, dependencies)).join(", ") + "]"
+    );
   } else if (typeof value === "object" && value !== null) {
     // let newObj: any = {};
     // console.log("a");
@@ -61,7 +61,7 @@ export function stringifyValue(
         .map((entry) => {
           // console.log("b");
           // newObj[entry[0]] = stringifyValue(entry[1]);
-          return `${entry[0]}:${stringifyValue(entry[1], hre, nameTags)}`;
+          return `${entry[0]}:${stringifyValue(entry[1], dependencies)}`;
         })
         .join(", ") +
       "}"

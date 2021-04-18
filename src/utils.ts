@@ -1,38 +1,40 @@
 import { ethers } from "ethers";
-import { NameTags } from "./type-extensions";
+import { TracerDependenciesExtended } from "./types";
 
 export function getFromNameTags(
   address: string,
-  nameTags: NameTags
+  dependencies: TracerDependenciesExtended
 ) {
   return (
-    nameTags[address] ||
-    nameTags[address.toLowerCase()] ||
-    nameTags[address.toUpperCase()] ||
-    nameTags[ethers.utils.getAddress(address)]
+    dependencies.nameTags[address] ||
+    dependencies.nameTags[address.toLowerCase()] ||
+    dependencies.nameTags[address.toUpperCase()] ||
+    dependencies.nameTags[ethers.utils.getAddress(address)]
   );
 }
 
 export function setInNameTags(
   address: string,
   value: string,
-  nameTags: NameTags
+  dependencies: TracerDependenciesExtended
 ) {
-  replaceIfExists(address, value, nameTags) ||
-    replaceIfExists(address.toLowerCase(), value, nameTags) ||
-    replaceIfExists(address.toUpperCase(), value, nameTags) ||
-    replaceIfExists(ethers.utils.getAddress(address), value, nameTags) ||
-    (nameTags[ethers.utils.getAddress(address)] = value);
-
-  
+  replaceIfExists(address, value, dependencies) ||
+    replaceIfExists(address.toLowerCase(), value, dependencies) ||
+    replaceIfExists(address.toUpperCase(), value, dependencies) ||
+    replaceIfExists(ethers.utils.getAddress(address), value, dependencies) ||
+    (dependencies.nameTags[ethers.utils.getAddress(address)] = value);
 }
 
-function replaceIfExists(key: string, value: string, nameTags: NameTags) {
+function replaceIfExists(
+  key: string,
+  value: string,
+  dependencies: TracerDependenciesExtended
+) {
   if (
-    nameTags[key] &&
-    !nameTags[key].split(" / ").includes(value)
+    dependencies.nameTags[key] &&
+    !dependencies.nameTags[key].split(" / ").includes(value)
   ) {
-    nameTags[key] = `${value} / ${nameTags[key]}`;
+    dependencies.nameTags[key] = `${value} / ${dependencies.nameTags[key]}`;
     return true;
   } else {
     return false;
