@@ -3,11 +3,13 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
 import { getFromNameTags } from "./utils";
+import { NameTags } from "./type-extensions";
 
 export function formatEventArgs(
   parsed: LogDescription,
   decimals: number,
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  nameTags: NameTags
 ) {
   const stringifiedArgs: [string, string][] = [];
   for (let i = 0; i < parsed.eventFragment.inputs.length; i++) {
@@ -17,7 +19,7 @@ export function formatEventArgs(
       name,
       decimals !== -1 && i === 2 // display formatted value for erc20 transfer events
         ? ethers.utils.formatUnits(parsed.args[2], decimals)
-        : stringifyValue(parsed.args[i], hre),
+        : stringifyValue(parsed.args[i], hre, nameTags),
     ]);
   }
   return `${stringifiedArgs
@@ -27,7 +29,8 @@ export function formatEventArgs(
 
 export function stringifyValue(
   value: any,
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  nameTags: NameTags
 ): string {
   if (value?._isBigNumber) {
     return ethers.BigNumber.from(value).toString();
@@ -38,8 +41,8 @@ export function stringifyValue(
     value.slice(0, 2) === "0x" &&
     value.length === 42
   ) {
-    if (getFromNameTags(value, hre)) {
-      return chalk.italic(`[${getFromNameTags(value, hre)}]`);
+    if (getFromNameTags(value, nameTags)) {
+      return chalk.italic(`[${getFromNameTags(value, nameTags)}]`);
     } else {
       if (hre.tracer._internal.printNameTagTip === undefined) {
         hre.tracer._internal.printNameTagTip = "print it";
@@ -47,7 +50,7 @@ export function stringifyValue(
       return value;
     }
   } else if (Array.isArray(value)) {
-    return "[" + value.map((v) => stringifyValue(v, hre)).join(", ") + "]";
+    return "[" + value.map((v) => stringifyValue(v, hre, nameTags)).join(", ") + "]";
   } else if (typeof value === "object" && value !== null) {
     // let newObj: any = {};
     // console.log("a");
@@ -58,7 +61,7 @@ export function stringifyValue(
         .map((entry) => {
           // console.log("b");
           // newObj[entry[0]] = stringifyValue(entry[1]);
-          return `${entry[0]}:${stringifyValue(entry[1], hre)}`;
+          return `${entry[0]}:${stringifyValue(entry[1], hre, nameTags)}`;
         })
         .join(", ") +
       "}"

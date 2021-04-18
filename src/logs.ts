@@ -14,12 +14,14 @@ export async function printLogs(
   ]);
   if (!receipt || !receipt?.logs) return;
 
+  const nameTags = {...hre.tracer.nameTags};
+
   if (typeof receipt.to === "string") {
-    setInNameTags(receipt.to, "Receiver", hre);
+    setInNameTags(receipt.to, "Receiver", nameTags);
   }
 
   if (typeof receipt.from === "string") {
-    setInNameTags(receipt.from, "Sender", hre);
+    setInNameTags(receipt.from, "Sender", nameTags);
   }
 
   const names = await hre.artifacts.getAllFullyQualifiedNames();
@@ -42,9 +44,9 @@ export async function printLogs(
         }
 
         console.log(
-          `${stringifyValue(receipt.logs[i].address, hre) + " "}${chalk.green(
+          `${stringifyValue(receipt.logs[i].address, hre, nameTags) + " "}${chalk.green(
             parsed.name
-          )}(${formatEventArgs(parsed, decimals, hre)})`
+          )}(${formatEventArgs(parsed, decimals, hre, nameTags)})`
         );
         break;
       } catch {}

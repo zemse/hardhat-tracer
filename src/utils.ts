@@ -1,38 +1,40 @@
 import { ethers } from "ethers";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { NameTags } from "./type-extensions";
 
 export function getFromNameTags(
   address: string,
-  hre: HardhatRuntimeEnvironment
+  nameTags: NameTags
 ) {
   return (
-    hre.tracer.nameTags[address] ||
-    hre.tracer.nameTags[address.toLowerCase()] ||
-    hre.tracer.nameTags[address.toUpperCase()] ||
-    hre.tracer.nameTags[ethers.utils.getAddress(address)]
+    nameTags[address] ||
+    nameTags[address.toLowerCase()] ||
+    nameTags[address.toUpperCase()] ||
+    nameTags[ethers.utils.getAddress(address)]
   );
 }
 
 export function setInNameTags(
   address: string,
   value: string,
-  hre: HardhatRuntimeEnvironment
+  nameTags: NameTags
 ) {
-  replaceIfExists(address, value) ||
-    replaceIfExists(address.toLowerCase(), value) ||
-    replaceIfExists(address.toUpperCase(), value) ||
-    replaceIfExists(ethers.utils.getAddress(address), value) ||
-    (hre.tracer.nameTags[ethers.utils.getAddress(address)] = value);
+  replaceIfExists(address, value, nameTags) ||
+    replaceIfExists(address.toLowerCase(), value, nameTags) ||
+    replaceIfExists(address.toUpperCase(), value, nameTags) ||
+    replaceIfExists(ethers.utils.getAddress(address), value, nameTags) ||
+    (nameTags[ethers.utils.getAddress(address)] = value);
 
-  function replaceIfExists(key: string, value: string) {
-    if (
-      hre.tracer.nameTags[key] &&
-      !hre.tracer.nameTags[key].split(" / ").includes(value)
-    ) {
-      hre.tracer.nameTags[key] = `${value} / ${hre.tracer.nameTags[key]}`;
-      return true;
-    } else {
-      return false;
-    }
+  
+}
+
+function replaceIfExists(key: string, value: string, nameTags: NameTags) {
+  if (
+    nameTags[key] &&
+    !nameTags[key].split(" / ").includes(value)
+  ) {
+    nameTags[key] = `${value} / ${nameTags[key]}`;
+    return true;
+  } else {
+    return false;
   }
 }
