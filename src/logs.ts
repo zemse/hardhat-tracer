@@ -41,7 +41,7 @@ export async function printLogs(
             const res = await dependencies.provider.send("eth_call", [
               { data: "0x313ce567", to: receipt.logs[i].address },
             ]);
-            decimals = +res;
+            decimals = +res.slice(0, 66);
           } catch {}
         }
 
