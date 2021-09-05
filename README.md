@@ -23,8 +23,7 @@ Just add the `--logs` after your test command.
 ```
 npx hardhat test --logs
 ```
-
-![Console test](https://imgur.com/download/KB72yBV/)
+<img width="1177" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/132125751-20d5d006-2d54-4901-bfc5-db0c8d5495b0.png">
 
 ### Address name tags
 
