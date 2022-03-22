@@ -116,12 +116,38 @@ async function parseData(
   }
 }
 
+export async function parseLog(
+  log: { data: string; topics: string[] },
+  dependencies: TracerDependenciesExtended
+) {
+  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+
+  for (const name of names) {
+    const artifact = await dependencies.artifacts.readArtifact(name);
+    const iface = new Interface(artifact.abi);
+
+    try {
+      const parsed = iface.parseLog(log);
+      let decimals = -1;
+
+      return `${chalk.yellow(parsed.name)}(${formatResult(
+        parsed.args,
+        parsed.eventFragment,
+        decimals,
+        true,
+        dependencies
+      )})`;
+    } catch {}
+  }
+}
+
 async function printStructLog(
   structLog: StructLog,
   index: number,
   structLogs: StructLog[],
   dependencies: TracerDependenciesExtended
 ) {
+  // TODO, need to add CREATE CREATE2 and other log stuff.
   switch (structLog.op) {
     case "CALL":
       await printCall(structLog, index, structLogs, dependencies);
@@ -131,6 +157,12 @@ async function printStructLog(
       break;
     case "DELEGATECALL":
       await printDelegateCall(structLog, index, structLogs, dependencies);
+      break;
+    case "LOG0":
+      await printLog0(structLog, dependencies);
+      break;
+    case "LOG1":
+      await printLog1(structLog, dependencies);
       break;
     case "REVERT":
       await printRevert(structLog);
@@ -244,6 +276,59 @@ async function printDelegateCall(
 
 async function printRevert(structLog: StructLog) {
   console.log(DEPTH_INDENTATION.repeat(structLog.depth) + chalk.red("REVERT"));
+}
+
+async function printLog0(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 2) {
+    console.log("Faulty LOG0");
+    return;
+  }
+
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await parseLog(
+    {
+      data,
+      topics: [],
+    },
+    dependencies
+  );
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+}
+
+async function printLog1(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 3) {
+    console.log("Faulty LOG1");
+    return;
+  }
+
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+  const topic0 = parseHex(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await parseLog(
+    {
+      data,
+      topics: [topic0],
+    },
+    dependencies
+  );
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
 }
 
 function findNextStructLogInDepth(
