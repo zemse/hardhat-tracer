@@ -3,6 +3,8 @@ import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { wrapHardhatProvider } from "./wrapper";
 import "./type-extensions";
 
+console.log(123);
+
 task(TASK_TEST, "Runs mocha tests")
   .addFlag("trace", "trace logs and calls in transactions")
   .addFlag("logs", "print logs emmitted during transactions")

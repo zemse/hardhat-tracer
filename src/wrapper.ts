@@ -7,6 +7,7 @@ import {
   Artifacts,
   EIP1193Provider,
 } from "hardhat/types";
+import { printCalls } from "./calls";
 import { printLogs } from "./logs";
 import { TracerEnv, TracerDependencies, ProviderLike } from "./types";
 
@@ -23,23 +24,24 @@ class TracerWrapper extends ProviderWrapper {
   }
 
   public async request(args: RequestArguments): Promise<unknown> {
-    // let result = (await (this.provider.request
-    //   ? this._wrappedProvider.request(args)
-    //   : // @ts-ignore
-    //     this._wrappedProvider.send(args.method, args.params as any[]))) as any;
-
-    let result = await this.dependencies.provider.send(
-      args.method,
-      args.params as any[]
-    );
+    let result;
+    let error: any;
+    try {
+      result = await this.dependencies.provider.send(
+        args.method,
+        args.params as any[]
+      );
+    } catch (error_) {
+      error = error_;
+    }
 
     if (
-      result != null &&
+      (result != null || error != null) &&
       (args.method === "eth_sendTransaction" ||
         args.method === "eth_sendRawTransaction" ||
         args.method === "eth_getTransactionReceipt")
     ) {
-      let hash = result;
+      let hash = result ?? error?.transactionHash;
       let receipt;
       if (typeof result === "object" && result !== null) {
         hash = result.transactionHash ?? result.hash;
@@ -51,16 +53,16 @@ class TracerWrapper extends ProviderWrapper {
         );
       }
       if (!this.txPrinted[hash] && receipt !== null) {
-        // console.log(hash);
         this.txPrinted[hash] = true;
         const dependenciesExtended = {
           ...this.dependencies,
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
         };
-        // @ts-ignore
         await printLogs(hash, receipt, dependenciesExtended);
+        await printCalls(hash, dependenciesExtended);
       }
     }
+    if (error) throw error;
     return result;
   }
 }

@@ -2,7 +2,7 @@ import { EthereumProvider } from "hardhat/src/types/provider";
 import { Artifacts } from "hardhat/types";
 import { Interface } from "ethers/lib/utils";
 import chalk from "chalk";
-import { formatEventArgs, stringifyValue } from "./formatter";
+import { formatResult, stringifyValue } from "./formatter";
 import { setInNameTags } from "./utils";
 import { TracerDependenciesExtended } from "./types";
 
@@ -18,13 +18,13 @@ export async function printLogs(
     ]);
   if (!receipt || !receipt.logs) return;
 
-  if (typeof receipt.to === "string") {
-    setInNameTags(receipt.to, "Receiver", dependencies);
-  }
+  // if (typeof receipt.to === "string") {
+  //   setInNameTags(receipt.to, "Receiver", dependencies);
+  // }
 
-  if (typeof receipt.from === "string") {
-    setInNameTags(receipt.from, "Sender", dependencies);
-  }
+  // if (typeof receipt.from === "string") {
+  //   setInNameTags(receipt.from, "Sender", dependencies);
+  // }
 
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
 
@@ -48,9 +48,11 @@ export async function printLogs(
         console.log(
           `${
             stringifyValue(receipt.logs[i].address, dependencies) + " "
-          }${chalk.green(parsed.name)}(${formatEventArgs(
-            parsed,
+          }${chalk.green(parsed.name)}(${formatResult(
+            parsed.args,
+            parsed.eventFragment,
             decimals,
+            true,
             dependencies
           )})`
         );
