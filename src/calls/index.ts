@@ -8,7 +8,7 @@ import {
   hexStripZeros,
   hexZeroPad,
 } from "@ethersproject/bytes";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, BigNumberish, ethers } from "ethers";
 import { network } from "hardhat";
 import { TracerDependenciesExtended } from "../types";
 import { Interface } from "@ethersproject/abi";
@@ -34,7 +34,15 @@ export async function printCalls(
     ) {
       // normal transaction
       console.log(
-        "CALL " + (await formatData(tx.to, tx.input, "0x", dependencies))
+        "CALL " +
+          (await formatData(
+            tx.to,
+            tx.input,
+            "0x",
+            tx.value,
+            tx.gas,
+            dependencies
+          ))
       );
     } else {
       // contract deploy transaction
@@ -117,6 +125,8 @@ async function formatData(
   to: string,
   input: string,
   ret: string,
+  value: BigNumberish,
+  gas: BigNumberish,
   dependencies: TracerDependenciesExtended
 ) {
   // console.log("parse data", { to, input, ret });
@@ -166,11 +176,19 @@ async function formatData(
           dependencies
         )
       : "";
+
+    const extra = [];
+    if ((value = BigNumber.from(value)).gt(0)) {
+      extra.push(`value: ${stringifyValue(value, dependencies)}`);
+    }
+    if ((gas = BigNumber.from(gas)).gt(0)) {
+      extra.push(`gas: ${stringifyValue(gas, dependencies)}`);
+    }
     return `${chalk.cyan(artifact.contractName)}${
       "" ?? toAddress
-    }.${chalk.green(functionFragment.name)}(${inputArgs})${
-      outputArgs ? ` => (${outputArgs})` : ""
-    }`;
+    }.${chalk.green(functionFragment.name)}${
+      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+    }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
   // TODO add flag to hide unrecognized stuff
@@ -273,6 +291,9 @@ async function printStructLog(
     case "CALL":
       await printCall(structLog, index, structLogs, dependencies);
       break;
+    case "printCallCode":
+      await printCallCode(structLog, index, structLogs, dependencies);
+      break;
     case "STATICCALL":
       await printStaticCall(structLog, index, structLogs, dependencies);
       break;
@@ -352,7 +373,7 @@ async function printCreate2(
   // console.log("parsed call", { gas, to, value, input, ret });
 
   const str = await formatContract(codeWithArgs, value, salt, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE " + str);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE2 " + str);
 }
 
 async function printCall(
@@ -382,8 +403,39 @@ async function printCall(
   // console.log("call", structLog);
   // console.log("parsed call", { gas, to, value, input, ret });
 
-  const str = await formatData(to, input, ret, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALL " + str);
+  const str = await formatData(to, input, ret, value, gas, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALL " + str + " ");
+}
+
+async function printCallCode(
+  structLog: StructLog,
+  index: number,
+  structLogs: StructLog[],
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 7) {
+    console.log("Faulty CALLCODE");
+    return;
+  }
+
+  const gas = parseUint(stack.pop()!);
+  const to = parseAddress(stack.pop()!);
+  const value = parseUint(stack.pop()!);
+  const argsOffset = parseNumber(stack.pop()!);
+  const argsSize = parseNumber(stack.pop()!);
+  const retOffset = parseNumber(stack.pop()!);
+  const retSize = parseNumber(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const input = hexlify(memory.slice(argsOffset, argsOffset + argsSize));
+  const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
+
+  // console.log("call", structLog);
+  // console.log("parsed call", { gas, to, value, input, ret });
+
+  const str = await formatData(to, input, ret, value, gas, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALLCODE " + str);
 }
 
 async function printStaticCall(
@@ -423,7 +475,7 @@ async function printStaticCall(
   );
 
   // console.log("parsed static call", { gas, to, retOffset, retSize, ret });
-  const str = await formatData(to, input, ret, dependencies);
+  const str = await formatData(to, input, ret, 0, gas, dependencies);
   console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "STATICCALL " + str);
 }
 
@@ -453,7 +505,7 @@ async function printDelegateCall(
   const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
 
   // console.log("parsed static call", { gas, to, input, ret });
-  const str = await formatData(to, input, ret, dependencies);
+  const str = await formatData(to, input, ret, 0, gas, dependencies);
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) + "DELEGATECALL " + str
   );
