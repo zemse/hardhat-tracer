@@ -8,6 +8,7 @@ import {
   parseAddress,
   parseNumber,
   parseMemory,
+  findNextStructLogInDepth,
 } from "../../utils";
 
 export async function printCall(
@@ -32,7 +33,16 @@ export async function printCall(
 
   const memory = parseMemory(structLog.memory);
   const input = hexlify(memory.slice(argsOffset, argsOffset + argsSize));
-  const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
+
+  // return data
+  const structLogNext = findNextStructLogInDepth(
+    structLogs,
+    structLog.depth,
+    index + 1 // find next structLog in the same depth
+  );
+  const ret = hexlify(
+    parseMemory(structLogNext.memory).slice(retOffset, retOffset + retSize)
+  );
 
   const str = await formatData(to, input, ret, value, gas, dependencies);
   console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALL " + str + " ");
