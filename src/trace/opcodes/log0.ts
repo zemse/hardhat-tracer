@@ -3,11 +3,12 @@ import { DEPTH_INDENTATION } from "../../constants";
 import { formatLog } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
-  shallowCopyStack,
-  parseNumber,
-  parseMemory,
   isOnlyLogs,
+  parseMemory,
+  parseNumber,
+  shallowCopyStack,
 } from "../../utils";
+import { printGasCost } from "../print-gas-cost";
 
 export async function printLog0(
   structLog: StructLog,
@@ -37,6 +38,7 @@ export async function printLog0(
       isOnlyLogs(dependencies.tracerEnv) ? 1 : structLog.depth
     ) +
       "EVENT " +
-      str
+      str +
+      printGasCost(structLog, null, dependencies)
   );
 }

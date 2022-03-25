@@ -1,15 +1,16 @@
 import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatData } from "../../formatter";
+import { formatCall } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
-  shallowCopyStack,
-  parseUint,
-  parseAddress,
-  parseNumber,
-  parseMemory,
   findNextStructLogInDepth,
+  parseAddress,
+  parseMemory,
+  parseNumber,
+  parseUint,
+  shallowCopyStack,
 } from "../../utils";
+import { printGasCost } from "../print-gas-cost";
 
 export async function printCallCode(
   structLog: StructLog,
@@ -35,7 +36,7 @@ export async function printCallCode(
   const input = hexlify(memory.slice(argsOffset, argsOffset + argsSize));
 
   // return data
-  const structLogNext = findNextStructLogInDepth(
+  const [structLogNext, structLogNextNext] = findNextStructLogInDepth(
     structLogs,
     structLog.depth,
     index + 1 // find next structLog in the same depth
@@ -44,6 +45,15 @@ export async function printCallCode(
     parseMemory(structLogNext.memory).slice(retOffset, retOffset + retSize)
   );
 
-  const str = await formatData(to, input, ret, value, gas, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALLCODE " + str);
+  const str = await formatCall(to, input, ret, value, gas, dependencies);
+  console.log(
+    DEPTH_INDENTATION.repeat(structLog.depth) +
+      "CALLCODE " +
+      str +
+      printGasCost(
+        structLog,
+        structLog.gas - structLogNextNext.gas,
+        dependencies
+      )
+  );
 }

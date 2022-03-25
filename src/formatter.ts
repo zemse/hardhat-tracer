@@ -62,7 +62,7 @@ export async function formatContract(
   return `ContractNotRecognized(codeSize=${code.length})`;
 }
 
-export async function formatData(
+export async function formatCall(
   to: string,
   input: string,
   ret: string,
@@ -121,7 +121,7 @@ export async function formatData(
     if ((value = BigNumber.from(value)).gt(0)) {
       extra.push(`value: ${stringifyValue(value, dependencies)}`);
     }
-    if ((gas = BigNumber.from(gas)).gt(0)) {
+    if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
       extra.push(`gas: ${stringifyValue(gas, dependencies)}`);
     }
     return `${chalk.cyan(artifact.contractName)}${

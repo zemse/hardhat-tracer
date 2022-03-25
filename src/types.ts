@@ -10,7 +10,7 @@ export interface TracerEnvUser {
   calls?: boolean;
   sstores?: boolean;
   sloads?: boolean;
-  gas?: boolean;
+  gasCost?: boolean;
 }
 
 export interface TracerEnv {
@@ -19,7 +19,7 @@ export interface TracerEnv {
   calls: boolean;
   sstores: boolean;
   sloads: boolean;
-  gas: boolean;
+  gasCost: boolean;
   nameTags: NameTags;
   _internal: {
     printNameTagTip:

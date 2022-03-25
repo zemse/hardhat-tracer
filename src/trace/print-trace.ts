@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { formatContract, formatData } from "../formatter";
+import { formatCall, formatContract } from "../formatter";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
 import { printCall } from "./opcodes/call";
@@ -34,7 +34,7 @@ export async function printTrace(
       // normal transaction
       console.log(
         "CALL " +
-          (await formatData(
+          (await formatCall(
             tx.to,
             tx.input,
             "0x",

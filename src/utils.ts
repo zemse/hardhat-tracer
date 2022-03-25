@@ -1,3 +1,4 @@
+import { arrayify, hexStripZeros, hexZeroPad } from "@ethersproject/bytes";
 import { BigNumber, ethers } from "ethers";
 import {
   StructLog,
@@ -5,7 +6,6 @@ import {
   TracerEnv,
   TracerEnvUser,
 } from "./types";
-import { arrayify, hexStripZeros, hexZeroPad } from "@ethersproject/bytes";
 
 export function getTracerEnvFromUserInput(
   userInput?: TracerEnvUser
@@ -17,7 +17,7 @@ export function getTracerEnvFromUserInput(
     calls: userInput.calls ?? true,
     sstores: userInput.sstores ?? false,
     sloads: userInput.sloads ?? false,
-    gas: userInput.gas ?? false,
+    gasCost: userInput.gasCost ?? false,
     nameTags: {},
     _internal: {
       printNameTagTip: undefined,
@@ -26,7 +26,7 @@ export function getTracerEnvFromUserInput(
 }
 
 export function isOnlyLogs(env: TracerEnv): boolean {
-  return env.logs && !env.calls && !env.sstores && !env.sloads && !env.gas;
+  return env.logs && !env.calls && !env.sstores && !env.sloads && !env.gasCost;
 }
 
 export function getFromNameTags(
@@ -73,10 +73,10 @@ export function findNextStructLogInDepth(
   structLogs: StructLog[],
   depth: number,
   startIndex: number
-): StructLog {
+): [StructLog, StructLog] {
   for (let i = startIndex; i < structLogs.length; i++) {
     if (structLogs[i].depth === depth) {
-      return structLogs[i];
+      return [structLogs[i], structLogs[i + 1]];
     }
   }
   throw new Error("Could not find next StructLog in depth");

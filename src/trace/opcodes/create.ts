@@ -3,11 +3,12 @@ import { DEPTH_INDENTATION } from "../../constants";
 import { formatContract } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
-  shallowCopyStack,
-  parseUint,
-  parseNumber,
   parseMemory,
+  parseNumber,
+  parseUint,
+  shallowCopyStack,
 } from "../../utils";
+import { printGasCost } from "../print-gas-cost";
 
 export async function printCreate(
   structLog: StructLog,
@@ -29,5 +30,10 @@ export async function printCreate(
   const codeWithArgs = hexlify(memory.slice(codeOffset, codeOffset + codeSize));
 
   const str = await formatContract(codeWithArgs, value, null, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE " + str);
+  console.log(
+    DEPTH_INDENTATION.repeat(structLog.depth) +
+      "CREATE " +
+      str +
+      printGasCost(structLog, null, dependencies)
+  );
 }

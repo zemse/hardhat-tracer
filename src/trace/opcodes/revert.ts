@@ -2,7 +2,8 @@ import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
 import { formatError } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
-import { shallowCopyStack, parseNumber, parseMemory } from "../../utils";
+import { parseMemory, parseNumber, shallowCopyStack } from "../../utils";
+import { printGasCost } from "../print-gas-cost";
 
 export async function printRevert(
   structLog: StructLog,
@@ -20,5 +21,10 @@ export async function printRevert(
   const input = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
 
   const str = await formatError(input, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "REVERT " + str);
+  console.log(
+    DEPTH_INDENTATION.repeat(structLog.depth) +
+      "REVERT " +
+      str +
+      printGasCost(structLog, null, dependencies)
+  );
 }
