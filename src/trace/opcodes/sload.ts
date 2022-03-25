@@ -1,6 +1,5 @@
 import chalk from "chalk";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatError, stringifyValue } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
   parseHex,
@@ -8,6 +7,7 @@ import {
   parseNumber,
   shallowCopyStack,
 } from "../../utils";
+import { formatParam } from "../format/param";
 import { printGasCost } from "../print-gas-cost";
 
 export async function printSload(
@@ -22,7 +22,7 @@ export async function printSload(
   const key = parseHex(stack.pop()!);
   const value = parseHex(stack.pop()!);
 
-  const str = `${chalk.blueBright(key)} => (${stringifyValue(
+  const str = `${chalk.blueBright(key)} => (${formatParam(
     value,
     dependencies
   )})`;

@@ -1,6 +1,5 @@
 import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatCall } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
   findNextStructLogInDepth,
@@ -10,6 +9,7 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
+import { formatCall } from "../format/call";
 import { printGasCost } from "../print-gas-cost";
 
 export async function printCallCode(

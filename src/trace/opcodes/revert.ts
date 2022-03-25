@@ -1,8 +1,8 @@
 import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatError } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import { parseMemory, parseNumber, shallowCopyStack } from "../../utils";
+import { formatError } from "../format/error";
 import { printGasCost } from "../print-gas-cost";
 
 export async function printRevert(

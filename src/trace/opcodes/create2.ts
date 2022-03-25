@@ -1,6 +1,5 @@
 import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatContract } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
   parseMemory,
@@ -8,6 +7,7 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
+import { formatContract } from "../format/contract";
 import { printGasCost } from "../print-gas-cost";
 
 export async function printCreate2(

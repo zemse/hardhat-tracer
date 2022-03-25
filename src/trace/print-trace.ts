@@ -1,7 +1,8 @@
 import chalk from "chalk";
-import { formatCall, formatContract } from "../formatter";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
+import { formatCall } from "./format/call";
+import { formatContract } from "./format/contract";
 import { printCall } from "./opcodes/call";
 import { printCallCode } from "./opcodes/callcode";
 import { printCreate } from "./opcodes/create";

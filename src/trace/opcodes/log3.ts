@@ -1,6 +1,5 @@
 import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
-import { formatLog } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
   isOnlyLogs,
@@ -9,6 +8,7 @@ import {
   parseNumber,
   shallowCopyStack,
 } from "../../utils";
+import { formatLog } from "../format/log";
 import { printGasCost } from "../print-gas-cost";
 
 export async function printLog3(

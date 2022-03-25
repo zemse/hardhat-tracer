@@ -2,9 +2,10 @@ import { EthereumProvider } from "hardhat/src/types/provider";
 import { Artifacts } from "hardhat/types";
 import { Interface } from "ethers/lib/utils";
 import chalk from "chalk";
-import { formatResult, stringifyValue } from "./formatter";
 import { setInNameTags } from "./utils";
 import { TracerDependenciesExtended } from "./types";
+import { formatParam } from "./trace/format/param";
+import { formatResult } from "./trace/format/result";
 
 export async function printLogs(
   txHash: string,
@@ -47,7 +48,7 @@ export async function printLogs(
 
         console.log(
           `${
-            stringifyValue(receipt.logs[i].address, dependencies) + " "
+            formatParam(receipt.logs[i].address, dependencies) + " "
           }${chalk.green(parsed.name)}(${formatResult(
             parsed.args,
             parsed.eventFragment,
