@@ -34,9 +34,6 @@ export async function printCallCode(
   const input = hexlify(memory.slice(argsOffset, argsOffset + argsSize));
   const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
 
-  // console.log("call", structLog);
-  // console.log("parsed call", { gas, to, value, input, ret });
-
   const str = await formatData(to, input, ret, value, gas, dependencies);
   console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALLCODE " + str);
 }

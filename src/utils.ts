@@ -48,8 +48,6 @@ export function findNextStructLogInDepth(
   startIndex: number
 ): StructLog {
   for (let i = startIndex; i < structLogs.length; i++) {
-    // console.log(i, depth, structLogs[i].depth, structLogs[i].op);
-
     if (structLogs[i].depth === depth) {
       return structLogs[i];
     }

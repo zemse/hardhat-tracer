@@ -28,9 +28,6 @@ export async function printCreate(
   const memory = parseMemory(structLog.memory);
   const codeWithArgs = hexlify(memory.slice(codeOffset, codeOffset + codeSize));
 
-  // console.log("call", structLog);
-  // console.log("parsed call", { gas, to, value, input, ret });
-
   const str = await formatContract(codeWithArgs, value, null, dependencies);
   console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE " + str);
 }

@@ -76,9 +76,7 @@ async function printStructLog(
   structLogs: StructLog[],
   dependencies: TracerDependenciesExtended
 ) {
-  // TODO, need to add CREATE CREATE2 and other log stuff.
-  // Also need to display gas, value in the calls
-  // Also count the sloads and sstores
+  // TODO add SLOAD and SSTORE
   switch (structLog.op) {
     case "CREATE":
       await printCreate(structLog, index, structLogs, dependencies);

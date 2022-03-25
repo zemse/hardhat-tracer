@@ -35,7 +35,6 @@ export async function printDelegateCall(
   const input = hexlify(memory.slice(argsOffset, argsOffset + argsSize));
   const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
 
-  // console.log("parsed static call", { gas, to, input, ret });
   const str = await formatData(to, input, ret, 0, gas, dependencies);
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) + "DELEGATECALL " + str

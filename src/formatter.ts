@@ -69,7 +69,6 @@ export async function formatData(
   gas: BigNumberish,
   dependencies: TracerDependenciesExtended
 ) {
-  // console.log("parse data", { to, input, ret });
   const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
 
@@ -184,7 +183,6 @@ export async function formatError(
       { decimals: -1, isInput: true, shorten: false },
       dependencies
     );
-    // console.log(parsed, formatted, "hello");
     return `${chalk.red(parsed.name)}(${formatted})`;
   } catch {}
 
@@ -285,15 +283,10 @@ export function stringifyValue(
       dependencies
     )}`;
   } else if (typeof value === "object" && value !== null) {
-    // let newObj: any = {};
-    // console.log("a", value);
-
     return (
       "{" +
       Object.entries(value)
         .map((entry) => {
-          // console.log("b");
-          // newObj[entry[0]] = stringifyValue(entry[1]);
           return `${entry[0]}:${stringifyValue(entry[1], dependencies)}`;
         })
         .join(", ") +
