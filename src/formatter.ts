@@ -24,10 +24,11 @@ export async function formatContract(
     const iface = new Interface(artifact.abi);
 
     if (
+      artifact.bytecode.length > 2 &&
       artifact.bytecode.length <= code.length &&
       code.slice(0, artifact.bytecode.length) === artifact.bytecode
     ) {
-      // we found the code
+      // we found the artifact with matching bytecode
       try {
         const constructorParamsDecoded = iface._decodeParams(
           iface.deploy.inputs,
