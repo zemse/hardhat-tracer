@@ -13,6 +13,8 @@ import { printLog2 } from "./opcodes/log2";
 import { printLog3 } from "./opcodes/log3";
 import { printLog4 } from "./opcodes/log4";
 import { printRevert } from "./opcodes/revert";
+import { printSload } from "./opcodes/sload";
+import { printSstore } from "./opcodes/sstore";
 import { printStaticCall } from "./opcodes/staticcall";
 
 export async function printTrace(
@@ -114,6 +116,12 @@ async function printStructLog(
       break;
     case "LOG4":
       await printLog4(structLog, dependencies);
+      break;
+    case "SSTORE":
+      await printSstore(structLog, dependencies);
+      break;
+    case "SLOAD":
+      await printSload(structLog, dependencies);
       break;
     case "REVERT":
       await printRevert(structLog, dependencies);
