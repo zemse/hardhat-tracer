@@ -30,24 +30,24 @@
     "README.md"
   ],
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.3.0",
     "@types/fs-extra": "^5.0.4",
     "@types/mocha": "^5.2.6",
     "@types/node": "^8.10.38",
     "chai": "^4.2.0",
-    "hardhat": "^2.9.0",
+    "hardhat": "^2.9.2",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
-    "ts-node": "^8.1.0",
+    "ts-node": "^10.7.0",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "4.x",
     "ethers": "5.x",
-    "hardhat": "^2.9.0"
+    "hardhat": "2.x"
   },
   "dependencies": {
     "ethers": "^5.6.1"

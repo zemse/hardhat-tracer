@@ -4,7 +4,22 @@ export interface NameTags {
   [address: string]: string;
 }
 
+export interface TracerEnvUser {
+  enabled?: boolean;
+  logs?: boolean;
+  calls?: boolean;
+  sstores?: boolean;
+  sloads?: boolean;
+  gas?: boolean;
+}
+
 export interface TracerEnv {
+  enabled: boolean;
+  logs: boolean;
+  calls: boolean;
+  sstores: boolean;
+  sloads: boolean;
+  gas: boolean;
   nameTags: NameTags;
   _internal: {
     printNameTagTip:

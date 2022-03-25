@@ -9,7 +9,13 @@ import {
 } from "hardhat/types";
 import { printTrace } from "./trace/print-trace";
 import { printLogs } from "./logs";
-import { TracerEnv, TracerDependencies, ProviderLike } from "./types";
+import {
+  TracerEnv,
+  TracerEnvUser,
+  TracerDependencies,
+  ProviderLike,
+} from "./types";
+import { getTracerEnvFromUserInput } from "./utils";
 
 /**
  * Wrapped provider which extends requests
@@ -36,6 +42,7 @@ class TracerWrapper extends ProviderWrapper {
     }
 
     if (
+      this.dependencies.tracerEnv.enabled &&
       (result != null || error != null) &&
       (args.method === "eth_sendTransaction" ||
         args.method === "eth_sendRawTransaction" ||
@@ -82,12 +89,8 @@ export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   );
   hre.network.provider = compatibleProvider;
 
-  if (!(hre as any).tracer) {
-    (hre as any).tracer = {
-      nameTags: {},
-      _internal: { printNameTagTip: undefined },
-    };
-  }
+  // ensure env is present
+  (hre as any).tracer = getTracerEnvFromUserInput((hre as any).tracer);
 }
 
 /**
@@ -102,12 +105,8 @@ export function wrapEthersProvider(
   artifacts: Artifacts,
   tracerEnv?: TracerEnv
 ): ethers.providers.Provider {
-  if (!tracerEnv) {
-    tracerEnv = {
-      nameTags: {},
-      _internal: { printNameTagTip: undefined },
-    };
-  }
+  // ensure env is present
+  tracerEnv = getTracerEnvFromUserInput(tracerEnv);
 
   const tracerProvider = new TracerWrapper({ provider, artifacts, tracerEnv });
   const compatibleProvider = new BackwardsCompatibilityProviderAdapter(

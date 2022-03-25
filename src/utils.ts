@@ -1,6 +1,29 @@
 import { BigNumber, ethers } from "ethers";
-import { StructLog, TracerDependenciesExtended } from "./types";
+import {
+  StructLog,
+  TracerDependenciesExtended,
+  TracerEnv,
+  TracerEnvUser,
+} from "./types";
 import { arrayify, hexStripZeros, hexZeroPad } from "@ethersproject/bytes";
+
+export function getTracerEnvFromUserInput(
+  userInput?: TracerEnvUser
+): TracerEnv {
+  userInput = userInput ?? {};
+  return {
+    enabled: userInput.enabled ?? false,
+    logs: userInput.logs ?? true,
+    calls: userInput.calls ?? true,
+    sstores: userInput.sstores ?? false,
+    sloads: userInput.sloads ?? false,
+    gas: userInput.gas ?? false,
+    nameTags: {},
+    _internal: {
+      printNameTagTip: undefined,
+    },
+  };
+}
 
 export function getFromNameTags(
   address: string,
