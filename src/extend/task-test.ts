@@ -13,11 +13,16 @@ task(TASK_TEST, "Runs mocha tests")
 
       if (args.logs) {
         hre.tracer.logs = true;
+        hre.tracer.calls = false;
+        hre.tracer.sloads = false;
+        hre.tracer.sstores = false;
       }
 
       if (args.trace) {
         hre.tracer.logs = true;
         hre.tracer.calls = true;
+        hre.tracer.sloads = false;
+        hre.tracer.sstores = false;
       }
 
       if (args.full_trace) {

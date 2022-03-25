@@ -7,6 +7,7 @@ import {
   parseNumber,
   parseHex,
   parseMemory,
+  isOnlyLogs,
 } from "../../utils";
 
 export async function printLog2(
@@ -34,5 +35,11 @@ export async function printLog2(
     },
     dependencies
   );
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
+  console.log(
+    DEPTH_INDENTATION.repeat(
+      isOnlyLogs(dependencies.tracerEnv) ? 1 : structLog.depth
+    ) +
+      "EVENT " +
+      str
+  );
 }

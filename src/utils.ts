@@ -25,6 +25,10 @@ export function getTracerEnvFromUserInput(
   };
 }
 
+export function isOnlyLogs(env: TracerEnv): boolean {
+  return env.logs && !env.calls && !env.sstores && !env.sloads && !env.gas;
+}
+
 export function getFromNameTags(
   address: string,
   dependencies: TracerDependenciesExtended

@@ -2,7 +2,12 @@ import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
 import { formatLog } from "../../formatter";
 import { StructLog, TracerDependenciesExtended } from "../../types";
-import { shallowCopyStack, parseNumber, parseMemory } from "../../utils";
+import {
+  shallowCopyStack,
+  parseNumber,
+  parseMemory,
+  isOnlyLogs,
+} from "../../utils";
 
 export async function printLog0(
   structLog: StructLog,
@@ -27,5 +32,11 @@ export async function printLog0(
     },
     dependencies
   );
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
+  console.log(
+    DEPTH_INDENTATION.repeat(
+      isOnlyLogs(dependencies.tracerEnv) ? 1 : structLog.depth
+    ) +
+      "EVENT " +
+      str
+  );
 }

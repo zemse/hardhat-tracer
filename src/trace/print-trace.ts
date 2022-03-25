@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { formatContract, formatData } from "../formatter";
 import { StructLog, TracerDependenciesExtended } from "../types";
-import { parseUint } from "../utils";
+import { isOnlyLogs, parseUint } from "../utils";
 import { printCall } from "./opcodes/call";
 import { printCallCode } from "./opcodes/callcode";
 import { printCreate } from "./opcodes/create";
@@ -76,6 +76,10 @@ async function printStructLog(
   structLogs: StructLog[],
   dependencies: TracerDependenciesExtended
 ) {
+  // if running in logs mode exit if opcode is not a LOG
+  if (isOnlyLogs(dependencies.tracerEnv) && !structLog.op.startsWith("LOG"))
+    return;
+
   // TODO add SLOAD and SSTORE
   switch (structLog.op) {
     case "CREATE":
