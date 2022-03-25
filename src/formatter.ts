@@ -5,13 +5,21 @@ import { Fragment, FunctionFragment, Result } from "ethers/lib/utils";
 import { getFromNameTags } from "./utils";
 import { TracerDependenciesExtended } from "./types";
 
+interface FormatOptions {
+  decimals?: number;
+  isInput?: boolean;
+  shorten?: boolean;
+}
+
 export function formatResult(
   result: Result,
   fragment: Fragment,
-  decimals: number,
-  isInput: boolean,
+  { decimals, isInput, shorten }: FormatOptions,
   dependencies: TracerDependenciesExtended
 ) {
+  decimals = decimals ?? -1;
+  isInput = isInput ?? true;
+  shorten = shorten ?? false;
   const stringifiedArgs: [string, string][] = [];
   const params = isInput
     ? fragment.inputs
@@ -31,7 +39,7 @@ export function formatResult(
     .map(
       (entry) =>
         `${
-          stringifiedArgs.length > 1 || isInput
+          stringifiedArgs.length > 1 || !shorten
             ? chalk.magenta(`${entry[0]}=`)
             : ""
         }${entry[1]}`
@@ -64,9 +72,14 @@ export function stringifyValue(
     return (
       "[" + value.map((v) => stringifyValue(v, dependencies)).join(", ") + "]"
     );
+  } else if (value?._isIndexed) {
+    return `${chalk.italic("[Indexed]")}${stringifyValue(
+      value.hash,
+      dependencies
+    )}`;
   } else if (typeof value === "object" && value !== null) {
     // let newObj: any = {};
-    // console.log("a");
+    // console.log("a", value);
 
     return (
       "{" +

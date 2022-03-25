@@ -58,7 +58,7 @@ class TracerWrapper extends ProviderWrapper {
           ...this.dependencies,
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
         };
-        await printLogs(hash, receipt, dependenciesExtended);
+        // await printLogs(hash, receipt, dependenciesExtended);
         await printCalls(hash, dependenciesExtended);
       }
     }

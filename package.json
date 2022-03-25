@@ -50,6 +50,6 @@
     "hardhat": "^2.9.0"
   },
   "dependencies": {
-    "ethers": "5.x"
+    "ethers": "^5.6.1"
   }
 }

@@ -24,42 +24,96 @@ export async function printCalls(
     const res = await dependencies.provider.send("debug_traceTransaction", [
       txHash,
     ]);
-    const rc = await dependencies.provider.send("eth_getTransactionByHash", [
+    const tx = await dependencies.provider.send("eth_getTransactionByHash", [
       txHash,
     ]);
-    // console.log(rc);
     if (
-      rc.to != null &&
-      rc.to != "0x" &&
-      rc.to != "0x0000000000000000000000000000000000000000"
+      tx.to != null &&
+      tx.to != "0x" &&
+      tx.to != "0x0000000000000000000000000000000000000000"
     ) {
-      console.log(await parseData(rc.to, rc.input, "0x", dependencies));
+      // normal transaction
+      console.log(
+        "CALL " + (await formatData(tx.to, tx.input, "0x", dependencies))
+      );
     } else {
       // contract deploy transaction
-      const names = await dependencies.artifacts.getAllFullyQualifiedNames();
-      for (const name of names) {
-        const artifact = await dependencies.artifacts.readArtifact(name);
-        if (artifact.bytecode === rc.input.slice(0, artifact.bytecode.length)) {
-          console.log("new", chalk.green(artifact.contractName));
-        }
-      }
+      const str = await formatContract(
+        tx.input,
+        parseUint(tx.value ?? "0x"),
+        null,
+        dependencies
+      );
+      console.log("CREATE " + str);
     }
 
     for (const [i, structLog] of (res.structLogs as StructLog[]).entries()) {
       await printStructLog(structLog, i, res.structLogs, dependencies);
     }
   } catch (error) {
+    // if debug_traceTransaction failed then print warning
     if ((error as any).message.includes("debug_traceTransaction")) {
       console.log(
         chalk.yellow(`Warning! Debug Transaction not supported on this network`)
       );
     } else {
+      // else print what the error is
       console.error(error);
     }
   }
 }
 
-async function parseData(
+async function formatContract(
+  code: string,
+  value: BigNumber,
+  salt: BigNumber | null,
+  dependencies: TracerDependenciesExtended
+) {
+  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+
+  for (const name of names) {
+    const artifact = await dependencies.artifacts.readArtifact(name);
+    const iface = new Interface(artifact.abi);
+
+    if (
+      artifact.bytecode.length <= code.length &&
+      code.slice(0, artifact.bytecode.length) === artifact.bytecode
+    ) {
+      // we found the code
+      try {
+        const constructorParamsDecoded = iface._decodeParams(
+          iface.deploy.inputs,
+          "0x" + code.slice(artifact.bytecode.length)
+        );
+        const inputArgs = formatResult(
+          constructorParamsDecoded,
+          iface.deploy,
+          { decimals: -1, isInput: true, shorten: false },
+          dependencies
+        );
+        const extra = [];
+        if (value.gt(0)) {
+          extra.push(`value: ${stringifyValue(value, dependencies)}`);
+        }
+        if (salt !== null) {
+          extra.push(
+            `salt: ${stringifyValue(
+              salt.gt(1 << 32) ? salt.toHexString() : salt,
+              dependencies
+            )}`
+          );
+        }
+        return `${chalk.cyan(artifact.contractName)}.${chalk.green(
+          "constructor"
+        )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})`;
+      } catch {}
+    }
+  }
+
+  return `ContractNotRecognized(codeSize=${code.length})`;
+}
+
+async function formatData(
   to: string,
   input: string,
   ret: string,
@@ -101,12 +155,16 @@ async function parseData(
     const inputArgs = formatResult(
       result,
       functionFragment,
-      -1,
-      true,
+      { decimals: -1, isInput: true, shorten: false },
       dependencies
     );
     const outputArgs = result2
-      ? formatResult(result2, functionFragment, 0, false, dependencies)
+      ? formatResult(
+          result2,
+          functionFragment,
+          { decimals: -1, isInput: false, shorten: true },
+          dependencies
+        )
       : "";
     return `${chalk.cyan(artifact.contractName)}${
       "" ?? toAddress
@@ -114,9 +172,12 @@ async function parseData(
       outputArgs ? ` => (${outputArgs})` : ""
     }`;
   }
+
+  // TODO add flag to hide unrecognized stuff
+  return `FunctionNotRecognized(to=${to}, input=${input}, ret=${ret})`;
 }
 
-export async function parseLog(
+export async function formatLog(
   log: { data: string; topics: string[] },
   dependencies: TracerDependenciesExtended
 ) {
@@ -133,12 +194,64 @@ export async function parseLog(
       return `${chalk.yellow(parsed.name)}(${formatResult(
         parsed.args,
         parsed.eventFragment,
-        decimals,
-        true,
+        { decimals, isInput: true, shorten: false },
         dependencies
       )})`;
     } catch {}
   }
+
+  return `${chalk.yellow("UnknownEvent")}(${stringifyValue(
+    log.data,
+    dependencies
+  )}, ${stringifyValue(log.topics, dependencies)})`;
+}
+
+export async function formatError(
+  revertData: string,
+  dependencies: TracerDependenciesExtended
+) {
+  const commonErrors = [
+    "function Error(string reason)",
+    "function Panic(uint256 code)",
+  ];
+  try {
+    const iface = new Interface(commonErrors);
+    const parsed = iface.parseTransaction({
+      data: revertData,
+    });
+
+    const formatted = formatResult(
+      parsed.args,
+      parsed.functionFragment,
+      { decimals: -1, isInput: true, shorten: false },
+      dependencies
+    );
+    // console.log(parsed, formatted, "hello");
+    return `${chalk.red(parsed.name)}(${formatted})`;
+  } catch {}
+
+  // if error not common then try to parse it as a custom error
+  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+
+  for (const name of names) {
+    const artifact = await dependencies.artifacts.readArtifact(name);
+    const iface = new Interface(artifact.abi);
+
+    try {
+      const errorDesc = iface.parseError(revertData);
+      return `${chalk.red(errorDesc.name)}(${formatResult(
+        errorDesc.args,
+        errorDesc.errorFragment,
+        { decimals: -1, isInput: true, shorten: false },
+        dependencies
+      )})`;
+    } catch {}
+  }
+
+  return `${chalk.red("UnknownError")}(${stringifyValue(
+    revertData,
+    dependencies
+  )})`;
 }
 
 async function printStructLog(
@@ -148,7 +261,15 @@ async function printStructLog(
   dependencies: TracerDependenciesExtended
 ) {
   // TODO, need to add CREATE CREATE2 and other log stuff.
+  // Also need to display gas, value in the calls
+  // Also count the sloads and sstores
   switch (structLog.op) {
+    case "CREATE":
+      await printCreate(structLog, index, structLogs, dependencies);
+      break;
+    case "CREATE2":
+      await printCreate2(structLog, index, structLogs, dependencies);
+      break;
     case "CALL":
       await printCall(structLog, index, structLogs, dependencies);
       break;
@@ -164,12 +285,74 @@ async function printStructLog(
     case "LOG1":
       await printLog1(structLog, dependencies);
       break;
+    case "LOG2":
+      await printLog2(structLog, dependencies);
+      break;
+    case "LOG3":
+      await printLog3(structLog, dependencies);
+      break;
+    case "LOG4":
+      await printLog4(structLog, dependencies);
+      break;
     case "REVERT":
-      await printRevert(structLog);
+      await printRevert(structLog, dependencies);
       break;
     default:
       break;
   }
+}
+
+async function printCreate(
+  structLog: StructLog,
+  index: number,
+  structLogs: StructLog[],
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 3) {
+    console.log("Faulty CREATE");
+    return;
+  }
+
+  const value = parseUint(stack.pop()!);
+  const codeOffset = parseNumber(stack.pop()!);
+  const codeSize = parseNumber(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const codeWithArgs = hexlify(memory.slice(codeOffset, codeOffset + codeSize));
+
+  // console.log("call", structLog);
+  // console.log("parsed call", { gas, to, value, input, ret });
+
+  const str = await formatContract(codeWithArgs, value, null, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE " + str);
+}
+
+async function printCreate2(
+  structLog: StructLog,
+  index: number,
+  structLogs: StructLog[],
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 4) {
+    console.log("Faulty CREATE2");
+    return;
+  }
+
+  const value = parseUint(stack.pop()!);
+  const codeOffset = parseNumber(stack.pop()!);
+  const codeSize = parseNumber(stack.pop()!);
+  const salt = parseUint(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const codeWithArgs = hexlify(memory.slice(codeOffset, codeOffset + codeSize));
+
+  // console.log("call", structLog);
+  // console.log("parsed call", { gas, to, value, input, ret });
+
+  const str = await formatContract(codeWithArgs, value, salt, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CREATE " + str);
 }
 
 async function printCall(
@@ -199,8 +382,8 @@ async function printCall(
   // console.log("call", structLog);
   // console.log("parsed call", { gas, to, value, input, ret });
 
-  const str = await parseData(to, input, ret, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+  const str = await formatData(to, input, ret, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "CALL " + str);
 }
 
 async function printStaticCall(
@@ -240,8 +423,8 @@ async function printStaticCall(
   );
 
   // console.log("parsed static call", { gas, to, retOffset, retSize, ret });
-  const str = await parseData(to, input, ret, dependencies);
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+  const str = await formatData(to, input, ret, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "STATICCALL " + str);
 }
 
 async function printDelegateCall(
@@ -270,12 +453,29 @@ async function printDelegateCall(
   const ret = hexlify(memory.slice(retOffset, retOffset + retSize));
 
   // console.log("parsed static call", { gas, to, input, ret });
-  const str = "(delegate) " + (await parseData(to, input, ret, dependencies));
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+  const str = await formatData(to, input, ret, dependencies);
+  console.log(
+    DEPTH_INDENTATION.repeat(structLog.depth) + "DELEGATECALL " + str
+  );
 }
 
-async function printRevert(structLog: StructLog) {
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + chalk.red("REVERT"));
+async function printRevert(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 2) {
+    console.log("Faulty REVERT");
+    return;
+  }
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const input = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await formatError(input, dependencies);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "REVERT " + str);
 }
 
 async function printLog0(
@@ -294,14 +494,14 @@ async function printLog0(
   const memory = parseMemory(structLog.memory);
   const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
 
-  const str = await parseLog(
+  const str = await formatLog(
     {
       data,
       topics: [],
     },
     dependencies
   );
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
 }
 
 async function printLog1(
@@ -321,14 +521,101 @@ async function printLog1(
   const memory = parseMemory(structLog.memory);
   const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
 
-  const str = await parseLog(
+  const str = await formatLog(
     {
       data,
       topics: [topic0],
     },
     dependencies
   );
-  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + str);
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
+}
+
+async function printLog2(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 4) {
+    console.log("Faulty LOG2");
+    return;
+  }
+
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+  const topic0 = parseHex(stack.pop()!);
+  const topic1 = parseHex(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await formatLog(
+    {
+      data,
+      topics: [topic0, topic1],
+    },
+    dependencies
+  );
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
+}
+
+async function printLog3(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 5) {
+    console.log("Faulty LOG3");
+    return;
+  }
+
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+  const topic0 = parseHex(stack.pop()!);
+  const topic1 = parseHex(stack.pop()!);
+  const topic2 = parseHex(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await formatLog(
+    {
+      data,
+      topics: [topic0, topic1, topic2],
+    },
+    dependencies
+  );
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
+}
+
+async function printLog4(
+  structLog: StructLog,
+  dependencies: TracerDependenciesExtended
+) {
+  const stack = shallowCopyStack(structLog.stack);
+  if (stack.length <= 6) {
+    console.log("Faulty LOG4");
+    return;
+  }
+
+  const dataOffset = parseNumber(stack.pop()!);
+  const dataSize = parseNumber(stack.pop()!);
+  const topic0 = parseHex(stack.pop()!);
+  const topic1 = parseHex(stack.pop()!);
+  const topic2 = parseHex(stack.pop()!);
+  const topic3 = parseHex(stack.pop()!);
+
+  const memory = parseMemory(structLog.memory);
+  const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
+
+  const str = await formatLog(
+    {
+      data,
+      topics: [topic0, topic1, topic2, topic3],
+    },
+    dependencies
+  );
+  console.log(DEPTH_INDENTATION.repeat(structLog.depth) + "EVENT " + str);
 }
 
 function findNextStructLogInDepth(

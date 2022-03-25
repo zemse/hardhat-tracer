@@ -51,8 +51,7 @@ export async function printLogs(
           }${chalk.green(parsed.name)}(${formatResult(
             parsed.args,
             parsed.eventFragment,
-            decimals,
-            true,
+            { decimals, isInput: true, shorten: false },
             dependencies
           )})`
         );
