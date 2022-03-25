@@ -27,3 +27,15 @@ export interface TracerDependenciesExtended extends TracerDependencies {
 export interface ProviderLike {
   send(method: string, params?: any[] | undefined): Promise<any>;
 }
+
+export interface StructLog {
+  depth: number;
+  error: string;
+  gas: number;
+  gasCost: number;
+  memory: string[];
+  op: string;
+  pc: number;
+  stack: string[];
+  storage: {};
+}

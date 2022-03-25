@@ -7,7 +7,7 @@ import {
   Artifacts,
   EIP1193Provider,
 } from "hardhat/types";
-import { printCalls } from "./calls";
+import { printTrace } from "./trace/print-trace";
 import { printLogs } from "./logs";
 import { TracerEnv, TracerDependencies, ProviderLike } from "./types";
 
@@ -59,7 +59,7 @@ class TracerWrapper extends ProviderWrapper {
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
         };
         // await printLogs(hash, receipt, dependenciesExtended);
-        await printCalls(hash, dependenciesExtended);
+        await printTrace(hash, dependenciesExtended);
       }
     }
     if (error) throw error;
