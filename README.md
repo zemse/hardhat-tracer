@@ -1,6 +1,6 @@
 # hardhat-tracer 🕵️
 
-Allows you to see emitted events when running your tests.
+Allows you to see events, calls and storage ops when running your tests.
 
 ## Installation
 
@@ -18,16 +18,18 @@ require("hardhat-tracer");
 
 ## Usage
 
-Just add the `--logs` after your test command.
+Just add the `--trace` or `--traceFull` after your test command.
 
+```shell
+npx hardhat test --trace      # shows logs + calls
+npx hardhat test --traceFull  # shows logs + calls + sloads + sstores
 ```
-npx hardhat test --logs
-```
+
 <img width="1177" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/132125751-20d5d006-2d54-4901-bfc5-db0c8d5495b0.png">
 
 ### Address name tags
 
-You can set display names / name tags for address by adding new entry to `hre.tracer.nameTags` object in your test cases, see following example:
+You can set display names / name tags for unknown addresses by adding new entry to `hre.tracer.nameTags` object in your test cases, see following example:
 
 ```ts
 hre.tracer.nameTags[this.arbitrager.address] = "Arbitrager";
