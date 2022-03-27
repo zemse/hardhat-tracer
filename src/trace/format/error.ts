@@ -1,6 +1,6 @@
-import chalk from "chalk";
 import { Interface } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
+import { colorError } from "../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -24,7 +24,7 @@ export async function formatError(
       { decimals: -1, isInput: true, shorten: false },
       dependencies
     );
-    return `${chalk.red(parsed.name)}(${formatted})`;
+    return `${colorError(parsed.name)}(${formatted})`;
   } catch {}
 
   // if error not common then try to parse it as a custom error
@@ -36,7 +36,7 @@ export async function formatError(
 
     try {
       const errorDesc = iface.parseError(revertData);
-      return `${chalk.red(errorDesc.name)}(${formatResult(
+      return `${colorError(errorDesc.name)}(${formatResult(
         errorDesc.args,
         errorDesc.errorFragment,
         { decimals: -1, isInput: true, shorten: false },
@@ -45,7 +45,7 @@ export async function formatError(
     } catch {}
   }
 
-  return `${chalk.red("UnknownError")}(${formatParam(
+  return `${colorError("UnknownError")}(${formatParam(
     revertData,
     dependencies
   )})`;

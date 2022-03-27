@@ -1,4 +1,4 @@
-import chalk from "chalk";
+// import chalk from "chalk";
 import {
   Result,
   Fragment,
@@ -6,6 +6,7 @@ import {
   formatUnits,
 } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
+import { colorKey } from "../colors";
 import { formatParam } from "./param";
 
 interface FormatOptions {
@@ -42,9 +43,7 @@ export function formatResult(
     .map(
       (entry) =>
         `${
-          stringifiedArgs.length > 1 || !shorten
-            ? chalk.magenta(`${entry[0]}=`)
-            : ""
+          stringifiedArgs.length > 1 || !shorten ? colorKey(`${entry[0]}=`) : ""
         }${entry[1]}`
     )
     .join(", ")}`;

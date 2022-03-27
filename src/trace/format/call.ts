@@ -1,8 +1,8 @@
-import chalk from "chalk";
 import { BigNumberish, BigNumber } from "ethers";
 import { Result, FunctionFragment, Interface } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 import { TracerDependenciesExtended } from "../../types";
+import { colorContract, colorFunction } from "../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -68,9 +68,9 @@ export async function formatCall(
     if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
       extra.push(`gas: ${formatParam(gas, dependencies)}`);
     }
-    return `${chalk.cyan(artifact.contractName)}${
+    return `${colorContract(artifact.contractName)}${
       "" ?? toAddress
-    }.${chalk.green(functionFragment.name)}${
+    }.${colorFunction(functionFragment.name)}${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }

@@ -1,8 +1,9 @@
-import chalk from "chalk";
+// import chalk from "chalk";
 import { BigNumber } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
 import { getFromNameTags } from "../../utils";
+import { colorIndexed, colorNameTag } from "../colors";
 
 export function formatParam(
   value: any,
@@ -18,7 +19,7 @@ export function formatParam(
     value.length === 42
   ) {
     if (getFromNameTags(value, dependencies)) {
-      return chalk.italic(`[${getFromNameTags(value, dependencies)}]`);
+      return colorNameTag(`[${getFromNameTags(value, dependencies)}]`);
     } else {
       if (dependencies.tracerEnv._internal.printNameTagTip === undefined) {
         dependencies.tracerEnv._internal.printNameTagTip = "print it";
@@ -30,7 +31,7 @@ export function formatParam(
       "[" + value.map((v) => formatParam(v, dependencies)).join(", ") + "]"
     );
   } else if (value?._isIndexed) {
-    return `${chalk.italic("[Indexed]")}${formatParam(
+    return `${colorIndexed("[Indexed]")}${formatParam(
       value.hash,
       dependencies
     )}`;

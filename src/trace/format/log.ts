@@ -1,7 +1,7 @@
-import chalk from "chalk";
 import { Interface, LogDescription } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 import { TracerDependenciesExtended } from "../../types";
+import { colorContract, colorEvent } from "../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -27,7 +27,7 @@ export async function formatLog(
       const parsed = iface.parseLog(log);
       let decimals = -1;
 
-      const str = `${chalk.yellow(parsed.name)}(${formatResult(
+      const str = `${colorEvent(parsed.name)}(${formatResult(
         parsed.args,
         parsed.eventFragment,
         { decimals, isInput: true, shorten: false },
@@ -38,7 +38,7 @@ export async function formatLog(
         artifact.deployedBytecode ===
         code?.slice(0, artifact.deployedBytecode.length)
       ) {
-        return artifact.contractName + "." + str;
+        return colorContract(artifact.contractName) + "." + str;
       }
       strPrevious = str;
     } catch {}
@@ -46,7 +46,7 @@ export async function formatLog(
 
   return (
     `<UnknownContract ${currentAddress}>.` + strPrevious ??
-    `${chalk.yellow("UnknownEvent")}(${formatParam(
+    `${colorEvent("UnknownEvent")}(${formatParam(
       log.data,
       dependencies
     )}, ${formatParam(log.topics, dependencies)})`
