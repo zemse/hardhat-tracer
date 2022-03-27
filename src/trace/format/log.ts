@@ -1,7 +1,9 @@
 import { Interface, LogDescription } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
-import { TracerDependenciesExtended } from "../../types";
+
 import { colorContract, colorEvent } from "../../colors";
+import { TracerDependenciesExtended } from "../../types";
+
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -25,7 +27,7 @@ export async function formatLog(
 
     try {
       const parsed = iface.parseLog(log);
-      let decimals = -1;
+      const decimals = -1;
 
       const str = `${colorEvent(parsed.name)}(${formatResult(
         parsed.args,

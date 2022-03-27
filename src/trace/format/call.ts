@@ -1,11 +1,13 @@
-import { BigNumberish, BigNumber } from "ethers";
-import { Result, FunctionFragment, Interface } from "ethers/lib/utils";
+import { BigNumber, BigNumberish } from "ethers";
+import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
-import { TracerDependenciesExtended } from "../../types";
+
 import { colorContract, colorFunction, colorKey } from "../../colors";
+import { TracerDependenciesExtended } from "../../types";
+import { getFromNameTags } from "../../utils";
+
 import { formatParam } from "./param";
 import { formatResult } from "./result";
-import { getFromNameTags } from "../../utils";
 
 export async function formatCall(
   to: string,

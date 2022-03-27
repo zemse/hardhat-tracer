@@ -1,4 +1,6 @@
-import { hexlify } from "@ethersproject/bytes";
+import { hexlify } from "ethers/lib/utils";
+
+import { colorLabel } from "../../colors";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
@@ -9,7 +11,6 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
-import { colorLabel } from "../../colors";
 import { formatCall } from "../format/call";
 import { printGasCost } from "../print-gas-cost";
 
@@ -28,7 +29,9 @@ export async function printDelegateCall(
   const gas = parseUint(stack.pop()!);
   const to = parseAddress(stack.pop()!);
   // hardhat console.log address
-  if (to === "0x000000000000000000636f6e736f6c652e6c6f67") return;
+  if (to === "0x000000000000000000636f6e736f6c652e6c6f67") {
+    return;
+  }
   const argsOffset = parseNumber(stack.pop()!);
   const argsSize = parseNumber(stack.pop()!);
   const retOffset = parseNumber(stack.pop()!);

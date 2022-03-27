@@ -1,3 +1,4 @@
+import { colorLabel, colorSstore } from "../../colors";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
@@ -6,7 +7,6 @@ import {
   parseNumber,
   shallowCopyStack,
 } from "../../utils";
-import { colorLabel, colorSstore } from "../../colors";
 import { formatParam } from "../format/param";
 import { printGasCost } from "../print-gas-cost";
 

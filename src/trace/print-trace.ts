@@ -1,8 +1,11 @@
 import { ethers } from "ethers";
 import { getContractAddress } from "ethers/lib/utils";
+
+import { colorLabel, colorWarning } from "../colors";
+import { DEPTH_INDENTATION } from "../constants";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
-import { colorLabel, colorWarning } from "../colors";
+
 import { formatCall } from "./format/call";
 import { formatContract } from "./format/contract";
 import { printCall } from "./opcodes/call";
@@ -19,13 +22,12 @@ import { printRevert } from "./opcodes/revert";
 import { printSload } from "./opcodes/sload";
 import { printSstore } from "./opcodes/sstore";
 import { printStaticCall } from "./opcodes/staticcall";
-import { DEPTH_INDENTATION } from "../constants";
 
 export async function printTrace(
   txHash: string,
   dependencies: TracerDependenciesExtended
 ) {
-  const addressStack: (string | undefined)[] = [];
+  const addressStack: Array<string | undefined> = [];
   try {
     const res = await dependencies.provider.send("debug_traceTransaction", [
       txHash,
@@ -34,9 +36,9 @@ export async function printTrace(
       txHash,
     ]);
     if (
-      tx.to != null &&
-      tx.to != "0x" &&
-      tx.to != "0x0000000000000000000000000000000000000000"
+      tx.to !== null &&
+      tx.to !== "0x" &&
+      tx.to !== "0x0000000000000000000000000000000000000000"
     ) {
       // normal transaction
       console.log(
@@ -91,12 +93,13 @@ async function printStructLog(
   structLog: StructLog,
   index: number,
   structLogs: StructLog[],
-  addressStack: (string | undefined)[],
+  addressStack: Array<string | undefined>,
   dependencies: TracerDependenciesExtended
 ) {
   // if running in logs mode exit if opcode is not a LOG
-  if (isOnlyLogs(dependencies.tracerEnv) && !structLog.op.startsWith("LOG"))
+  if (isOnlyLogs(dependencies.tracerEnv) && !structLog.op.startsWith("LOG")) {
     return;
+  }
 
   switch (structLog.op) {
     case "CREATE":

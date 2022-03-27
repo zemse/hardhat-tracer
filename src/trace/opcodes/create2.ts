@@ -1,4 +1,6 @@
-import { hexlify } from "@ethersproject/bytes";
+import { hexlify } from "ethers/lib/utils";
+
+import { colorLabel } from "../../colors";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
@@ -9,7 +11,6 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
-import { colorLabel } from "../../colors";
 import { formatContract } from "../format/contract";
 import { printGasCost } from "../print-gas-cost";
 

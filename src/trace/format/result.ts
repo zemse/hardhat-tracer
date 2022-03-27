@@ -1,11 +1,13 @@
 import {
-  Result,
+  formatUnits,
   Fragment,
   FunctionFragment,
-  formatUnits,
+  Result,
 } from "ethers/lib/utils";
-import { TracerDependenciesExtended } from "../../types";
+
 import { colorKey } from "../../colors";
+import { TracerDependenciesExtended } from "../../types";
+
 import { formatParam } from "./param";
 
 interface FormatOptions {
@@ -23,11 +25,13 @@ export function formatResult(
   decimals = decimals ?? -1;
   isInput = isInput ?? true;
   shorten = shorten ?? false;
-  const stringifiedArgs: [string, string][] = [];
+  const stringifiedArgs: Array<[string, string]> = [];
   const params = isInput
     ? fragment.inputs
     : (fragment as FunctionFragment)?.outputs;
-  if (!params) return "";
+  if (!params) {
+    return "";
+  }
   for (let i = 0; i < params.length; i++) {
     const param = params[i];
     const name = param.name ?? `arg_${i}`;

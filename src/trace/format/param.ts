@@ -1,8 +1,9 @@
 import { BigNumber } from "ethers";
 import { getAddress } from "ethers/lib/utils";
+
+import { colorIndexed, colorNameTag } from "../../colors";
 import { TracerDependenciesExtended } from "../../types";
 import { getFromNameTags } from "../../utils";
-import { colorIndexed, colorNameTag } from "../../colors";
 
 export function formatParam(
   value: any,

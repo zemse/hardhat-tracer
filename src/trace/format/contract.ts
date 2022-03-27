@@ -1,7 +1,9 @@
 import { BigNumber } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
-import { TracerDependenciesExtended } from "../../types";
+
 import { colorContract, colorFunction, colorKey } from "../../colors";
+import { TracerDependenciesExtended } from "../../types";
+
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -42,7 +44,7 @@ export async function formatContract(
         if (salt !== null) {
           extra.push(
             `salt: ${formatParam(
-              salt.gt(1 << 32) ? salt.toHexString() : salt,
+              salt.gt(2 ** 32) ? salt.toHexString() : salt,
               dependencies
             )}`
           );

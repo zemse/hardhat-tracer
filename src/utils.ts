@@ -1,9 +1,10 @@
-import { arrayify, hexStripZeros, hexZeroPad } from "@ethersproject/bytes";
 import { BigNumber, ethers } from "ethers";
+import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
 import {
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
+
 import {
   StructLog,
   TracerDependenciesExtended,
@@ -68,10 +69,18 @@ export function applyCommonFlagsToTracerEnv(
   }
 
   // enabling config by flags passed
-  if (args.logs) hre.tracer.logs = true;
-  if (args.calls) hre.tracer.calls = true;
-  if (args.sloads) hre.tracer.sloads = true;
-  if (args.sstores) hre.tracer.sstores = true;
+  if (args.logs) {
+    hre.tracer.logs = true;
+  }
+  if (args.calls) {
+    hre.tracer.calls = true;
+  }
+  if (args.sloads) {
+    hre.tracer.sloads = true;
+  }
+  if (args.sstores) {
+    hre.tracer.sstores = true;
+  }
 
   // enabling config by mode of operation
   if (args.trace) {
@@ -104,18 +113,6 @@ export function getFromNameTags(
     dependencies.nameTags[address.toUpperCase()] ||
     dependencies.nameTags[ethers.utils.getAddress(address)]
   );
-}
-
-export function setInNameTags(
-  address: string,
-  value: string,
-  dependencies: TracerDependenciesExtended
-) {
-  replaceIfExists(address, value, dependencies) ||
-    replaceIfExists(address.toLowerCase(), value, dependencies) ||
-    replaceIfExists(address.toUpperCase(), value, dependencies) ||
-    replaceIfExists(ethers.utils.getAddress(address), value, dependencies) ||
-    (dependencies.nameTags[ethers.utils.getAddress(address)] = value);
 }
 
 function replaceIfExists(

@@ -2,18 +2,18 @@ import { ethers } from "ethers";
 import { BackwardsCompatibilityProviderAdapter } from "hardhat/internal/core/providers/backwards-compatibility";
 import { ProviderWrapper } from "hardhat/internal/core/providers/wrapper";
 import {
-  RequestArguments,
-  HardhatRuntimeEnvironment,
   Artifacts,
   EIP1193Provider,
+  HardhatRuntimeEnvironment,
+  RequestArguments,
 } from "hardhat/types";
+
 import { printTrace } from "./trace/print-trace";
-import { printLogs } from "./logs";
 import {
+  ProviderLike,
+  TracerDependencies,
   TracerEnv,
   TracerEnvUser,
-  TracerDependencies,
-  ProviderLike,
 } from "./types";
 import { getTracerEnvFromUserInput } from "./utils";
 
@@ -21,8 +21,8 @@ import { getTracerEnvFromUserInput } from "./utils";
  * Wrapped provider which extends requests
  */
 class TracerWrapper extends ProviderWrapper {
-  dependencies: TracerDependencies;
-  txPrinted: { [key: string]: boolean } = {};
+  public dependencies: TracerDependencies;
+  public txPrinted: { [key: string]: boolean } = {};
 
   constructor(dependencies: TracerDependencies) {
     super((dependencies.provider as unknown) as EIP1193Provider);
@@ -37,8 +37,8 @@ class TracerWrapper extends ProviderWrapper {
         args.method,
         args.params as any[]
       );
-    } catch (error_) {
-      error = error_;
+    } catch (_error) {
+      error = _error;
     }
 
     if (
@@ -65,11 +65,12 @@ class TracerWrapper extends ProviderWrapper {
           ...this.dependencies,
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
         };
-        // await printLogs(hash, receipt, dependenciesExtended);
         await printTrace(hash, dependenciesExtended);
       }
     }
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return result;
   }
 }
