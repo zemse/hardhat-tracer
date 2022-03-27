@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { BigNumber } from "ethers";
-import { Interface } from "ethers/lib/utils";
+import { arrayify, Interface } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -58,5 +58,5 @@ export async function formatContract(
     }
   }
 
-  return `ContractNotRecognized(codeSize=${code.length})`;
+  return `Contract not recognized (deployCodeSize=${arrayify(code).length})`;
 }
