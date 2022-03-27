@@ -64,7 +64,7 @@ export function applyCommonFlagsToTracerEnv(
   const gascost = args.gascost || args.gas;
 
   // if any flag is present, then enable tracer
-  if (args.logs || args.trace || fulltrace || !args.disabletracer) {
+  if (args.logs || args.trace || fulltrace || args.disabletracer === true) {
     hre.tracer.enabled = true;
   }
 
