@@ -124,7 +124,7 @@ async function printStructLog(
       await printSstore(structLog, dependencies);
       break;
     case "SLOAD":
-      await printSload(structLog, dependencies);
+      await printSload(structLog, index, structLogs, dependencies);
       break;
     case "REVERT":
       await printRevert(structLog, dependencies);
