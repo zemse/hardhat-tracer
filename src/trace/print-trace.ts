@@ -19,6 +19,7 @@ import { printRevert } from "./opcodes/revert";
 import { printSload } from "./opcodes/sload";
 import { printSstore } from "./opcodes/sstore";
 import { printStaticCall } from "./opcodes/staticcall";
+import { DEPTH_INDENTATION } from "../constants";
 
 export async function printTrace(
   txHash: string,
@@ -178,6 +179,9 @@ async function printStructLog(
       addressStack.pop();
       break;
     default:
+      if (dependencies.tracerEnv.opcodes.includes(structLog.op)) {
+        console.log(DEPTH_INDENTATION.repeat(structLog.depth) + structLog.op);
+      }
       break;
   }
 }

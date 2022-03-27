@@ -90,7 +90,7 @@ export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   hre.network.provider = compatibleProvider;
 
   // ensure env is present
-  hre.tracer = getTracerEnvFromUserInput(hre.tracer);
+  hre.tracer = hre.tracer ?? getTracerEnvFromUserInput(hre.tracer);
 }
 
 /**

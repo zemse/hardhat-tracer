@@ -11,6 +11,7 @@ export interface TracerEnvUser {
   sstores?: boolean;
   sloads?: boolean;
   gasCost?: boolean;
+  opcodes?: string[];
 }
 
 export interface TracerEnv {
@@ -20,6 +21,7 @@ export interface TracerEnv {
   sstores: boolean;
   sloads: boolean;
   gasCost: boolean;
+  opcodes: string[];
   nameTags: NameTags;
   _internal: {
     printNameTagTip:
