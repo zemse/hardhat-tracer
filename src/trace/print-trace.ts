@@ -117,9 +117,12 @@ async function printStructLog(
       await printCallCode(structLog, index, structLogs, dependencies);
       break;
     case "STATICCALL":
-      await printStaticCall(structLog, index, structLogs, dependencies);
+      addressStack.push(
+        await printStaticCall(structLog, index, structLogs, dependencies)
+      );
       break;
     case "DELEGATECALL":
+      addressStack.push(addressStack[addressStack.length - 1]);
       await printDelegateCall(structLog, index, structLogs, dependencies);
       break;
     case "LOG0":

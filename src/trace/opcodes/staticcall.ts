@@ -61,4 +61,6 @@ export async function printStaticCall(
         dependencies
       )
   );
+
+  return to;
 }
