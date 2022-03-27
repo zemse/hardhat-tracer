@@ -1,6 +1,6 @@
 # hardhat-tracer 🕵️
 
-Allows you to see events, calls and storage ops when running your tests.
+Allows you to see events, calls and storage operations when running your tests.
 
 ## Installation
 
@@ -18,14 +18,25 @@ require("hardhat-tracer");
 
 ## Usage
 
-Just add the `--trace` or `--traceFull` after your test command.
+### Test
+
+Just add the `--trace` or `--fulltrace` after your test command.
 
 ```shell
 npx hardhat test --trace      # shows logs + calls
 npx hardhat test --traceFull  # shows logs + calls + sloads + sstores
 ```
 
-<img width="1177" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/132125751-20d5d006-2d54-4901-bfc5-db0c8d5495b0.png">
+<img width="1092" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/160298216-f56b8244-ceb3-4a5a-86a8-0afb29734354.png">
+
+### Trace
+
+You can trace a mainnet transaction and ABIs/artifacts in your project will be used to decode the internal message calls.
+
+```shell
+npx hardhat trace --hash 0xTransactionHash # works if mainnet fork is on
+npx hardhat trace --hash 0xTransactionHash --rpc https://url # must be archive node
+```
 
 ### Address name tags
 
