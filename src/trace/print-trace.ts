@@ -1,8 +1,8 @@
-import chalk from "chalk";
 import { ethers } from "ethers";
 import { getContractAddress } from "ethers/lib/utils";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
+import { colorLabel, colorWarning } from "../colors";
 import { formatCall } from "./format/call";
 import { formatContract } from "./format/contract";
 import { printCall } from "./opcodes/call";
@@ -39,7 +39,8 @@ export async function printTrace(
     ) {
       // normal transaction
       console.log(
-        "CALL " +
+        colorLabel("CALL") +
+          " " +
           (await formatCall(
             tx.to,
             tx.input,
@@ -60,7 +61,7 @@ export async function printTrace(
         dependencies
       );
       addressStack.push(getContractAddress(tx));
-      console.log("CREATE " + str);
+      console.log(colorLabel("CREATE") + " " + str);
     }
 
     for (const [i, structLog] of (res.structLogs as StructLog[]).entries()) {
@@ -76,7 +77,7 @@ export async function printTrace(
     // if debug_traceTransaction failed then print warning
     if ((error as any).message.includes("debug_traceTransaction")) {
       console.log(
-        chalk.yellow(`Warning! Debug Transaction not supported on this network`)
+        colorWarning(`Warning! Debug Transaction not supported on this network`)
       );
     } else {
       // else print what the error is

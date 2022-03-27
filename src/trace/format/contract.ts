@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
-import { colorContract, colorFunction } from "../colors";
+import { colorContract, colorFunction } from "../../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 

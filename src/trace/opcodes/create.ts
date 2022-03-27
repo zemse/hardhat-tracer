@@ -9,6 +9,7 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
+import { colorLabel } from "../../colors";
 import { formatContract } from "../format/contract";
 import { printGasCost } from "../print-gas-cost";
 
@@ -49,7 +50,8 @@ export async function printCreate(
   );
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) +
-      "CREATE " +
+      colorLabel("CREATE") +
+      " " +
       str +
       printGasCost(structLog, null, dependencies)
   );

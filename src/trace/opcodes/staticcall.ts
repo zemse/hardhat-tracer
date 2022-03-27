@@ -9,6 +9,7 @@ import {
   parseUint,
   shallowCopyStack,
 } from "../../utils";
+import { colorLabel } from "../../colors";
 import { formatCall } from "../format/call";
 import { printGasCost } from "../print-gas-cost";
 
@@ -51,7 +52,8 @@ export async function printStaticCall(
   const str = await formatCall(to, input, ret, 0, gas, dependencies);
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) +
-      "STATICCALL " +
+      colorLabel("STATICCALL") +
+      " " +
       str +
       printGasCost(
         structLog,

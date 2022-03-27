@@ -1,4 +1,3 @@
-// import chalk from "chalk";
 import {
   Result,
   Fragment,
@@ -6,7 +5,7 @@ import {
   formatUnits,
 } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
-import { colorKey } from "../colors";
+import { colorKey } from "../../colors";
 import { formatParam } from "./param";
 
 interface FormatOptions {

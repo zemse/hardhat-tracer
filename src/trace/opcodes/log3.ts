@@ -8,6 +8,7 @@ import {
   parseNumber,
   shallowCopyStack,
 } from "../../utils";
+import { colorLabel } from "../../colors";
 import { formatLog } from "../format/log";
 import { printGasCost } from "../print-gas-cost";
 
@@ -43,7 +44,8 @@ export async function printLog3(
     DEPTH_INDENTATION.repeat(
       isOnlyLogs(dependencies.tracerEnv) ? 1 : structLog.depth
     ) +
-      "EVENT " +
+      colorLabel("EVENT") +
+      " " +
       str +
       printGasCost(structLog, null, dependencies)
   );

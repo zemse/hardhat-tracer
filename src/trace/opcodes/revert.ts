@@ -2,6 +2,7 @@ import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import { parseMemory, parseNumber, shallowCopyStack } from "../../utils";
+import { colorLabel } from "../../colors";
 import { formatError } from "../format/error";
 import { printGasCost } from "../print-gas-cost";
 
@@ -23,7 +24,8 @@ export async function printRevert(
   const str = await formatError(input, dependencies);
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) +
-      "REVERT " +
+      colorLabel("REVERT") +
+      " " +
       str +
       printGasCost(structLog, null, dependencies)
   );

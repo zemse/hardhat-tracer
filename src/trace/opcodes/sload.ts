@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
@@ -7,6 +6,7 @@ import {
   parseNumber,
   shallowCopyStack,
 } from "../../utils";
+import { colorLabel, colorSload } from "../../colors";
 import { formatParam } from "../format/param";
 import { printGasCost } from "../print-gas-cost";
 
@@ -25,13 +25,11 @@ export async function printSload(
   const stackAfter = shallowCopyStack(structLogs[index + 1].stack);
   const value = parseHex(stackAfter.pop()!);
 
-  const str = `${chalk.blueBright(key)} => (${formatParam(
-    value,
-    dependencies
-  )})`;
+  const str = `${colorSload(key)} => (${formatParam(value, dependencies)})`;
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) +
-      "SLOAD " +
+      colorLabel("SLOAD") +
+      " " +
       str +
       printGasCost(structLog, null, dependencies)
   );

@@ -1,11 +1,11 @@
 import { EthereumProvider } from "hardhat/src/types/provider";
 import { Artifacts } from "hardhat/types";
 import { Interface } from "ethers/lib/utils";
-import chalk from "chalk";
 import { setInNameTags } from "./utils";
 import { TracerDependenciesExtended } from "./types";
 import { formatParam } from "./trace/format/param";
 import { formatResult } from "./trace/format/result";
+import { colorEvent, colorWarning } from "./colors";
 
 export async function printLogs(
   txHash: string,
@@ -49,7 +49,7 @@ export async function printLogs(
         console.log(
           `${
             formatParam(receipt.logs[i].address, dependencies) + " "
-          }${chalk.green(parsed.name)}(${formatResult(
+          }${colorEvent(parsed.name)}(${formatResult(
             parsed.args,
             parsed.eventFragment,
             { decimals, isInput: true, shorten: false },
@@ -66,7 +66,7 @@ export async function printLogs(
     // print only occassionally (20% probability)
     if (Math.random() < 0.2) {
       console.log(
-        chalk.yellow(
+        colorWarning(
           `Tip: You can set name tags for addresses by adding a key to hre.tracer.nameTags object in your test cases.\ne.g. hre.tracer.nameTags["0x1234567890123456789012345678901234567890"] = "MyTreasury";`
         )
       );
