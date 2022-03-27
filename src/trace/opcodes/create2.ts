@@ -2,6 +2,8 @@ import { hexlify } from "@ethersproject/bytes";
 import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import {
+  findNextStructLogInDepth,
+  parseAddress,
   parseMemory,
   parseNumber,
   parseUint,
@@ -30,7 +32,22 @@ export async function printCreate2(
   const memory = parseMemory(structLog.memory);
   const codeWithArgs = hexlify(memory.slice(codeOffset, codeOffset + codeSize));
 
-  const str = await formatContract(codeWithArgs, value, salt, dependencies);
+  const [structLogNextNext] = findNextStructLogInDepth(
+    structLogs,
+    structLog.depth,
+    index + 1 // find next structLog in the same depth
+  );
+  const deployedAddress = parseAddress(
+    shallowCopyStack(structLogNextNext.stack).pop()!
+  );
+
+  const str = await formatContract(
+    codeWithArgs,
+    value,
+    salt,
+    deployedAddress,
+    dependencies
+  );
   console.log(
     DEPTH_INDENTATION.repeat(structLog.depth) +
       "CREATE2 " +

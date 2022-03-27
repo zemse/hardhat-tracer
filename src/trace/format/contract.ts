@@ -9,6 +9,7 @@ export async function formatContract(
   code: string,
   value: BigNumber,
   salt: BigNumber | null,
+  deployedAddress: string | null,
   dependencies: TracerDependenciesExtended
 ) {
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
@@ -48,7 +49,11 @@ export async function formatContract(
         }
         return `${chalk.cyan(artifact.contractName)}.${chalk.green(
           "constructor"
-        )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})`;
+        )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})${
+          deployedAddress
+            ? ` => (${formatParam(deployedAddress, dependencies)})`
+            : ""
+        }`;
       } catch {}
     }
   }

@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { BigNumber } from "ethers";
+import { getAddress } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
 import { getFromNameTags } from "../../utils";
 
@@ -22,7 +23,7 @@ export function formatParam(
       if (dependencies.tracerEnv._internal.printNameTagTip === undefined) {
         dependencies.tracerEnv._internal.printNameTagTip = "print it";
       }
-      return value;
+      return getAddress(value);
     }
   } else if (Array.isArray(value)) {
     return (

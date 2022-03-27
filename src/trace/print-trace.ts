@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { getContractAddress } from "ethers/lib/utils";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
 import { formatCall } from "./format/call";
@@ -52,6 +53,7 @@ export async function printTrace(
         tx.input,
         parseUint(tx.value ?? "0x"),
         null,
+        getContractAddress(tx),
         dependencies
       );
       console.log("CREATE " + str);
