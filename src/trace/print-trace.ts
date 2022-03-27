@@ -120,11 +120,15 @@ async function printStructLog(
     case "LOG4":
       await printLog4(structLog, dependencies);
       break;
-    case "SSTORE":
-      await printSstore(structLog, dependencies);
-      break;
     case "SLOAD":
-      await printSload(structLog, index, structLogs, dependencies);
+      if (dependencies.tracerEnv.sloads) {
+        await printSload(structLog, index, structLogs, dependencies);
+      }
+      break;
+    case "SSTORE":
+      if (dependencies.tracerEnv.sstores) {
+        await printSstore(structLog, dependencies);
+      }
       break;
     case "REVERT":
       await printRevert(structLog, dependencies);

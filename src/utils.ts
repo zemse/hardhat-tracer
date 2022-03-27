@@ -1,6 +1,10 @@
 import { arrayify, hexStripZeros, hexZeroPad } from "@ethersproject/bytes";
 import { BigNumber, ethers } from "ethers";
 import {
+  ConfigurableTaskDefinition,
+  HardhatRuntimeEnvironment,
+} from "hardhat/types";
+import {
   StructLog,
   TracerDependenciesExtended,
   TracerEnv,
@@ -13,8 +17,8 @@ export function getTracerEnvFromUserInput(
   userInput = userInput ?? {};
   return {
     enabled: userInput.enabled ?? false,
-    logs: userInput.logs ?? true,
-    calls: userInput.calls ?? true,
+    logs: userInput.logs ?? false,
+    calls: userInput.calls ?? false,
     sstores: userInput.sstores ?? false,
     sloads: userInput.sloads ?? false,
     gasCost: userInput.gasCost ?? false,
@@ -23,6 +27,67 @@ export function getTracerEnvFromUserInput(
       printNameTagTip: undefined,
     },
   };
+}
+
+export function addCommonTracerFlagsTo(task: ConfigurableTaskDefinition) {
+  return (
+    task
+      // features
+      .addFlag("logs", "print logs emitted during transactions")
+      .addFlag("calls", "print calls during transactions")
+      .addFlag("sloads", "print SLOADs during calls")
+      .addFlag("sstores", "print SSTOREs during transactions")
+      .addFlag("gascost", "display gas cost")
+      .addFlag(
+        "disabletracer",
+        "do not enable tracer at the start (for inline enabling tracer)"
+      )
+      // feature group
+      .addFlag("trace", "trace logs and calls in transactions")
+      .addFlag(
+        "fulltrace",
+        "trace logs, calls and storage writes in transactions"
+      )
+      // aliases
+      .addFlag("tracefull", "alias for fulltrace")
+      .addFlag("gas", "alias for gascost")
+  );
+}
+
+export function applyCommonFlagsToTracerEnv(
+  args: any,
+  hre: HardhatRuntimeEnvironment
+) {
+  // populating aliases
+  const fulltrace = args.fulltrace || args.tracefull;
+  const gascost = args.gascost || args.gas;
+
+  // if any flag is present, then enable tracer
+  if (args.logs || args.trace || fulltrace || !args.disabletracer) {
+    hre.tracer.enabled = true;
+  }
+
+  // enabling config by flags passed
+  if (args.logs) hre.tracer.logs = true;
+  if (args.calls) hre.tracer.calls = true;
+  if (args.sloads) hre.tracer.sloads = true;
+  if (args.sstores) hre.tracer.sstores = true;
+
+  // enabling config by mode of operation
+  if (args.trace) {
+    hre.tracer.logs = true;
+    hre.tracer.calls = true;
+  }
+  if (fulltrace) {
+    hre.tracer.logs = true;
+    hre.tracer.calls = true;
+    hre.tracer.sloads = true;
+    hre.tracer.sstores = true;
+  }
+
+  if (gascost) {
+    hre.tracer.gasCost = true;
+  }
 }
 
 export function isOnlyLogs(env: TracerEnv): boolean {

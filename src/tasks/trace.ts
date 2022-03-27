@@ -1,12 +1,15 @@
 import { ethers } from "ethers";
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { task } from "hardhat/config";
+import { addCommonTracerFlagsTo, applyCommonFlagsToTracerEnv } from "../utils";
 import { wrapHardhatProvider } from "../wrapper";
 
-task("trace", "Traces a transaction hash")
+addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
   .addParam("hash", "transaction hash to view trace of")
   .addOptionalParam("rpc", "archive node")
   .setAction(async (args, hre, runSuper) => {
+    applyCommonFlagsToTracerEnv(args, hre);
+
     const tx = await hre.network.provider.send("eth_getTransactionByHash", [
       args.hash,
     ]);
