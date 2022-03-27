@@ -1,6 +1,6 @@
 {
   "name": "hardhat-tracer",
-  "version": "1.0.0-alpha.6",
+  "version": "1.1.0-rc.1",
   "description": "Hardhat Tracer plugin",
   "repository": "github:zemse/hardhat-tracer",
   "author": "Soham Zemse (https://github.com/zemse)",
@@ -12,7 +12,9 @@
     "smart-contracts",
     "hardhat",
     "hardhat-plugin",
-    "tracer"
+    "tracer",
+    "evm",
+    "internal-transactions"
   ],
   "scripts": {
     "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
