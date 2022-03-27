@@ -49,7 +49,6 @@ addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
     }
 
     wrapHardhatProvider(hre);
-    hre.tracer = hre.config.tracer;
     hre.tracer.enabled = true;
 
     const delayPromise = new Promise((resolve) => {

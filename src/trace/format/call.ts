@@ -2,9 +2,10 @@ import { BigNumberish, BigNumber } from "ethers";
 import { Result, FunctionFragment, Interface } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 import { TracerDependenciesExtended } from "../../types";
-import { colorContract, colorFunction } from "../../colors";
+import { colorContract, colorFunction, colorKey } from "../../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { getFromNameTags } from "../../utils";
 
 export async function formatCall(
   to: string,
@@ -34,18 +35,17 @@ export async function formatCall(
       } catch {}
 
       functionFragment = iface.getFunction(signature);
-      artifact = _artifact;
 
       if (toBytecode === _artifact.deployedBytecode) {
         // if bytecode of "to" is the same as the deployed bytecode,
         // it means the Artifact is correct
+        artifact = _artifact;
         break;
       }
     } catch {}
   }
 
-  if (artifact && result && functionFragment) {
-    let toAddress = `(${formatParam(to, dependencies)})`;
+  if (result && functionFragment) {
     const inputArgs = formatResult(
       result,
       functionFragment,
@@ -68,13 +68,29 @@ export async function formatCall(
     if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
       extra.push(`gas: ${formatParam(gas, dependencies)}`);
     }
-    return `${colorContract(artifact.contractName)}${
-      "" ?? toAddress
+    const nameTag = getFromNameTags(to, dependencies);
+    return `${
+      nameTag
+        ? colorContract(nameTag)
+        : artifact
+        ? colorContract(artifact.contractName)
+        : `<${colorContract("UnknownContract")} ${formatParam(
+            to,
+            dependencies
+          )}>`
     }.${colorFunction(functionFragment.name)}${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
   // TODO add flag to hide unrecognized stuff
-  return `FunctionNotRecognized(to=${to}, input=${input}, ret=${ret})`;
+  if (artifact) {
+    return `${colorContract(artifact.contractName)}.<${colorFunction(
+      "UnknownFunction"
+    )}>(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+  } else {
+    return `${colorFunction("UnknownContractAndFunction")}(${colorKey(
+      "to="
+    )}${to}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+  }
 }

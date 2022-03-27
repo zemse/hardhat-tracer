@@ -14,19 +14,20 @@ import {
 export function getTracerEnvFromUserInput(
   userInput?: TracerEnvUser
 ): TracerEnv {
-  userInput = userInput ?? {};
-  return {
-    enabled: userInput.enabled ?? false,
-    logs: userInput.logs ?? false,
-    calls: userInput.calls ?? false,
-    sstores: userInput.sstores ?? false,
-    sloads: userInput.sloads ?? false,
-    gasCost: userInput.gasCost ?? false,
-    nameTags: {},
-    _internal: {
+  let tracerEnv: TracerEnv = (userInput ?? {}) as TracerEnv;
+  if (tracerEnv.enabled === undefined) tracerEnv.enabled = false;
+  if (tracerEnv.logs === undefined) tracerEnv.logs = false;
+  if (tracerEnv.calls === undefined) tracerEnv.calls = false;
+  if (tracerEnv.sstores === undefined) tracerEnv.sstores = false;
+  if (tracerEnv.sloads === undefined) tracerEnv.sloads = false;
+  if (tracerEnv.gasCost === undefined) tracerEnv.gasCost = false;
+  if (tracerEnv.nameTags === undefined) tracerEnv.nameTags = {};
+  if (tracerEnv._internal === undefined) {
+    tracerEnv._internal = {
       printNameTagTip: undefined,
-    },
-  };
+    };
+  }
+  return tracerEnv;
 }
 
 export function addCommonTracerFlagsTo(task: ConfigurableTaskDefinition) {

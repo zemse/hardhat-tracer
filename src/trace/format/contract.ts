@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
 import { TracerDependenciesExtended } from "../../types";
-import { colorContract, colorFunction } from "../../colors";
+import { colorContract, colorFunction, colorKey } from "../../colors";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
 
@@ -58,5 +58,7 @@ export async function formatContract(
     }
   }
 
-  return `Contract not recognized (deployCodeSize=${arrayify(code).length})`;
+  return `${colorContract("UnknownContract")}(${colorKey("deployCodeSize=")}${
+    arrayify(code).length
+  })`;
 }

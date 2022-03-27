@@ -81,7 +81,7 @@ class TracerWrapper extends ProviderWrapper {
 export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   const tracerProvider = new TracerWrapper({
     artifacts: hre.artifacts,
-    tracerEnv: (hre as any).tracer,
+    tracerEnv: hre.tracer,
     provider: hre.network.provider,
   });
   const compatibleProvider = new BackwardsCompatibilityProviderAdapter(
@@ -90,7 +90,7 @@ export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   hre.network.provider = compatibleProvider;
 
   // ensure env is present
-  (hre as any).tracer = getTracerEnvFromUserInput((hre as any).tracer);
+  hre.tracer = getTracerEnvFromUserInput(hre.tracer);
 }
 
 /**
