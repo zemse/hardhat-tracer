@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { ethers } from "ethers";
 import { getContractAddress } from "ethers/lib/utils";
 import { StructLog, TracerDependenciesExtended } from "../types";
 import { isOnlyLogs, parseUint } from "../utils";
@@ -23,6 +24,7 @@ export async function printTrace(
   txHash: string,
   dependencies: TracerDependenciesExtended
 ) {
+  const addressStack: (string | undefined)[] = [];
   try {
     const res = await dependencies.provider.send("debug_traceTransaction", [
       txHash,
@@ -47,6 +49,7 @@ export async function printTrace(
             dependencies
           ))
       );
+      addressStack.push(tx.to);
     } else {
       // contract deploy transaction
       const str = await formatContract(
@@ -56,11 +59,18 @@ export async function printTrace(
         getContractAddress(tx),
         dependencies
       );
+      addressStack.push(getContractAddress(tx));
       console.log("CREATE " + str);
     }
 
     for (const [i, structLog] of (res.structLogs as StructLog[]).entries()) {
-      await printStructLog(structLog, i, res.structLogs, dependencies);
+      await printStructLog(
+        structLog,
+        i,
+        res.structLogs,
+        addressStack,
+        dependencies
+      );
     }
   } catch (error) {
     // if debug_traceTransaction failed then print warning
@@ -79,24 +89,30 @@ async function printStructLog(
   structLog: StructLog,
   index: number,
   structLogs: StructLog[],
+  addressStack: (string | undefined)[],
   dependencies: TracerDependenciesExtended
 ) {
   // if running in logs mode exit if opcode is not a LOG
   if (isOnlyLogs(dependencies.tracerEnv) && !structLog.op.startsWith("LOG"))
     return;
 
-  // TODO add SLOAD and SSTORE
   switch (structLog.op) {
     case "CREATE":
-      await printCreate(structLog, index, structLogs, dependencies);
+      addressStack.push(
+        await printCreate(structLog, index, structLogs, dependencies)
+      );
       break;
     case "CREATE2":
-      await printCreate2(structLog, index, structLogs, dependencies);
+      addressStack.push(
+        await printCreate2(structLog, index, structLogs, dependencies)
+      );
       break;
     case "CALL":
-      await printCall(structLog, index, structLogs, dependencies);
+      addressStack.push(
+        await printCall(structLog, index, structLogs, dependencies)
+      );
       break;
-    case "printCallCode":
+    case "CALLCODE":
       await printCallCode(structLog, index, structLogs, dependencies);
       break;
     case "STATICCALL":
@@ -106,19 +122,39 @@ async function printStructLog(
       await printDelegateCall(structLog, index, structLogs, dependencies);
       break;
     case "LOG0":
-      await printLog0(structLog, dependencies);
+      await printLog0(
+        structLog,
+        addressStack[addressStack.length - 1],
+        dependencies
+      );
       break;
     case "LOG1":
-      await printLog1(structLog, dependencies);
+      await printLog1(
+        structLog,
+        addressStack[addressStack.length - 1],
+        dependencies
+      );
       break;
     case "LOG2":
-      await printLog2(structLog, dependencies);
+      await printLog2(
+        structLog,
+        addressStack[addressStack.length - 1],
+        dependencies
+      );
       break;
     case "LOG3":
-      await printLog3(structLog, dependencies);
+      await printLog3(
+        structLog,
+        addressStack[addressStack.length - 1],
+        dependencies
+      );
       break;
     case "LOG4":
-      await printLog4(structLog, dependencies);
+      await printLog4(
+        structLog,
+        addressStack[addressStack.length - 1],
+        dependencies
+      );
       break;
     case "SLOAD":
       if (dependencies.tracerEnv.sloads) {
@@ -132,6 +168,10 @@ async function printStructLog(
       break;
     case "REVERT":
       await printRevert(structLog, dependencies);
+      addressStack.pop();
+      break;
+    case "RETURN":
+      addressStack.pop();
       break;
     default:
       break;

@@ -53,4 +53,5 @@ export async function printCreate(
       str +
       printGasCost(structLog, null, dependencies)
   );
+  return deployedAddress;
 }

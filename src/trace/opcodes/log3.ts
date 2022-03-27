@@ -13,6 +13,7 @@ import { printGasCost } from "../print-gas-cost";
 
 export async function printLog3(
   structLog: StructLog,
+  currentAddress: string | undefined,
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
@@ -35,6 +36,7 @@ export async function printLog3(
       data,
       topics: [topic0, topic1, topic2],
     },
+    currentAddress,
     dependencies
   );
   console.log(

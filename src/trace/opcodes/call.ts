@@ -56,4 +56,5 @@ export async function printCall(
         dependencies
       )
   );
+  return to;
 }
