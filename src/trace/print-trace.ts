@@ -181,6 +181,9 @@ async function printStructLog(
     case "RETURN":
       addressStack.pop();
       break;
+    case "STOP":
+      addressStack.pop();
+      break;
     default:
       if (dependencies.tracerEnv.opcodes.includes(structLog.op)) {
         console.log(DEPTH_INDENTATION.repeat(structLog.depth) + structLog.op);
