@@ -3,6 +3,7 @@ import { Artifact } from "hardhat/types";
 
 import { colorContract, colorEvent } from "../../colors";
 import { TracerDependenciesExtended } from "../../types";
+import { compareBytecode } from "../../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -20,34 +21,38 @@ export async function formatLog(
       ])) as string)
     : undefined;
 
-  let strPrevious: string | undefined;
+  let str: string | undefined;
+  let contractName: string | undefined;
   for (const name of names) {
     const artifact = await dependencies.artifacts.readArtifact(name);
     const iface = new Interface(artifact.abi);
 
+    // try to find the contract name
+    if (compareBytecode(artifact.deployedBytecode, code ?? "0x") > 0.5) {
+      contractName = artifact.contractName;
+    }
+
+    // try to parse the arguments
     try {
       const parsed = iface.parseLog(log);
       const decimals = -1;
 
-      const str = `${colorEvent(parsed.name)}(${formatResult(
+      str = `${colorEvent(parsed.name)}(${formatResult(
         parsed.args,
         parsed.eventFragment,
         { decimals, isInput: true, shorten: false },
         dependencies
       )})`;
-
-      if (
-        artifact.deployedBytecode ===
-        code?.slice(0, artifact.deployedBytecode.length)
-      ) {
-        return colorContract(artifact.contractName) + "." + str;
-      }
-      strPrevious = str;
     } catch {}
+
+    // if we got both the contract name and arguments parsed so far, we can stop
+    if (contractName && str) {
+      return colorContract(contractName) + "." + str;
+    }
   }
 
   return (
-    `<${colorContract("UnknownContract")} ${currentAddress}>.` + strPrevious ??
+    `<${colorContract("UnknownContract")} ${currentAddress}>.` + str ??
     `${colorEvent("UnknownEvent")}(${formatParam(
       log.data,
       dependencies

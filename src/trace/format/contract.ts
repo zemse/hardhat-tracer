@@ -3,6 +3,7 @@ import { arrayify, Interface } from "ethers/lib/utils";
 
 import { colorContract, colorFunction, colorKey } from "../../colors";
 import { TracerDependenciesExtended } from "../../types";
+import { compareBytecode } from "../../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -23,7 +24,7 @@ export async function formatContract(
     if (
       artifact.bytecode.length > 2 &&
       artifact.bytecode.length <= code.length &&
-      code.slice(0, artifact.bytecode.length) === artifact.bytecode
+      compareBytecode(artifact.bytecode, code) > 0.5
     ) {
       // we found the artifact with matching bytecode
       try {
