@@ -31,6 +31,7 @@ export async function printTrace(
   try {
     const res = await dependencies.provider.send("debug_traceTransaction", [
       txHash,
+      { disableStorage: true },
     ]);
     const tx = await dependencies.provider.send("eth_getTransactionByHash", [
       txHash,
