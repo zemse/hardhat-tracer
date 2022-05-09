@@ -106,13 +106,12 @@ export function isOnlyLogs(env: TracerEnv): boolean {
 export function getFromNameTags(
   address: string,
   dependencies: TracerDependenciesExtended
-) {
+): string | undefined {
   return (
     dependencies.nameTags[address] ||
     dependencies.nameTags[address.toLowerCase()] ||
     dependencies.nameTags[address.toUpperCase()] ||
-    dependencies.nameTags[ethers.utils.getAddress(address)] ||
-    address
+    dependencies.nameTags[ethers.utils.getAddress(address)]
   );
 }
 
