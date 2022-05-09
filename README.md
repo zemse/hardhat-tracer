@@ -2,6 +2,13 @@
 
 Allows you to see events, calls and storage operations when running your tests.
 
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Test](#test): See debug trace when running test
+  - [Trace](#trace): Task to generate call tree for a transaction
+  - [Calldata decoder](#calldata-decoder): Task to simply decode an encoded data
+  - [Address name tags](#address-name-tags): Set alias for addresses with name
+
 ## Installation
 
 **Step 1:** Install the package
