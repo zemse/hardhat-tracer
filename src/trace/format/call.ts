@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber, BigNumberish, ethers } from "ethers";
 import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
@@ -29,7 +29,10 @@ export async function formatCall(
     const iface = new Interface(_artifact.abi);
 
     // try to find the contract name
-    if (compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5) {
+    if (
+      compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
+      (to === ethers.constants.AddressZero && toBytecode.length <= 2)
+    ) {
       // if bytecode of "to" is the same as the deployed bytecode
       // we can use the artifact name
       contractName = _artifact.contractName;
@@ -92,7 +95,7 @@ export async function formatCall(
   }
 
   // TODO add flag to hide unrecognized stuff
-  if (contractName) {
+  if (toBytecode.length > 2 && contractName) {
     return `${colorContract(contractName)}.<${colorFunction(
       "UnknownFunction"
     )}>(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
