@@ -23,7 +23,7 @@ export function getTracerEnvFromUserInput(
     sloads: userInput?.sloads ?? false,
     gasCost: userInput?.gasCost ?? false,
     opcodes: userInput?.opcodes ?? [],
-    nameTags: {},
+    nameTags: userInput?.nameTags ?? {},
     _internal: {
       printNameTagTip: undefined,
     },
@@ -111,7 +111,8 @@ export function getFromNameTags(
     dependencies.nameTags[address] ||
     dependencies.nameTags[address.toLowerCase()] ||
     dependencies.nameTags[address.toUpperCase()] ||
-    dependencies.nameTags[ethers.utils.getAddress(address)]
+    dependencies.nameTags[ethers.utils.getAddress(address)] ||
+    address
   );
 }
 

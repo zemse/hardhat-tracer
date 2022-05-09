@@ -12,6 +12,7 @@ export interface TracerEnvUser {
   sloads?: boolean;
   gasCost?: boolean;
   opcodes?: string[];
+  nameTags?: NameTags;
 }
 
 export interface TracerEnv {

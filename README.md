@@ -62,3 +62,14 @@ You can set display names / name tags for unknown addresses by adding new entry 
 ```ts
 hre.tracer.nameTags[this.arbitrager.address] = "Arbitrager";
 ```
+
+or can be set in hardhat config
+
+```ts
+tracer: {
+    nameTags: {
+        '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266': 'Hunter',
+        [someVariable]: 'MyContract',
+    },
+},
+```
