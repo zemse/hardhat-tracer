@@ -3,7 +3,7 @@ import { Artifact } from "hardhat/types";
 
 import { colorContract, colorEvent } from "../../colors";
 import { TracerDependenciesExtended } from "../../types";
-import { compareBytecode } from "../../utils";
+import { compareBytecode, getFromNameTags } from "../../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -13,16 +13,20 @@ export async function formatLog(
   currentAddress: string | undefined,
   dependencies: TracerDependenciesExtended
 ) {
-  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
-  const code = currentAddress
-    ? ((await dependencies.provider.send("eth_getCode", [
-        currentAddress,
-        "latest",
-      ])) as string)
+  const nameTag = currentAddress
+    ? getFromNameTags(currentAddress, dependencies)
     : undefined;
+  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+  const code =
+    !nameTag && currentAddress
+      ? ((await dependencies.provider.send("eth_getCode", [
+          currentAddress,
+          "latest",
+        ])) as string)
+      : undefined;
 
   let str: string | undefined;
-  let contractName: string | undefined;
+  let contractName: string | undefined = nameTag;
   for (const name of names) {
     const artifact = await dependencies.artifacts.readArtifact(name);
     const iface = new Interface(artifact.abi);
