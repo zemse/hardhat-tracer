@@ -7,6 +7,9 @@ const config: HardhatUserConfig = {
   solidity: "0.7.3",
   defaultNetwork: "hardhat",
   paths: {},
+  tracer: {
+    enabled: true,
+  },
 };
 
 export default config;
