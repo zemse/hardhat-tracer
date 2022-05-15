@@ -8,6 +8,7 @@ import { isOnlyLogs, parseUint } from "../utils";
 
 import { formatCall } from "./format/call";
 import { formatContract } from "./format/contract";
+import { formatLog } from "./format/log";
 import { printCall } from "./opcodes/call";
 import { printCallCode } from "./opcodes/callcode";
 import { printCreate } from "./opcodes/create";
@@ -27,66 +28,126 @@ export async function printTrace(
   txHash: string,
   dependencies: TracerDependenciesExtended
 ) {
-  const addressStack: Array<string | undefined> = [];
   try {
-    const res = await dependencies.provider.send("debug_traceTransaction", [
+    if (isOnlyLogs(dependencies.tracerEnv)) {
+      await printLogs(txHash, dependencies);
+    } else {
+      try {
+        await printDebugTraceTransaction(txHash, dependencies);
+      } catch (error) {
+        if (!isDebugTTNotSupportedError(error)) {
+          console.log(
+            colorWarning(
+              `If you think the above error is a bug, please report it to https://github.com/zemse/hardhat-tracer/issues/new, meanwhile fallbacking to --logs:`
+            )
+          );
+        }
+        await printLogs(txHash, dependencies);
+      }
+    }
+  } catch (error) {
+    console.error("Error in printTrace:", error);
+    return;
+  }
+}
+
+function isDebugTTNotSupportedError(error: any) {
+  return (error as any).message.includes("debug_traceTransaction");
+}
+
+async function printLogs(
+  txHash: string,
+  dependencies: TracerDependenciesExtended
+) {
+  const rc = await dependencies.provider.send("eth_getTransactionReceipt", [
+    txHash,
+  ]);
+  const addressStack: Array<string | undefined> = [];
+  await printTopLevel(txHash, addressStack, dependencies);
+  if (rc && rc.logs && rc.logs.length) {
+    for (const log of rc.logs) {
+      console.log(
+        DEPTH_INDENTATION + (await formatLog(log, log.address, dependencies))
+      );
+    }
+  }
+}
+
+async function printDebugTraceTransaction(
+  txHash: string,
+  dependencies: TracerDependenciesExtended
+) {
+  let trace;
+  try {
+    trace = await dependencies.provider.send("debug_traceTransaction", [
       txHash,
       { disableStorage: true },
     ]);
-    const tx = await dependencies.provider.send("eth_getTransactionByHash", [
-      txHash,
-    ]);
-    if (
-      tx.to !== null &&
-      tx.to !== "0x" &&
-      tx.to !== "0x0000000000000000000000000000000000000000"
-    ) {
-      // normal transaction
-      console.log(
-        colorLabel("CALL") +
-          " " +
-          (await formatCall(
-            tx.to,
-            tx.input,
-            "0x",
-            tx.value,
-            tx.gas,
-            dependencies
-          ))
-      );
-      addressStack.push(tx.to);
-    } else {
-      // contract deploy transaction
-      const str = await formatContract(
-        tx.input,
-        parseUint(tx.value ?? "0x"),
-        null,
-        getContractAddress(tx),
-        dependencies
-      );
-      addressStack.push(getContractAddress(tx));
-      console.log(colorLabel("CREATE") + " " + str);
-    }
 
-    for (const [i, structLog] of (res.structLogs as StructLog[]).entries()) {
+    const addressStack: Array<string | undefined> = [];
+    await printTopLevel(txHash, addressStack, dependencies);
+    for (const [i, structLog] of (trace.structLogs as StructLog[]).entries()) {
       await printStructLog(
         structLog,
         i,
-        res.structLogs,
+        trace.structLogs,
         addressStack,
         dependencies
       );
     }
   } catch (error) {
     // if debug_traceTransaction failed then print warning
-    if ((error as any).message.includes("debug_traceTransaction")) {
+    if (isDebugTTNotSupportedError(error)) {
       console.log(
         colorWarning(`Warning! Debug Transaction not supported on this network`)
       );
     } else {
       // else print what the error is
-      console.error(error);
+      console.error("Error in printDebugTraceTransaction:", error);
     }
+    throw error;
+  }
+}
+
+async function printTopLevel(
+  txHash: string,
+  addressStack: Array<string | undefined>,
+  dependencies: TracerDependenciesExtended
+) {
+  const tx = await dependencies.provider.send("eth_getTransactionByHash", [
+    txHash,
+  ]);
+
+  if (
+    tx.to !== null &&
+    tx.to !== "0x" &&
+    tx.to !== "0x0000000000000000000000000000000000000000"
+  ) {
+    // normal transaction
+    console.log(
+      colorLabel("CALL") +
+        " " +
+        (await formatCall(
+          tx.to,
+          tx.input,
+          "0x",
+          tx.value,
+          tx.gas,
+          dependencies
+        ))
+    );
+    addressStack.push(tx.to);
+  } else {
+    // contract deploy transaction
+    const str = await formatContract(
+      tx.input,
+      parseUint(tx.value ?? "0x"),
+      null,
+      getContractAddress(tx),
+      dependencies
+    );
+    addressStack.push(getContractAddress(tx));
+    console.log(colorLabel("CREATE") + " " + str);
   }
 }
 
