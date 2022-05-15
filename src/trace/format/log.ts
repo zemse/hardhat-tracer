@@ -56,7 +56,10 @@ export async function formatLog(
   }
 
   return (
-    `<${colorContract("UnknownContract")} ${currentAddress}>.` +
+    `<${colorContract("UnknownContract")} ${formatParam(
+      currentAddress,
+      dependencies
+    )}>.` +
     (str ??
       `${colorEvent("UnknownEvent")}(${formatParam(
         log.data,
