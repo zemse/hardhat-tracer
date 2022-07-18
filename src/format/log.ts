@@ -1,9 +1,9 @@
 import { Interface, LogDescription } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
-import { colorContract, colorEvent } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
-import { compareBytecode, getFromNameTags } from "../../utils";
+import { colorContract, colorEvent } from "../colors";
+import { TracerDependenciesExtended } from "../types";
+import { compareBytecode, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";

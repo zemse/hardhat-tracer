@@ -1,6 +1,6 @@
-import { DEPTH_INDENTATION } from "../../constants";
-import { StructLog, TracerDependenciesExtended } from "../../types";
-import { isOnlyLogs } from "../../utils";
+import { DEPTH_INDENTATION } from "../constants";
+import { StructLog, TracerDependenciesExtended } from "../types";
+import { isOnlyLogs } from "../utils";
 import { printCall } from "../opcodes/call";
 import { printCallCode } from "../opcodes/callcode";
 import { printCreate } from "../opcodes/create";

@@ -1,4 +1,4 @@
-import { StructLog, TracerDependenciesExtended } from "../../types";
+import { StructLog, TracerDependenciesExtended } from "../types";
 
 /**
  * Formats gas cost for a given structLog

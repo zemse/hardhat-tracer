@@ -5,8 +5,8 @@ import {
   Result,
 } from "ethers/lib/utils";
 
-import { colorKey } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
+import { colorKey } from "../colors";
+import { TracerDependenciesExtended } from "../types";
 
 import { formatParam } from "./param";
 

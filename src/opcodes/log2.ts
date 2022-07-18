@@ -1,15 +1,15 @@
 import { hexlify } from "ethers/lib/utils";
 
-import { colorLabel } from "../../colors";
-import { DEPTH_INDENTATION } from "../../constants";
-import { StructLog, TracerDependenciesExtended } from "../../types";
+import { colorLabel } from "../colors";
+import { DEPTH_INDENTATION } from "../constants";
+import { StructLog, TracerDependenciesExtended } from "../types";
 import {
   isOnlyLogs,
   parseHex,
   parseMemory,
   parseNumber,
   shallowCopyStack,
-} from "../../utils";
+} from "../utils";
 import { formatLog } from "../format/log";
 import { formatGasCost } from "../format/gas-cost";
 

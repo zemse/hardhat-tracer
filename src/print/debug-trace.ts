@@ -1,4 +1,4 @@
-import { StructLog, TracerDependenciesExtended } from "../../types";
+import { StructLog, TracerDependenciesExtended } from "../types";
 import { printStructLog } from "./struct-log";
 import { printTopLevelTx } from "./top-level-tx";
 

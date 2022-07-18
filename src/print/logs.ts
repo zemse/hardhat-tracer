@@ -1,5 +1,5 @@
-import { DEPTH_INDENTATION } from "../../constants";
-import { TracerDependenciesExtended } from "../../types";
+import { DEPTH_INDENTATION } from "../constants";
+import { TracerDependenciesExtended } from "../types";
 import { formatLog } from "../format/log";
 import { printTopLevelTx } from "./top-level-tx";
 

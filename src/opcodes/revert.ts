@@ -1,9 +1,9 @@
 import { hexlify } from "ethers/lib/utils";
 
-import { colorLabel } from "../../colors";
-import { DEPTH_INDENTATION } from "../../constants";
-import { StructLog, TracerDependenciesExtended } from "../../types";
-import { parseMemory, parseNumber, shallowCopyStack } from "../../utils";
+import { colorLabel } from "../colors";
+import { DEPTH_INDENTATION } from "../constants";
+import { StructLog, TracerDependenciesExtended } from "../types";
+import { parseMemory, parseNumber, shallowCopyStack } from "../utils";
 import { formatError } from "../format/error";
 import { formatGasCost } from "../format/gas-cost";
 

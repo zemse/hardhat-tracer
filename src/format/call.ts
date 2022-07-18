@@ -2,9 +2,9 @@ import { BigNumber, BigNumberish, ethers } from "ethers";
 import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
-import { colorContract, colorFunction, colorKey } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
-import { compareBytecode, getFromNameTags } from "../../utils";
+import { colorContract, colorFunction, colorKey } from "../colors";
+import { TracerDependenciesExtended } from "../types";
+import { compareBytecode, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";

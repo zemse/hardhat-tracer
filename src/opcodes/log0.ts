@@ -1,34 +1,30 @@
 import { hexlify } from "ethers/lib/utils";
 
-import { colorLabel } from "../../colors";
-import { DEPTH_INDENTATION } from "../../constants";
-import { StructLog, TracerDependenciesExtended } from "../../types";
+import { colorLabel } from "../colors";
+import { DEPTH_INDENTATION } from "../constants";
+import { StructLog, TracerDependenciesExtended } from "../types";
 import {
   isOnlyLogs,
-  parseHex,
   parseMemory,
   parseNumber,
   shallowCopyStack,
-} from "../../utils";
+} from "../utils";
 import { formatLog } from "../format/log";
 import { formatGasCost } from "../format/gas-cost";
 
-export async function printLog3(
+export async function printLog0(
   structLog: StructLog,
   currentAddress: string | undefined,
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 5) {
-    console.log("Faulty LOG3");
+  if (stack.length <= 2) {
+    console.log("Faulty LOG0");
     return;
   }
 
   const dataOffset = parseNumber(stack.pop()!);
   const dataSize = parseNumber(stack.pop()!);
-  const topic0 = parseHex(stack.pop()!);
-  const topic1 = parseHex(stack.pop()!);
-  const topic2 = parseHex(stack.pop()!);
 
   const memory = parseMemory(structLog.memory);
   const data = hexlify(memory.slice(dataOffset, dataOffset + dataSize));
@@ -36,7 +32,7 @@ export async function printLog3(
   const str = await formatLog(
     {
       data,
-      topics: [topic0, topic1, topic2],
+      topics: [],
     },
     currentAddress,
     dependencies

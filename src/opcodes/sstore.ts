@@ -1,12 +1,7 @@
-import { colorLabel, colorSstore } from "../../colors";
-import { DEPTH_INDENTATION } from "../../constants";
-import { StructLog, TracerDependenciesExtended } from "../../types";
-import {
-  parseHex,
-  parseMemory,
-  parseNumber,
-  shallowCopyStack,
-} from "../../utils";
+import { colorLabel, colorSstore } from "../colors";
+import { DEPTH_INDENTATION } from "../constants";
+import { StructLog, TracerDependenciesExtended } from "../types";
+import { parseHex, parseMemory, parseNumber, shallowCopyStack } from "../utils";
 import { formatParam } from "../format/param";
 import { formatGasCost } from "../format/gas-cost";
 

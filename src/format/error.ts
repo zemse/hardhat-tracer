@@ -1,7 +1,7 @@
 import { Interface } from "ethers/lib/utils";
 
-import { colorError } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
+import { colorError } from "../colors";
+import { TracerDependenciesExtended } from "../types";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";

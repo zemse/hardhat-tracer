@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 
 import { task } from "hardhat/config";
-import { printDebugTrace, printDebugTraceOrLogs } from "../trace/print";
+import { printDebugTrace, printDebugTraceOrLogs } from "../print";
 
 import { addCommonTracerFlagsTo, applyCommonFlagsToTracerEnv } from "../utils";
 import { wrapHardhatProvider } from "../wrapper";

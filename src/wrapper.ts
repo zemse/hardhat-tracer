@@ -8,7 +8,7 @@ import {
   RequestArguments,
 } from "hardhat/types";
 
-import { printDebugTraceOrLogs } from "./trace/print";
+import { printDebugTraceOrLogs } from "./print";
 import {
   ProviderLike,
   TracerDependencies,

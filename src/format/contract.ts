@@ -1,9 +1,9 @@
 import { BigNumber } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
 
-import { colorContract, colorFunction, colorKey } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
-import { compareBytecode } from "../../utils";
+import { colorContract, colorFunction, colorKey } from "../colors";
+import { TracerDependenciesExtended } from "../types";
+import { compareBytecode } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";

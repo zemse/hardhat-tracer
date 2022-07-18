@@ -1,7 +1,7 @@
 import { getContractAddress } from "ethers/lib/utils";
-import { colorLabel } from "../../colors";
-import { TracerDependenciesExtended } from "../../types";
-import { parseUint } from "../../utils";
+import { colorLabel } from "../colors";
+import { TracerDependenciesExtended } from "../types";
+import { parseUint } from "../utils";
 import { formatCall } from "../format/call";
 import { formatContract } from "../format/contract";
 

@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { task } from "hardhat/config";
-import { formatCall } from "../trace/format/call";
-import { formatError } from "../trace/format/error";
+import { formatCall } from "../format/call";
+import { formatError } from "../format/error";
 import {
   addCommonTracerFlagsTo,
   applyCommonFlagsToTracerEnv,

@@ -1,5 +1,5 @@
-import { TracerDependenciesExtended } from "../../types";
-import { isOnlyLogs } from "../../utils";
+import { TracerDependenciesExtended } from "../types";
+import { isOnlyLogs } from "../utils";
 import { printDebugTrace } from "./debug-trace";
 import { printLogs } from "./logs";
 
