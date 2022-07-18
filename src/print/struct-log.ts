@@ -15,6 +15,13 @@ import { printRevert } from "../opcodes/revert";
 import { printSload } from "../opcodes/sload";
 import { printSstore } from "../opcodes/sstore";
 import { printStaticCall } from "../opcodes/staticcall";
+import { printAdd } from "../opcodes/add";
+import { printSub } from "../opcodes/sub";
+import { printMul } from "../opcodes/mul";
+import { printEq } from "../opcodes/eq";
+import { printLt } from "../opcodes/lt";
+import { printGt } from "../opcodes/gt";
+import { printSha3 } from "../opcodes/sha3";
 
 /**
  * Prints the given structLog to the console.
@@ -113,15 +120,46 @@ export async function printStructLog(
       await printRevert(structLog, dependencies);
       addressStack.pop();
       break;
+
     case "RETURN":
       addressStack.pop();
       break;
     case "STOP":
       addressStack.pop();
       break;
+
     default:
       if (dependencies.tracerEnv.opcodes.includes(structLog.op)) {
-        console.log(DEPTH_INDENTATION.repeat(structLog.depth) + structLog.op);
+        switch (structLog.op) {
+          case "ADD":
+            await printAdd(structLog, index, structLogs, dependencies);
+            break;
+          case "SUB":
+            await printSub(structLog, index, structLogs, dependencies);
+            break;
+          case "MUL":
+            await printMul(structLog, index, structLogs, dependencies);
+            break;
+          case "DIV":
+            await printMul(structLog, index, structLogs, dependencies);
+            break;
+          case "EQ":
+            await printEq(structLog, index, structLogs, dependencies);
+            break;
+          case "LT":
+            await printLt(structLog, index, structLogs, dependencies);
+            break;
+          case "GT":
+            await printGt(structLog, index, structLogs, dependencies);
+            break;
+          case "SHA3":
+            await printSha3(structLog, index, structLogs, dependencies);
+            break;
+          default:
+            console.log(
+              DEPTH_INDENTATION.repeat(structLog.depth) + structLog.op
+            );
+        }
       }
       break;
   }
