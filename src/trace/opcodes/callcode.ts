@@ -12,7 +12,7 @@ import {
   shallowCopyStack,
 } from "../../utils";
 import { formatCall } from "../format/call";
-import { printGasCost } from "../print-gas-cost";
+import { formatGasCost } from "../format/gas-cost";
 
 export async function printCallCode(
   structLog: StructLog,
@@ -53,7 +53,7 @@ export async function printCallCode(
       colorLabel("CALLCODE") +
       " " +
       str +
-      printGasCost(
+      formatGasCost(
         structLog,
         structLog.gas - structLogNextNext.gas,
         dependencies

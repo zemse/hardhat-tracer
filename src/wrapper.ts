@@ -8,14 +8,14 @@ import {
   RequestArguments,
 } from "hardhat/types";
 
-import { printTrace } from "./trace/print-trace";
+import { printDebugTraceOrLogs } from "./trace/print";
 import {
   ProviderLike,
   TracerDependencies,
   TracerEnv,
   TracerEnvUser,
 } from "./types";
-import { getTracerEnvFromUserInput } from "./utils";
+import { getTracerEnvFromUserInput, isOnlyLogs } from "./utils";
 
 /**
  * Wrapped provider which extends requests
@@ -65,7 +65,11 @@ class TracerWrapper extends ProviderWrapper {
           ...this.dependencies,
           nameTags: { ...this.dependencies.tracerEnv.nameTags },
         };
-        await printTrace(hash, dependenciesExtended);
+        try {
+          await printDebugTraceOrLogs(hash, dependenciesExtended);
+        } catch (error) {
+          console.log("error in request wrapper:", error);
+        }
       }
     }
     if (error) {

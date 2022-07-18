@@ -5,7 +5,7 @@ import { DEPTH_INDENTATION } from "../../constants";
 import { StructLog, TracerDependenciesExtended } from "../../types";
 import { parseMemory, parseNumber, shallowCopyStack } from "../../utils";
 import { formatError } from "../format/error";
-import { printGasCost } from "../print-gas-cost";
+import { formatGasCost } from "../format/gas-cost";
 
 export async function printRevert(
   structLog: StructLog,
@@ -28,6 +28,6 @@ export async function printRevert(
       colorLabel("REVERT") +
       " " +
       str +
-      printGasCost(structLog, null, dependencies)
+      formatGasCost(structLog, null, dependencies)
   );
 }

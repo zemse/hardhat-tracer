@@ -11,7 +11,7 @@ import {
   shallowCopyStack,
 } from "../../utils";
 import { formatLog } from "../format/log";
-import { printGasCost } from "../print-gas-cost";
+import { formatGasCost } from "../format/gas-cost";
 
 export async function printLog2(
   structLog: StructLog,
@@ -47,6 +47,6 @@ export async function printLog2(
       colorLabel("EVENT") +
       " " +
       str +
-      printGasCost(structLog, null, dependencies)
+      formatGasCost(structLog, null, dependencies)
   );
 }

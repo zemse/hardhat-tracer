@@ -8,7 +8,7 @@ import {
   shallowCopyStack,
 } from "../../utils";
 import { formatParam } from "../format/param";
-import { printGasCost } from "../print-gas-cost";
+import { formatGasCost } from "../format/gas-cost";
 
 export async function printSload(
   structLog: StructLog,
@@ -31,6 +31,6 @@ export async function printSload(
       colorLabel("SLOAD") +
       " " +
       str +
-      printGasCost(structLog, null, dependencies)
+      formatGasCost(structLog, null, dependencies)
   );
 }

@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
-import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
+
 import { task } from "hardhat/config";
+import { printDebugTrace, printDebugTraceOrLogs } from "../trace/print";
 
 import { addCommonTracerFlagsTo, applyCommonFlagsToTracerEnv } from "../utils";
 import { wrapHardhatProvider } from "../wrapper";
@@ -15,6 +16,7 @@ addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
       args.hash,
     ]);
 
+    // if tx is not on hardhat local, then use rpc
     if (tx == null) {
       if (!args.rpc) {
         const mainnetForkUrl = (hre.network.config as any).forking?.url;
@@ -32,11 +34,27 @@ addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
         throw new Error(
           "Transaction not found on rpc. Are you sure the transaction is confirmed on this network?"
         );
-      } else if (!txFromRpc.blockNumber) {
+      }
+
+      if (!txFromRpc.blockNumber) {
         throw new Error(
           "Transaction is not mined yet, please wait for it to be mined"
         );
-      } else {
+      }
+
+      try {
+        console.warn("Trying with rpc");
+        await printDebugTrace(args.hash, {
+          provider,
+          tracerEnv: hre.tracer,
+          artifacts: hre.artifacts,
+          nameTags: hre.tracer.nameTags,
+        });
+      } catch (error) {
+        console.warn(
+          "Using debug_tt on rpc failed, activating mainnet fork at block",
+          txFromRpc.blockNumber
+        );
         await hre.network.provider.send("hardhat_reset", [
           {
             forking: {
@@ -45,20 +63,22 @@ addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
             },
           },
         ]);
-        console.log("Switched mainnet fork to block", txFromRpc.blockNumber);
       }
     }
 
-    wrapHardhatProvider(hre);
-    hre.tracer.enabled = true;
+    // using hardhat for getting the trace. if tx was previously not found on hardhat local,
+    // but now it will be available, due to mainnet fork activation
+    console.warn("Trying with hardhat mainnet fork");
+    const tracePromise = printDebugTraceOrLogs(args.hash, {
+      provider: hre.network.provider,
+      tracerEnv: hre.tracer,
+      artifacts: hre.artifacts,
+      nameTags: hre.tracer.nameTags,
+    });
 
     const delayPromise = new Promise((resolve) => {
       setTimeout(() => resolve("delay"), 20000);
     });
-    const tracePromise = hre.network.provider.send(
-      "eth_getTransactionReceipt",
-      [args.hash]
-    );
 
     const resolved = await Promise.race([delayPromise, tracePromise]);
     if (resolved === "delay") {
@@ -68,8 +88,7 @@ addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
     }
 
     const traceResult = await tracePromise;
-
-    if (traceResult == null) {
+    if (!traceResult) {
       throw new Error("Transaction could not be traced");
     }
   });

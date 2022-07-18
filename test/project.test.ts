@@ -13,6 +13,7 @@ describe("Integration tests examples", function () {
     });
 
     it("mainnet", async function () {
+      this.hre.run("compile");
       await this.hre.run("trace", {
         hash:
           "0xc7f743c1bcd7fddfd6b644f6e5a3a97bdf5a02dfdff180a79f79f7c7481a5b0f",
