@@ -2,6 +2,7 @@ import { Interface } from "ethers/lib/utils";
 
 import { colorError } from "../colors";
 import { TracerDependenciesExtended } from "../types";
+import { formatObject } from "./object";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -11,7 +12,7 @@ export async function formatError(
   dependencies: TracerDependenciesExtended
 ) {
   const commonErrors = [
-    "function Error(string reason)",
+    "function Error(string situation)",
     "function Panic(uint256 code)",
   ];
   try {
@@ -20,12 +21,51 @@ export async function formatError(
       data: revertData,
     });
 
+    if (parsed.name === "Panic") {
+      const panicCode = parsed.args.code.toNumber();
+      let situation = "";
+      switch (panicCode) {
+        case 0x01:
+          situation = "assert false";
+          break;
+        case 0x11:
+          situation = "arithmetic overflow or underflow";
+          break;
+        case 0x12:
+          situation = "divide or modulo by zero";
+          break;
+        case 0x21:
+          situation = "value invalid for enum";
+          break;
+        case 0x22:
+          situation = "access incorrectly encoded storage byte array";
+          break;
+        case 0x31:
+          situation = "pop on empty array";
+          break;
+        case 0x32:
+          situation = "array index out of bounds";
+          break;
+        case 0x41:
+          situation = "allocating too much memory";
+          break;
+        case 0x51:
+          situation = "zero internal function";
+          break;
+      }
+      return `${colorError(parsed.name)}(${formatObject({
+        code: panicCode,
+        situation,
+      })})`;
+    }
+
     const formatted = formatResult(
       parsed.args,
       parsed.functionFragment,
       { decimals: -1, isInput: true, shorten: false },
       dependencies
     );
+
     return `${colorError(parsed.name)}(${formatted})`;
   } catch {}
 
