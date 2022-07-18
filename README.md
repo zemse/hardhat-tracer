@@ -32,6 +32,7 @@ Just add the `--trace` or `--fulltrace` after your test command.
 ```shell
 npx hardhat test --trace      # shows logs + calls
 npx hardhat test --fulltrace  # shows logs + calls + sloads + sstores
+npx hardhat test --trace --opcodes ADD,SUB # shows any opcode specified
 ```
 
 <img width="1092" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/160298216-f56b8244-ceb3-4a5a-86a8-0afb29734354.png">

@@ -2,13 +2,9 @@ import { ethers } from "ethers";
 import { task } from "hardhat/config";
 import { formatCall } from "../format/call";
 import { formatError } from "../format/error";
-import {
-  addCommonTracerFlagsTo,
-  applyCommonFlagsToTracerEnv,
-  removeColor,
-} from "../utils";
+import { addCliParams, removeColor } from "../utils";
 
-addCommonTracerFlagsTo(task("decode", "Decodes calldata or error data"))
+addCliParams(task("decode", "Decodes calldata or error data"))
   .addParam("data", "Calldata or error data to decode")
   .setAction(async (args, hre) => {
     const td = {

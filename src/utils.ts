@@ -30,10 +30,13 @@ export function getTracerEnvFromUserInput(
   };
 }
 
-export function addCommonTracerFlagsTo(task: ConfigurableTaskDefinition) {
+export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
     task
-      // features
+      // params
+      .addOptionalParam("opcodes", "specify more opcodes to print")
+
+      // feature flags
       .addFlag("logs", "print logs emitted during transactions")
       .addFlag("calls", "print calls during transactions")
       .addFlag("sloads", "print SLOADs during calls")
@@ -43,7 +46,8 @@ export function addCommonTracerFlagsTo(task: ConfigurableTaskDefinition) {
         "disabletracer",
         "do not enable tracer at the start (for inline enabling tracer)"
       )
-      // feature group
+
+      // feature group flags
       .addFlag("trace", "trace logs and calls in transactions")
       .addFlag(
         "fulltrace",
@@ -55,7 +59,7 @@ export function addCommonTracerFlagsTo(task: ConfigurableTaskDefinition) {
   );
 }
 
-export function applyCommonFlagsToTracerEnv(
+export function applyCliArgsToTracer(
   args: any,
   hre: HardhatRuntimeEnvironment
 ) {
@@ -80,6 +84,9 @@ export function applyCommonFlagsToTracerEnv(
   }
   if (args.sstores) {
     hre.tracer.sstores = true;
+  }
+  if (args.opcodes) {
+    hre.tracer.opcodes = [...args.opcodes.split(",")];
   }
 
   // enabling config by mode of operation

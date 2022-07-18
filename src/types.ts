@@ -22,7 +22,7 @@ export interface TracerEnv {
   sstores: boolean;
   sloads: boolean;
   gasCost: boolean;
-  opcodes: string[];
+  opcodes: string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
   _internal: {
     printNameTagTip:

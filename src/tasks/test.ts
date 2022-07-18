@@ -1,12 +1,12 @@
 import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 import { task } from "hardhat/config";
 
-import { addCommonTracerFlagsTo, applyCommonFlagsToTracerEnv } from "../utils";
+import { addCliParams, applyCliArgsToTracer } from "../utils";
 import { wrapHardhatProvider } from "../wrapper";
 
-addCommonTracerFlagsTo(task(TASK_TEST, "Runs mocha tests")).setAction(
+addCliParams(task(TASK_TEST, "Runs mocha tests")).setAction(
   async (args, hre, runSuper) => {
-    applyCommonFlagsToTracerEnv(args, hre);
+    applyCliArgsToTracer(args, hre);
 
     wrapHardhatProvider(hre);
 

@@ -3,14 +3,13 @@ import { ethers } from "ethers";
 import { task } from "hardhat/config";
 import { printDebugTrace, printDebugTraceOrLogs } from "../print";
 
-import { addCommonTracerFlagsTo, applyCommonFlagsToTracerEnv } from "../utils";
-import { wrapHardhatProvider } from "../wrapper";
+import { addCliParams, applyCliArgsToTracer } from "../utils";
 
-addCommonTracerFlagsTo(task("trace", "Traces a transaction hash"))
+addCliParams(task("trace", "Traces a transaction hash"))
   .addParam("hash", "transaction hash to view trace of")
   .addOptionalParam("rpc", "archive node")
   .setAction(async (args, hre, runSuper) => {
-    applyCommonFlagsToTracerEnv(args, hre);
+    applyCliArgsToTracer(args, hre);
 
     const tx = await hre.network.provider.send("eth_getTransactionByHash", [
       args.hash,
