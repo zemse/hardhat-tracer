@@ -21,7 +21,7 @@ export async function printCreate2(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 4) {
+  if (stack.length < 4) {
     console.log("Faulty CREATE2");
     return;
   }

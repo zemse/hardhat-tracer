@@ -21,7 +21,7 @@ export async function printStaticCall(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 6) {
+  if (stack.length < 6) {
     console.log("Faulty STATICCALL");
     return;
   }

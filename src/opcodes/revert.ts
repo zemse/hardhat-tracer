@@ -12,7 +12,7 @@ export async function printRevert(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 2) {
+  if (stack.length < 2) {
     console.log("Faulty REVERT");
     return;
   }

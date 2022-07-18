@@ -12,7 +12,7 @@ export async function printSload(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 1) {
+  if (stack.length < 1) {
     console.log("Faulty SLOAD");
     return;
   }

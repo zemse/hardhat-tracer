@@ -21,7 +21,7 @@ export async function printCall(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 7) {
+  if (stack.length < 7) {
     console.log("Faulty CALL");
     return;
   }

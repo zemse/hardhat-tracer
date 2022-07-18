@@ -19,7 +19,7 @@ export async function printLog4(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 6) {
+  if (stack.length < 6) {
     console.log("Faulty LOG4");
     return;
   }

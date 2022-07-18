@@ -21,7 +21,7 @@ export async function printCallCode(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 7) {
+  if (stack.length < 7) {
     console.log("Faulty CALLCODE");
     return;
   }
