@@ -12,7 +12,7 @@ export async function formatError(
   dependencies: TracerDependenciesExtended
 ) {
   const commonErrors = [
-    "function Error(string situation)",
+    "function Error(string reason)",
     "function Panic(uint256 code)",
   ];
   try {
