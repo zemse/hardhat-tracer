@@ -12,6 +12,14 @@ describe("Integration tests examples", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
+    it.only("test", async function () {
+      this.hre.run("compile");
+      await this.hre.run("test", {
+        trace: true,
+        opcodes: "MLOAD,MSTORE",
+      });
+    });
+
     it("mainnet", async function () {
       this.hre.run("compile");
       await this.hre.run("trace", {

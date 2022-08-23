@@ -7,6 +7,7 @@ contract Hello {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     constructor() {
-        emit WhatsUp("Hello, world!");
+        string memory hello = "Hello, world!";
+        emit WhatsUp(hello);
     }
 }
