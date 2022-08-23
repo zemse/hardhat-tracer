@@ -22,6 +22,8 @@ import { printEq } from "../opcodes/eq";
 import { printLt } from "../opcodes/lt";
 import { printGt } from "../opcodes/gt";
 import { printSha3 } from "../opcodes/sha3";
+import { printMload } from "../opcodes/mload";
+import { printMstore } from "../opcodes/mstore";
 
 /**
  * Prints the given structLog to the console.
@@ -154,6 +156,12 @@ export async function printStructLog(
             break;
           case "SHA3":
             await printSha3(structLog, index, structLogs, dependencies);
+            break;
+          case "MLOAD":
+            await printMload(structLog, index, structLogs, dependencies);
+            break;
+          case "MSTORE":
+            await printMstore(structLog, dependencies);
             break;
           default:
             console.log(
