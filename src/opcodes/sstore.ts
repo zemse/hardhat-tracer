@@ -10,7 +10,7 @@ export async function printSstore(
   dependencies: TracerDependenciesExtended
 ) {
   const stack = shallowCopyStack(structLog.stack);
-  if (stack.length <= 2) {
+  if (stack.length < 2) {
     console.log("Faulty SSTORE");
     return;
   }
