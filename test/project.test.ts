@@ -4,16 +4,33 @@ import path from "path";
 
 import { useEnvironment } from "./helpers";
 
-describe("Integration tests examples", function () {
-  describe("Hardhat Runtime Environment extension", function () {
+describe("Hardhat Runtime Environment extension", function () {
+  describe.only("Test task", function () {
     useEnvironment("hardhat-project");
+
+    // before(async function () {
+    //   await this.hre.run("compile");
+    // });
+
+    it("works", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("test");
+    });
+  });
+
+  describe("Trace task", function () {
+    useEnvironment("hardhat-project");
+
+    before(async function () {
+      // await this.hre.run("compile");
+    });
 
     it("Should be enabled when specified in config", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
     it("mainnet", async function () {
-      this.hre.run("compile");
+      await this.hre.run("compile");
       await this.hre.run("trace", {
         hash:
           "0xc7f743c1bcd7fddfd6b644f6e5a3a97bdf5a02dfdff180a79f79f7c7481a5b0f",
@@ -23,6 +40,7 @@ describe("Integration tests examples", function () {
         ),
       });
     });
+
     it("arbitrum", async function () {
       await this.hre.run("trace", {
         hash:

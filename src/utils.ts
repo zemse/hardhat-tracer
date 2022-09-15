@@ -24,6 +24,7 @@ export function getTracerEnvFromUserInput(
     gasCost: userInput?.gasCost ?? false,
     opcodes: userInput?.opcodes ?? [],
     nameTags: userInput?.nameTags ?? {},
+    // @ts-ignore
     _internal: {
       printNameTagTip: undefined,
     },

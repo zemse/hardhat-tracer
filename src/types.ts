@@ -1,4 +1,6 @@
+import VM from "@ethereumjs/vm";
 import { Artifacts, EthereumProvider } from "hardhat/types";
+import { TraceRecorder } from "./trace/recorder";
 
 export interface NameTags {
   [address: string]: string;
@@ -17,6 +19,7 @@ export interface TracerEnvUser {
 
 export interface TracerEnv {
   enabled: boolean;
+  // TODO remove these logs calls and put them into opcodes mapping
   logs: boolean;
   calls: boolean;
   sstores: boolean;
@@ -24,12 +27,14 @@ export interface TracerEnv {
   gasCost: boolean;
   opcodes: string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
+  // todo remove internal
   _internal: {
     printNameTagTip:
       | undefined // meaning "no need to print"
       | "print it"
       | "already printed";
   };
+  recorder?: TraceRecorder;
 }
 
 export interface TracerDependencies {

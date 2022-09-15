@@ -32,6 +32,8 @@ class TracerWrapper extends ProviderWrapper {
   public async request(args: RequestArguments): Promise<unknown> {
     let result;
     let error: any;
+    console.log(args.method);
+
     try {
       result = await this.dependencies.provider.send(
         args.method,
@@ -41,37 +43,19 @@ class TracerWrapper extends ProviderWrapper {
       error = _error;
     }
 
-    if (
-      this.dependencies.tracerEnv.enabled &&
-      (result != null || error != null) &&
-      (args.method === "eth_sendTransaction" ||
-        args.method === "eth_sendRawTransaction" ||
-        args.method === "eth_getTransactionReceipt")
-    ) {
-      let hash = result ?? error?.transactionHash;
-      let receipt;
-      if (typeof result === "object" && result !== null) {
-        hash = result.transactionHash ?? result.hash;
-        receipt = result;
-      } else {
-        receipt = await this.dependencies.provider.send(
-          "eth_getTransactionReceipt",
-          [hash]
-        );
-      }
-      if (!this.txPrinted[hash] && receipt !== null) {
-        this.txPrinted[hash] = true;
-        const dependenciesExtended = {
-          ...this.dependencies,
-          nameTags: { ...this.dependencies.tracerEnv.nameTags },
-        };
-        try {
-          await printDebugTraceOrLogs(hash, dependenciesExtended);
-        } catch (error) {
-          console.log("error in request wrapper:", error);
-        }
-      }
+    // TODO take decision whether to print or not
+    // if estimateGas fails then print it
+    // sendTx should be printing it regardless of success or failure
+    const isEstimateGasFailed = args.method === "eth_estimateGas" && !!error;
+    const isSendTransaction = args.method === "eth_sendTransaction";
+    const isEthCall = args.method === "eth_call";
+
+    if (isEstimateGasFailed || isSendTransaction || isEthCall) {
+      this.dependencies.tracerEnv.recorder?.previousTraces?.[
+        this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
+      ]?.print?.();
     }
+
     if (error) {
       throw error;
     }
