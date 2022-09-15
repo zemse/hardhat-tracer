@@ -11,6 +11,7 @@ import { STATICCALL } from "./opcodes/staticcall";
 import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
+import { hexPrefix } from "../utils";
 
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
@@ -53,8 +54,8 @@ export class TraceRecorder {
       item = {
         opcode: "STATICCALL",
         params: {
-          to: message.to.toString(),
-          inputData: message.data.toString("hex"),
+          to: hexPrefix(message.to.toString()),
+          inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: message.gasLimit.toNumber(),
         },
         children: [],
@@ -63,8 +64,8 @@ export class TraceRecorder {
       item = {
         opcode: "DELEGATECALL",
         params: {
-          to: message.to.toString(),
-          inputData: message.data.toString("hex"),
+          to: hexPrefix(message.to.toString()),
+          inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: message.gasLimit.toNumber(),
         },
         children: [],
@@ -73,10 +74,10 @@ export class TraceRecorder {
       item = {
         opcode: "CALL",
         params: {
-          to: message.to.toString(),
-          inputData: message.data.toString("hex"),
+          to: hexPrefix(message.to.toString()),
+          inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: message.gasLimit.toNumber(),
-          value: message.value.toString(),
+          value: hexPrefix(message.value.toString()),
         },
         children: [],
       } as Item<CALL>;
@@ -84,9 +85,9 @@ export class TraceRecorder {
       item = {
         opcode: "CREATE",
         params: {
-          initCode: message.data.toString("hex"),
+          initCode: hexPrefix(message.data.toString("hex")),
           gasLimit: message.gasLimit.toNumber(),
-          value: message.value.toString(),
+          value: hexPrefix(message.value.toString()),
         },
         children: [],
       } as Item<CREATE>;

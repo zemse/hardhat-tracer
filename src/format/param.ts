@@ -2,12 +2,12 @@ import { BigNumber } from "ethers";
 import { getAddress } from "ethers/lib/utils";
 
 import { colorIndexed, colorNameTag } from "../colors";
-import { TracerDependenciesExtended } from "../types";
+import { TracerDependencies } from "../types";
 import { getFromNameTags } from "../utils";
 
 export function formatParam(
   value: any,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ): string {
   if (value?._isBigNumber) {
     return BigNumber.from(value).toString();

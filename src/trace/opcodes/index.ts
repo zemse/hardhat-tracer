@@ -3,6 +3,9 @@ import { Item } from "../transaction";
 
 import sstore from "./sstore";
 import create from "./create";
+import call from "./call";
+import staticcall from "./staticcall";
+import { TracerDependencies } from "../../types";
 
 export function parse(
   opcode: string,
@@ -18,14 +21,19 @@ export function parse(
   }
 }
 
-export function format(item: Item<any>): string {
+export async function format(
+  item: Item<any>,
+  dependencies: TracerDependencies
+): Promise<string> {
   switch (item.opcode) {
-    // case "CALL":
-    //   this.trace.insertItem(call.parseStep(step));
-    case "CREATE":
-      return create.format(item);
+    case "CALL":
+      return await call.format(item, dependencies);
+    case "STATICCALL":
+      return await staticcall.format(item, dependencies);
+    // case "CREATE":
+    //   return await create.format(item, dependencies);
     case "SSTORE":
-      return sstore.format(item);
+      return await sstore.format(item);
     default:
       return item.opcode + " not implemented";
   }

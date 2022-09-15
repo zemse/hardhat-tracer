@@ -1,3 +1,5 @@
+import { formatContract } from "../../format/contract";
+import { TracerDependencies } from "../../types";
 import { Item } from "../transaction";
 
 export interface CREATE {
@@ -9,8 +11,20 @@ export interface CREATE {
   gasUsed?: number;
 }
 
-function format(item: Item<CREATE>): string {
-  return `CREATE inputCodeLength=${item.params.initCode.length}`;
+async function format(
+  item: Item<CREATE>,
+  dependencies: TracerDependencies
+): Promise<string> {
+  return (
+    "CREATE " +
+    (await formatContract(
+      item.params.initCode,
+      item.params.value,
+      null,
+      item.params.deployedAddress ?? "no address",
+      dependencies
+    ))
+  );
 }
 
 export default { format };

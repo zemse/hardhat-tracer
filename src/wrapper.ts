@@ -51,9 +51,9 @@ class TracerWrapper extends ProviderWrapper {
     const isEthCall = args.method === "eth_call";
 
     if (isEstimateGasFailed || isSendTransaction || isEthCall) {
-      this.dependencies.tracerEnv.recorder?.previousTraces?.[
+      await this.dependencies.tracerEnv.recorder?.previousTraces?.[
         this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
-      ]?.print?.();
+      ]?.print?.(this.dependencies);
     }
 
     if (error) {

@@ -6,7 +6,7 @@ import {
 } from "ethers/lib/utils";
 
 import { colorKey } from "../colors";
-import { TracerDependenciesExtended } from "../types";
+import { TracerDependencies } from "../types";
 
 import { formatParam } from "./param";
 
@@ -20,7 +20,7 @@ export function formatResult(
   result: Result,
   fragment: Fragment,
   { decimals, isInput, shorten }: FormatOptions,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ) {
   decimals = decimals ?? -1;
   isInput = isInput ?? true;

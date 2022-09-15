@@ -3,7 +3,7 @@ import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
-import { TracerDependenciesExtended } from "../types";
+import { TracerDependencies } from "../types";
 import { compareBytecode, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
@@ -15,7 +15,7 @@ export async function formatCall(
   ret: string,
   value: BigNumberish,
   gas: BigNumberish,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ) {
   const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();

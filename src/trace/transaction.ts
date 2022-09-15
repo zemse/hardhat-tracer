@@ -1,5 +1,6 @@
 // export type AbstractParams = { [key: string]: any };
 
+import { TracerDependencies } from "../types";
 import { format } from "./opcodes";
 
 export interface Item<Params> {
@@ -89,18 +90,25 @@ export class TraceTransaction {
     this.parent = this.parent.parent as CallItem;
   }
 
-  print() {
+  // TODO make dependencies optional
+  async print(dependencies: TracerDependencies) {
     if (!this.top) throw new Error("this.top is undefined");
-    print(0, this.top);
+    await print(dependencies, 0, this.top);
   }
 }
 
-function print(depth = 0, item: Item<any>) {
+async function print(
+  dependencies: TracerDependencies,
+  depth = 0,
+  item: Item<any>
+) {
   const indentation = "   ".repeat(depth);
 
-  console.log(indentation + format(item));
+  console.log(indentation + (await format(item, dependencies)));
 
-  if (item.children) {
-    item.children.forEach(print.bind(null, depth + 1));
+  if (!!item.children) {
+    for (const childItem of item.children) {
+      await print(dependencies, depth + 1, childItem);
+    }
   }
 }

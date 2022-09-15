@@ -1,3 +1,5 @@
+import { formatCall } from "../../format/call";
+import { TracerDependencies } from "../../types";
 import { Item } from "../transaction";
 
 export interface STATICCALL {
@@ -8,8 +10,22 @@ export interface STATICCALL {
   gasUsed?: number;
 }
 
-function format(item: Item<STATICCALL>): string {
-  return `STATICCALL ${item.params.to}(calldata=${item.params.inputData},returndata=${item.params.returnData})`;
+async function format(
+  item: Item<STATICCALL>,
+  dependencies: TracerDependencies
+): Promise<string> {
+  return (
+    "CALL " +
+    (await formatCall(
+      item.params.to,
+      item.params.inputData,
+      // TODO refactor these input types or order
+      item.params.returnData ?? "0x",
+      0,
+      item.params.gasLimit,
+      dependencies
+    ))
+  );
 }
 
 export default { format };

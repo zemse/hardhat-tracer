@@ -7,6 +7,7 @@ import {
 
 import {
   StructLog,
+  TracerDependencies,
   TracerDependenciesExtended,
   TracerEnv,
   TracerEnvUser,
@@ -113,13 +114,13 @@ export function isOnlyLogs(env: TracerEnv): boolean {
 
 export function getFromNameTags(
   address: string,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ): string | undefined {
   return (
-    dependencies.nameTags[address] ||
-    dependencies.nameTags[address.toLowerCase()] ||
-    dependencies.nameTags[address.toUpperCase()] ||
-    dependencies.nameTags[ethers.utils.getAddress(address)]
+    dependencies.tracerEnv.nameTags[address] ||
+    dependencies.tracerEnv.nameTags[address.toLowerCase()] ||
+    dependencies.tracerEnv.nameTags[address.toUpperCase()] ||
+    dependencies.tracerEnv.nameTags[ethers.utils.getAddress(address)]
   );
 }
 
@@ -202,4 +203,13 @@ export function removeColor(str: string) {
     /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
     ""
   );
+}
+
+/**
+ * Ensures 0x prefix to a hex string which may or may not
+ * @param str A hex string that may or may not have 0x prepended
+ */
+export function hexPrefix(str: string): string {
+  if (!str.startsWith("0x")) str = "0x" + str;
+  return str;
 }
