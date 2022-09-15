@@ -15,7 +15,7 @@ async function format(
   dependencies: TracerDependencies
 ): Promise<string> {
   return (
-    "CALL " +
+    "STATICCALL " +
     (await formatCall(
       item.params.to,
       item.params.inputData,
