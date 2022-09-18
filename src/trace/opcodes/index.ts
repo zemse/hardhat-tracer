@@ -3,6 +3,7 @@ import { Item } from "../transaction";
 
 import sstore from "./sstore";
 import create from "./create";
+import create2 from "./create2";
 import call from "./call";
 import staticcall from "./staticcall";
 import revert from "./revert";
@@ -33,8 +34,10 @@ export async function format(
       return await call.format(item, dependencies);
     case "STATICCALL":
       return await staticcall.format(item, dependencies);
-    // case "CREATE":
-    //   return await create.format(item, dependencies);
+    case "CREATE":
+      return await create.format(item, dependencies);
+    case "CREATE2":
+      return await create2.format(item, dependencies);
     case "SSTORE":
       return await sstore.format(item);
     case "REVERT":

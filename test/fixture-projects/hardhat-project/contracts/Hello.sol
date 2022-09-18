@@ -17,6 +17,8 @@ contract Hello {
     function hit() external {
         Child c = new Child();
         emit WhatsUp(c.hi());
+        Child c2 = new Child{salt: bytes32("hello")}();
+        emit WhatsUp(c2.hi());
         this.dm();
         heyy = 23;
         console.log(

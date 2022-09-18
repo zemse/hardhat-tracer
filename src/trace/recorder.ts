@@ -12,6 +12,7 @@ import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
 import { hexPrefix } from "../utils";
+import { CREATE2 } from "./opcodes/create2";
 
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
@@ -81,7 +82,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CALL>;
-    } else {
+    } else if (message.to == undefined && message.salt == undefined) {
       item = {
         opcode: "CREATE",
         params: {
@@ -91,6 +92,24 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CREATE>;
+    } else if (message.to == undefined && message.salt != undefined) {
+      item = {
+        opcode: "CREATE2",
+        params: {
+          initCode: hexPrefix(message.data.toString("hex")),
+          gasLimit: message.gasLimit.toNumber(),
+          value: hexPrefix(message.value.toString()),
+          salt: hexPrefix(message.salt.toString("hex")),
+        },
+        children: [],
+      } as Item<CREATE2>;
+    } else {
+      item = {
+        opcode: "UNKNOWN",
+        params: {},
+        children: [],
+      };
+      console.error("handleBeforeMessage: message type not handled", message);
     }
 
     this.trace.insertItem(item, { increaseDepth: true });
@@ -100,7 +119,33 @@ export class TraceRecorder {
   handleNewContract(contract: NewContractEvent, next: () => void) {
     // console.log("handleNewContract");
 
-    // TODO use this to get the contract address and create code
+    if (!this.trace || !this.trace.parent) {
+      console.error("handleNewContract: trace.parent not present");
+    } else {
+      if (["CREATE", "CREATE2"].includes(this.trace.parent.opcode ?? "")) {
+        this.trace.parent.params;
+      }
+
+      switch (this.trace.parent.opcode) {
+        case "CREATE":
+          const createItem = (this.trace.parent as unknown) as Item<CREATE>;
+          createItem.params.deployedAddress = hexPrefix(
+            contract.address.toString()
+          );
+          break;
+        case "CREATE2":
+          const create2Item = (this.trace.parent as unknown) as Item<CREATE2>;
+          create2Item.params.deployedAddress = hexPrefix(
+            contract.address.toString()
+          );
+          break;
+        default:
+          console.log(this.trace.parent);
+
+          console.error("handleNewContract: opcode not handled");
+          break;
+      }
+    }
 
     next();
   }
