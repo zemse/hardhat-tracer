@@ -5,6 +5,7 @@ import sstore from "./sstore";
 import create from "./create";
 import call from "./call";
 import staticcall from "./staticcall";
+import revert from "./revert";
 import { TracerDependencies } from "../../types";
 
 export function parse(
@@ -16,6 +17,8 @@ export function parse(
     //   this.trace.insertItem(call.parseStep(step));
     case "SSTORE":
       return sstore.parse(step);
+    case "REVERT":
+      return revert.parse(step);
     default:
       return;
   }
@@ -34,6 +37,8 @@ export async function format(
     //   return await create.format(item, dependencies);
     case "SSTORE":
       return await sstore.format(item);
+    case "REVERT":
+      return await revert.format(item, dependencies);
     default:
       return item.opcode + " not implemented";
   }

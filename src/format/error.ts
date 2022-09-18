@@ -1,7 +1,7 @@
 import { Interface } from "ethers/lib/utils";
 
 import { colorError } from "../colors";
-import { TracerDependenciesExtended } from "../types";
+import { TracerDependencies } from "../types";
 import { formatObject } from "./object";
 
 import { formatParam } from "./param";
@@ -9,7 +9,7 @@ import { formatResult } from "./result";
 
 export async function formatError(
   revertData: string,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ) {
   const commonErrors = [
     "function Error(string reason)",
