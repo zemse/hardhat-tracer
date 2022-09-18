@@ -6,6 +6,7 @@ export const colorContract = chalk.green;
 export const colorFunction = chalk.cyan;
 export const colorEvent = chalk.yellow;
 export const colorError = chalk.red;
+export const colorConsole = chalk.blue;
 export const colorKey = chalk.magenta;
 export const colorSload = chalk.blueBright;
 export const colorSstore = chalk.redBright;
