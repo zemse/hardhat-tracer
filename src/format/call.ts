@@ -8,6 +8,7 @@ import { compareBytecode, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { SEPARATOR } from "./separator";
 
 export async function formatCall(
   to: string,
@@ -19,6 +20,8 @@ export async function formatCall(
 ) {
   const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+
+  // TODO handle if `to` is console.log address
 
   let contractName: string | undefined;
   let result: Result | undefined;
@@ -74,10 +77,10 @@ export async function formatCall(
 
     const extra = [];
     if ((value = BigNumber.from(value)).gt(0)) {
-      extra.push(`value: ${formatParam(value, dependencies)}`);
+      extra.push(`value${SEPARATOR}${formatParam(value, dependencies)}`);
     }
     if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
-      extra.push(`gas: ${formatParam(gas, dependencies)}`);
+      extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
     }
     const nameTag = getFromNameTags(to, dependencies);
     return `${
@@ -98,10 +101,14 @@ export async function formatCall(
   if (toBytecode.length > 2 && contractName) {
     return `${colorContract(contractName)}.<${colorFunction(
       "UnknownFunction"
-    )}>(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+    )}>(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
+      "ret" + SEPARATOR
+    )}${ret})`;
   } else {
     return `${colorFunction("UnknownContractAndFunction")}(${colorKey(
-      "to="
-    )}${to}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+      "to" + SEPARATOR
+    )}${to}, ${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
+      "ret" + SEPARATOR
+    )}${ret || "0x"})`;
   }
 }

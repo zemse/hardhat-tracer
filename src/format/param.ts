@@ -4,6 +4,7 @@ import { getAddress } from "ethers/lib/utils";
 import { colorIndexed, colorNameTag } from "../colors";
 import { TracerDependencies } from "../types";
 import { getFromNameTags } from "../utils";
+import { SEPARATOR } from "./separator";
 
 export function formatParam(
   value: any,
@@ -40,7 +41,10 @@ export function formatParam(
       "{" +
       Object.entries(value)
         .map((entry) => {
-          return `${entry[0]}:${formatParam(entry[1], dependencies)}`;
+          return `${entry[0]}${SEPARATOR}${formatParam(
+            entry[1],
+            dependencies
+          )}`;
         })
         .join(", ") +
       "}"

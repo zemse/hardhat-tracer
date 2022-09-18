@@ -1,4 +1,5 @@
 import { colorKey } from "../colors";
+import { SEPARATOR } from "./separator";
 
 export function formatObject(obj: any) {
   return Object.entries(obj)
@@ -11,7 +12,7 @@ export function formatObject(obj: any) {
       } else if (typeof value === "object") {
         value = `{${formatObject(value)}}`;
       }
-      return `${colorKey(key + "=")}${value}`;
+      return `${colorKey(key + SEPARATOR)}${value}`;
     })
     .join(", ");
 }

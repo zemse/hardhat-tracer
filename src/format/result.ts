@@ -46,7 +46,9 @@ export function formatResult(
     .map(
       (entry) =>
         `${
-          stringifiedArgs.length > 1 || !shorten ? colorKey(`${entry[0]}=`) : ""
+          stringifiedArgs.length > 1 || !shorten
+            ? colorKey(`${entry[0]}: `)
+            : ""
         }${entry[1]}`
     )
     .join(", ")}`;

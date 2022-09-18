@@ -35,11 +35,15 @@ contract Hello {
     }
 
     function dm() external view returns (string memory) {
-        return this.dm2();
+        return this.dm2("Heya!", msg.sender);
     }
 
-    function dm2() external pure returns (string memory) {
-        return "Heya!";
+    function dm2(string memory hello, address yo)
+        external
+        pure
+        returns (string memory)
+    {
+        return hello;
     }
 
     function kick() public view returns (string memory) {
