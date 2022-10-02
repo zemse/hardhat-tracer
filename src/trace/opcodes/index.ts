@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@ethereumjs/vm/dist/evm/interpreter";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { Item } from "../transaction";
 
 import sstore from "./sstore";

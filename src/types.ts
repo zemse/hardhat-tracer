@@ -1,4 +1,4 @@
-import VM from "@ethereumjs/vm";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { Artifacts, EthereumProvider } from "hardhat/types";
 import { TraceRecorder } from "./trace/recorder";
 

@@ -2,18 +2,8 @@ import { extendEnvironment } from "hardhat/config";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 import { getVM } from "../get-vm";
-import { InterpreterStep } from "@ethereumjs/vm/dist/evm/interpreter";
-
 import { TracerEnv } from "../types";
-import {
-  // handleAfterMessage,
-  // handleAfterTx,
-  // handleBeforeMessage,
-  // handleBeforeTx,
-  // handleNewContract,
-  // handleStep,
-  TraceRecorder,
-} from "../trace/recorder";
+import { TraceRecorder } from "../trace/recorder";
 
 declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {

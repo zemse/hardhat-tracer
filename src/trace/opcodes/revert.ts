@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@ethereumjs/vm/dist/evm/interpreter";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { formatError } from "../../format/error";
 import { TracerDependencies } from "../../types";
 import { hexPrefix } from "../../utils";
@@ -9,8 +9,8 @@ export interface REVERT {
 }
 
 function parse(step: InterpreterStep): Item<REVERT> {
-  const offset = step.stack[step.stack.length - 1].toNumber();
-  const length = step.stack[step.stack.length - 2].toNumber();
+  const offset = Number(step.stack[step.stack.length - 1].toString());
+  const length = Number(step.stack[step.stack.length - 2].toString());
   const data = hexPrefix(
     step.memory.slice(offset, offset + length).toString("hex")
   );

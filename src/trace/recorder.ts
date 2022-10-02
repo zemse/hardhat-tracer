@@ -1,10 +1,10 @@
-import { InterpreterStep } from "@ethereumjs/vm/dist/evm/interpreter";
-import Message from "@ethereumjs/vm/dist/evm/message";
-import { Transaction } from "@ethereumjs/tx";
-import { EVMResult, NewContractEvent } from "@ethereumjs/vm/dist/evm/evm";
-import { AfterTxEvent } from "@ethereumjs/vm/dist/runTx";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
+import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
+import { Address } from "@nomicfoundation/ethereumjs-util";
+import { AfterTxEvent } from "@nomicfoundation/ethereumjs-vm";
 import { Item, TraceTransaction } from "./transaction";
-import VM from "@ethereumjs/vm";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 // import { call } from "./opcodes/call";
 import { parse } from "./opcodes";
 import { STATICCALL } from "./opcodes/staticcall";
@@ -17,21 +17,29 @@ import { CREATE2 } from "./opcodes/create2";
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
 
+interface NewContractEvent {
+  address: Address;
+  code: Buffer;
+}
+
 export class TraceRecorder {
   previousTraces: TraceTransaction[] = [];
   trace: TraceTransaction | undefined;
   previousOpcode: string | undefined;
   constructor(vm: VM) {
     // this.txTrace = new TransactionTrace("", "", "", 0);
-    vm.on("beforeTx", this.handleBeforeTx.bind(this));
-    vm.on("beforeMessage", this.handleBeforeMessage.bind(this));
-    vm.on("newContract", this.handleNewContract.bind(this));
-    vm.on("step", this.handleStep.bind(this));
-    vm.on("afterMessage", this.handleAfterMessage.bind(this));
-    vm.on("afterTx", this.handleAfterTx.bind(this));
+    vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
+    vm.evm.events?.on("beforeMessage", this.handleBeforeMessage.bind(this));
+    vm.evm.events?.on("newContract", this.handleNewContract.bind(this));
+    vm.evm.events?.on("step", this.handleStep.bind(this));
+    vm.evm.events?.on("afterMessage", this.handleAfterMessage.bind(this));
+    vm.events.on("afterTx", this.handleAfterTx.bind(this));
   }
 
-  handleBeforeTx(tx: Transaction, next: () => void) {
+  handleBeforeTx(
+    tx: TypedTransaction,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleBeforeTx");
 
     if (this.trace) {
@@ -41,10 +49,13 @@ export class TraceRecorder {
 
     this.trace = new TraceTransaction();
 
-    next();
+    resolve?.();
   }
 
-  handleBeforeMessage(message: Message, next: () => void) {
+  handleBeforeMessage(
+    message: Message,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleBeforeMessage");
 
     if (!this.trace) {
@@ -52,22 +63,28 @@ export class TraceRecorder {
     }
     let item: Item<any>;
     if (message.isStatic) {
+      if (message.to === undefined) {
+        throw new Error("internal error: message.to is undefined");
+      }
       item = {
         opcode: "STATICCALL",
         params: {
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
-          gasLimit: message.gasLimit.toNumber(),
+          gasLimit: Number(message.gasLimit.toString()),
         },
         children: [],
       } as Item<STATICCALL>;
     } else if (message.delegatecall) {
+      if (message.to === undefined) {
+        throw new Error("internal error: message.to is undefined");
+      }
       item = {
         opcode: "DELEGATECALL",
         params: {
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
-          gasLimit: message.gasLimit.toNumber(),
+          gasLimit: Number(message.gasLimit.toString()),
         },
         children: [],
       } as Item<DELEGATECALL>;
@@ -77,7 +94,7 @@ export class TraceRecorder {
         params: {
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
-          gasLimit: message.gasLimit.toNumber(),
+          gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString()),
         },
         children: [],
@@ -87,7 +104,7 @@ export class TraceRecorder {
         opcode: "CREATE",
         params: {
           initCode: hexPrefix(message.data.toString("hex")),
-          gasLimit: message.gasLimit.toNumber(),
+          gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString()),
         },
         children: [],
@@ -97,7 +114,7 @@ export class TraceRecorder {
         opcode: "CREATE2",
         params: {
           initCode: hexPrefix(message.data.toString("hex")),
-          gasLimit: message.gasLimit.toNumber(),
+          gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString()),
           salt: hexPrefix(message.salt.toString("hex")),
         },
@@ -113,10 +130,13 @@ export class TraceRecorder {
     }
 
     this.trace.insertItem(item, { increaseDepth: true });
-    next();
+    resolve?.();
   }
 
-  handleNewContract(contract: NewContractEvent, next: () => void) {
+  handleNewContract(
+    contract: NewContractEvent,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleNewContract");
 
     if (!this.trace || !this.trace.parent) {
@@ -147,10 +167,13 @@ export class TraceRecorder {
       }
     }
 
-    next();
+    resolve?.();
   }
 
-  handleStep(step: InterpreterStep, next: () => void) {
+  handleStep(
+    step: InterpreterStep,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleStep");
     if (!this.trace) {
       throw new Error("internal error: trace is undefined");
@@ -176,10 +199,13 @@ export class TraceRecorder {
     this.previousOpcode = step.opcode.name;
     // console.log(step.opcode.name);
     // setTimeout(() => next(), 1);
-    next();
+    resolve?.();
   }
 
-  handleAfterMessage(evmResult: EVMResult, next: () => void) {
+  handleAfterMessage(
+    evmResult: EVMResult,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleAfterMessage");
 
     if (!this.trace) {
@@ -189,10 +215,13 @@ export class TraceRecorder {
     this.trace.returnCurrentCall(
       evmResult.execResult.returnValue.toString("hex")
     );
-    next();
+    resolve?.();
   }
 
-  handleAfterTx(_tx: AfterTxEvent, next: () => void) {
+  handleAfterTx(
+    _tx: AfterTxEvent,
+    resolve: ((result?: any) => void) | undefined
+  ) {
     // console.log("handleAfterTx");
 
     if (!this.trace) {
@@ -206,6 +235,6 @@ export class TraceRecorder {
     this.trace = undefined;
     this.previousOpcode = undefined;
 
-    next();
+    resolve?.();
   }
 }

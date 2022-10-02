@@ -1,4 +1,4 @@
-import VM from "@ethereumjs/vm";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 // Credits: https://github.com/defi-wonderland/smock/blob/3c2b80b72fe146634b999df5b9bb9ef5ffc27508/src/utils/hardhat.ts#L20-L51
