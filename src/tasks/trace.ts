@@ -49,6 +49,8 @@ addCliParams(task("trace", "Traces a transaction hash"))
           artifacts: hre.artifacts,
           nameTags: hre.tracer.nameTags,
         });
+        // if printing was successful, then stop here
+        return;
       } catch (error) {
         console.warn(
           "Using debug_tt on rpc failed, activating mainnet fork at block",
