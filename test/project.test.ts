@@ -5,7 +5,7 @@ import path from "path";
 import { useEnvironment } from "./helpers";
 
 describe("Hardhat Runtime Environment extension", function () {
-  describe.only("Test task", function () {
+  describe("Test task", function () {
     useEnvironment("hardhat-project");
 
     // before(async function () {
@@ -41,7 +41,7 @@ describe("Hardhat Runtime Environment extension", function () {
       });
     });
 
-    it("arbitrum", async function () {
+    it.skip("arbitrum", async function () {
       await this.hre.run("trace", {
         hash:
           "0x64e36ed3441bae0ed9b1ce685cb14791806a857038a094753943007df3d74bc5",
