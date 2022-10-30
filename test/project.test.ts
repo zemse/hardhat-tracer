@@ -29,7 +29,7 @@ describe("Hardhat Runtime Environment extension", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
-    it("mainnet", async function () {
+    it("mainnet by rpc", async function () {
       await this.hre.run("compile");
       await this.hre.run("trace", {
         hash:
@@ -38,6 +38,15 @@ describe("Hardhat Runtime Environment extension", function () {
           "_",
           ""
         ),
+      });
+    });
+
+    it("mainnet by network", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("trace", {
+        hash:
+          "0xc7f743c1bcd7fddfd6b644f6e5a3a97bdf5a02dfdff180a79f79f7c7481a5b0f",
+        network: "mainnet",
       });
     });
 
