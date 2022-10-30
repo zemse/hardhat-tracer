@@ -15,9 +15,9 @@ contract Hello {
     }
 
     function hit() external {
-        Child c = new Child();
+        Child c = new Child(address(0));
         emit WhatsUp(c.hi());
-        Child c2 = new Child{salt: bytes32("hello")}();
+        Child c2 = new Child{salt: bytes32("hello")}(address(0));
         emit WhatsUp(c2.hi());
         this.dm();
         heyy = 23;
@@ -28,7 +28,7 @@ contract Hello {
     }
 
     function crash() external {
-        Child c = new Child();
+        Child c = new Child(address(0));
 
         console.log(
             "Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!"
@@ -58,6 +58,12 @@ contract Hello {
 }
 
 contract Child {
+    address temp;
+
+    constructor(address hello) {
+        temp = hello;
+    }
+
     function hi() public pure returns (string memory) {
         return "Heya!";
     }
