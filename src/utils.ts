@@ -18,6 +18,7 @@ export function getTracerEnvFromUserInput(
 ): TracerEnv {
   return {
     enabled: userInput?.enabled ?? false,
+    ignoreNext: false,
     logs: userInput?.logs ?? false,
     calls: userInput?.calls ?? false,
     sstores: userInput?.sstores ?? false,

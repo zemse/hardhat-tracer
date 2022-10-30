@@ -23,7 +23,7 @@ const config: HardhatUserConfig = {
   },
   paths: {},
   tracer: {
-    enabled: true,
+    // enabled: true,
   },
 };
 

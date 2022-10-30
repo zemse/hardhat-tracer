@@ -46,14 +46,26 @@ class TracerWrapper extends ProviderWrapper {
     // TODO take decision whether to print or not
     // if estimateGas fails then print it
     // sendTx should be printing it regardless of success or failure
-    const isEstimateGasFailed = args.method === "eth_estimateGas" && !!error;
     const isSendTransaction = args.method === "eth_sendTransaction";
     const isEthCall = args.method === "eth_call";
+    const isEstimateGas = args.method === "eth_estimateGas";
 
-    if (isEstimateGasFailed || isSendTransaction || isEthCall) {
-      await this.dependencies.tracerEnv.recorder?.previousTraces?.[
-        this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
-      ]?.print?.(this.dependencies);
+    const isEthCallFailed = isEthCall && !!error;
+    const isEstimateGasFailed = isEstimateGas && !!error;
+
+    if (this.dependencies.tracerEnv.ignoreNext) {
+      this.dependencies.tracerEnv.ignoreNext = false;
+    } else {
+      if (
+        isEstimateGasFailed ||
+        isEthCallFailed ||
+        (this.dependencies.tracerEnv.enabled &&
+          (isSendTransaction || isEthCall))
+      ) {
+        await this.dependencies.tracerEnv.recorder?.previousTraces?.[
+          this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
+        ]?.print?.(this.dependencies);
+      }
     }
 
     if (error) {

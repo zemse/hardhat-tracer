@@ -19,6 +19,7 @@ export interface TracerEnvUser {
 
 export interface TracerEnv {
   enabled: boolean;
+  ignoreNext: boolean;
   // TODO remove these logs calls and put them into opcodes mapping
   logs: boolean;
   calls: boolean;
