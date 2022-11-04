@@ -8,14 +8,7 @@ import {
   RequestArguments,
 } from "hardhat/types";
 
-import { printDebugTraceOrLogs } from "./print";
-import {
-  ProviderLike,
-  TracerDependencies,
-  TracerEnv,
-  TracerEnvUser,
-} from "./types";
-import { getTracerEnvFromUserInput, isOnlyLogs } from "./utils";
+import { ProviderLike, TracerDependencies, TracerEnv } from "./types";
 
 /**
  * Wrapped provider which extends requests
@@ -32,7 +25,7 @@ class TracerWrapper extends ProviderWrapper {
   public async request(args: RequestArguments): Promise<unknown> {
     let result;
     let error: any;
-    console.log(args.method);
+    console.log("wrapper->args.method", args.method);
 
     try {
       result = await this.dependencies.provider.send(
@@ -91,7 +84,7 @@ export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   hre.network.provider = compatibleProvider;
 
   // ensure env is present
-  hre.tracer = hre.tracer ?? getTracerEnvFromUserInput(hre.tracer);
+  // hre.tracer = hre.tracer ?? getTracerEnvFromUserInput(hre.tracer);
 }
 
 /**
@@ -107,7 +100,21 @@ export function wrapEthersProvider(
   tracerEnv?: TracerEnv
 ): ethers.providers.Provider {
   // ensure env is present
-  tracerEnv = getTracerEnvFromUserInput(tracerEnv);
+  // const tracerEnv = getTracerEnvFromUserInput(tracerEnvUser);
+  if (!tracerEnv) {
+    tracerEnv = {
+      enabled: false,
+      ignoreNext: false,
+      verbosity: 1,
+      gasCost: false,
+      opcodes: new Map(),
+      nameTags: {},
+      // @ts-ignore TODO remove, this has no place in "config"
+      _internal: {
+        printNameTagTip: undefined,
+      },
+    };
+  }
 
   const tracerProvider = new TracerWrapper({ provider, artifacts, tracerEnv });
   const compatibleProvider = new BackwardsCompatibilityProviderAdapter(

@@ -4,16 +4,9 @@ import {
   experimentalAddHardhatNetworkMessageTraceHook,
 } from "hardhat/config";
 import { MessageTrace } from "hardhat/internal/hardhat-network/stack-traces/message-trace";
-import {
-  HardhatConfig,
-  HardhatUserConfig,
-  ExperimentalHardhatNetworkMessageTraceHook,
-  HardhatRuntimeEnvironment,
-} from "hardhat/types";
-import { getVM } from "../get-vm";
+import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
 import { TracerEnv, TracerEnvUser } from "../types";
-import { getTracerEnvFromUserInput } from "../utils";
 
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {
@@ -27,24 +20,31 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
-    config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
+    // config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
+
+    const opcodes = new Map<string, boolean>();
+    if (userConfig.tracer?.opcodes) {
+      if (!Array.isArray(userConfig.tracer.opcodes)) {
+        throw new Error(
+          "tracer.opcodes in hardhat user config should be array"
+        );
+      }
+      for (const opcode of userConfig.tracer.opcodes) {
+        opcodes.set(opcode, true);
+      }
+    }
+
+    config.tracer = {
+      enabled: userConfig.tracer?.enabled ?? false,
+      ignoreNext: false,
+      verbosity: userConfig.tracer?.defaultVerbosity ?? 1,
+      gasCost: userConfig.tracer?.gasCost ?? false,
+      opcodes,
+      nameTags: userConfig.tracer?.nameTags ?? {},
+      // @ts-ignore TODO remove, this has no place in "config"
+      _internal: {
+        printNameTagTip: undefined,
+      },
+    };
   }
 );
-
-// extendEnvironment((hre: HardhatRuntimeEnvironment) => {
-//   getVM(hre).then((vm) => {
-//     vm.on("step", () => {
-//       console.log("step");
-//     });
-//   });
-// });
-
-// experimentalAddHardhatNetworkMessageTraceHook(
-//   async (
-//     hre: HardhatRuntimeEnvironment,
-//     trace: MessageTrace,
-//     isMessageTraceFromACall: boolean
-//   ) => {
-//     console.log("tracecall", trace.bytecode, isMessageTraceFromACall);
-//   }
-// );

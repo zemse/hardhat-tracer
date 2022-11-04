@@ -8,10 +8,7 @@ export interface NameTags {
 
 export interface TracerEnvUser {
   enabled?: boolean;
-  logs?: boolean;
-  calls?: boolean;
-  sstores?: boolean;
-  sloads?: boolean;
+  defaultVerbosity?: number;
   gasCost?: boolean;
   opcodes?: string[];
   nameTags?: NameTags;
@@ -20,13 +17,15 @@ export interface TracerEnvUser {
 export interface TracerEnv {
   enabled: boolean;
   ignoreNext: boolean;
-  // TODO remove these logs calls and put them into opcodes mapping
-  logs: boolean;
-  calls: boolean;
-  sstores: boolean;
-  sloads: boolean;
+  verbosity: number;
+  // verbosity: 0 => no printing
+  // verbosity: 1 => only failed eth_call or eth_estimateGas or eth_sendTransaction
+  // verbosity: 2 => print logs for everything i.e. all eth_call, eth_estimateGas, eth_sendTransaction
+  // verbosity: 3 => print calls + logs for everything i.e. all eth_call, eth_estimateGas, eth_sendTransaction
+  // verbosity: 4 => print calls + logs + specified opcodes for everything
+
   gasCost: boolean;
-  opcodes: string[]; // TODO have a map of opcode to boolean
+  opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
   // todo remove internal
   _internal: {

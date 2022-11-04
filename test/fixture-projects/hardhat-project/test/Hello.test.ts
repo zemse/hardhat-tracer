@@ -11,7 +11,7 @@ describe("Hello", () => {
     // const signers = await hre.ethers.getSigners();
     // await signers[0].estimateGas({ ...tx });
 
-    // hre.tracer.enabled = true;
+    hre.tracer.enabled = true;
     console.log("========> hello.hit()");
     await hello.hit();
     console.log("========> hello.kick()");

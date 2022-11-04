@@ -13,11 +13,14 @@ declare module "hardhat/types/runtime" {
 
 extendEnvironment((hre) => {
   // copy reference of config.tracer to tracer
-  console.log("extend env", hre.config.tracer);
-
+  // TODO take this properly, env can contain things that config does not need to.
   hre.tracer = hre.config.tracer;
+
+  // @ts-ignore
+  global.tracerEnv = hre.tracer;
+
   getVM(hre).then((vm) => {
-    hre.tracer.recorder = new TraceRecorder(vm);
+    hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
     // vm.on("beforeTx", handleBeforeTx);
     // vm.on("beforeMessage", handleBeforeMessage);
     // vm.on("newContract", handleNewContract);

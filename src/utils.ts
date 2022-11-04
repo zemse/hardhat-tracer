@@ -1,5 +1,6 @@
-import { BigNumber, ethers } from "ethers";
 import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
+import { BigNumber, ethers } from "ethers";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 import {
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
@@ -13,52 +14,30 @@ import {
   TracerEnvUser,
 } from "./types";
 
-export function getTracerEnvFromUserInput(
-  userInput?: TracerEnvUser
-): TracerEnv {
-  return {
-    enabled: userInput?.enabled ?? false,
-    ignoreNext: false,
-    logs: userInput?.logs ?? false,
-    calls: userInput?.calls ?? false,
-    sstores: userInput?.sstores ?? false,
-    sloads: userInput?.sloads ?? false,
-    gasCost: userInput?.gasCost ?? false,
-    opcodes: userInput?.opcodes ?? [],
-    nameTags: userInput?.nameTags ?? {},
-    // @ts-ignore
-    _internal: {
-      printNameTagTip: undefined,
-    },
-  };
-}
+import {
+  getOpcodesForHF,
+  Opcode,
+} from "@nomicfoundation/ethereumjs-evm/dist/opcodes";
 
 export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
     task
+      // enable flag
+      .addFlag("trace", "enable tracer to print calls and logs in tests")
+
       // params
       .addOptionalParam("opcodes", "specify more opcodes to print")
 
-      // feature flags
-      .addFlag("logs", "print logs emitted during transactions")
-      .addFlag("calls", "print calls during transactions")
-      .addFlag("sloads", "print SLOADs during calls")
-      .addFlag("sstores", "print SSTOREs during transactions")
+      // verbosity flags
+      .addFlag("v", "set verbosity to 1")
+      .addFlag("vv", "set verbosity to 2")
+      .addFlag("vvv", "set verbosity to 3")
+      .addFlag("vvvv", "set verbosity to 4")
       .addFlag("gascost", "display gas cost")
       .addFlag(
         "disabletracer",
         "do not enable tracer at the start (for inline enabling tracer)"
       )
-
-      // feature group flags
-      .addFlag("trace", "trace logs and calls in transactions")
-      .addFlag(
-        "fulltrace",
-        "trace logs, calls and storage writes in transactions"
-      )
-      // aliases
-      .addFlag("tracefull", "alias for fulltrace")
-      .addFlag("gas", "alias for gascost")
   );
 }
 
@@ -66,51 +45,43 @@ export function applyCliArgsToTracer(
   args: any,
   hre: HardhatRuntimeEnvironment
 ) {
-  // populating aliases
-  const fulltrace = args.fulltrace || args.tracefull;
-  const gascost = args.gascost || args.gas;
-
   // if any flag is present, then enable tracer
-  if (args.logs || args.trace || fulltrace || args.disabletracer === true) {
+  if (args.trace) {
     hre.tracer.enabled = true;
   }
 
-  // enabling config by flags passed
-  if (args.logs) {
-    hre.tracer.logs = true;
+  // setting verbosity
+  if (args.vvvv) {
+    hre.tracer.verbosity = 4;
+  } else if (args.vvv) {
+    hre.tracer.verbosity = 3;
+  } else if (args.vv) {
+    hre.tracer.verbosity = 2;
+  } else if (args.v) {
+    hre.tracer.verbosity = 1;
   }
-  if (args.calls) {
-    hre.tracer.calls = true;
-  }
-  if (args.sloads) {
-    hre.tracer.sloads = true;
-  }
-  if (args.sstores) {
-    hre.tracer.sstores = true;
-  }
+
   if (args.opcodes) {
-    hre.tracer.opcodes = [...args.opcodes.split(",")];
+    // hre.tracer.opcodes = [hre.tracer.opcodes, ...args.opcodes.split(",")];
+    for (const opcode of args.opcodes.split(",")) {
+      hre.tracer.opcodes.set(opcode, true);
+    }
+
+    if (hre.tracer.recorder === undefined) {
+      throw new Error(
+        `hardhat-tracer/utils/applyCliArgsToTracer: hre.tracer.recorder is undefined`
+      );
+    }
+    checkIfOpcodesAreValid(hre.tracer.opcodes, hre.tracer.recorder.vm);
   }
 
-  // enabling config by mode of operation
-  if (args.trace) {
-    hre.tracer.logs = true;
-    hre.tracer.calls = true;
-  }
-  if (fulltrace) {
-    hre.tracer.logs = true;
-    hre.tracer.calls = true;
-    hre.tracer.sloads = true;
-    hre.tracer.sstores = true;
-  }
-
-  if (gascost) {
+  if (args.gascost) {
     hre.tracer.gasCost = true;
   }
 }
 
 export function isOnlyLogs(env: TracerEnv): boolean {
-  return env.logs && !env.calls && !env.sstores && !env.sloads && !env.gasCost;
+  return env.verbosity === 2;
 }
 
 export function getFromNameTags(
@@ -213,4 +184,21 @@ export function removeColor(str: string) {
 export function hexPrefix(str: string): string {
   if (!str.startsWith("0x")) str = "0x" + str;
   return str;
+}
+
+export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
+  // fetch the opcodes which work on this VM
+  let activeOpcodesMap = new Map<string, boolean>();
+  for (const opcode of getOpcodesForHF(vm._common).opcodes.values()) {
+    activeOpcodesMap.set(opcode.name, true);
+  }
+
+  // check if there are any opcodes specified in tracer which do not work
+  for (const opcode of opcodes.keys()) {
+    if (!activeOpcodesMap.get(opcode)) {
+      throw new Error(
+        `The opcode "${opcode}" is not active on this VM. If the opcode name is misspelled in the config, please correct it.`
+      );
+    }
+  }
 }

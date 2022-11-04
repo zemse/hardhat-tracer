@@ -107,12 +107,12 @@ export async function printStructLog(
       );
       break;
     case "SLOAD":
-      if (dependencies.tracerEnv.sloads) {
+      if (dependencies.tracerEnv.opcodes.get("SLOAD")) {
         await printSload(structLog, index, structLogs, dependencies);
       }
       break;
     case "SSTORE":
-      if (dependencies.tracerEnv.sstores) {
+      if (dependencies.tracerEnv.opcodes.get("SSTORE")) {
         await printSstore(structLog, dependencies);
       }
       break;
@@ -129,7 +129,7 @@ export async function printStructLog(
       break;
 
     default:
-      if (dependencies.tracerEnv.opcodes.includes(structLog.op)) {
+      if (dependencies.tracerEnv.opcodes.get(structLog.op)) {
         switch (structLog.op) {
           case "ADD":
             await printAdd(structLog, index, structLogs, dependencies);

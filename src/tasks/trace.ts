@@ -14,14 +14,10 @@ const originalCreate = VM.create;
 
 VM.create = async function (...args) {
   const vm = await originalCreate.bind(VM)(...args);
-  // const og = vm.runTx;
-  // vm.runTx = async function (...args) {
-  //   console.log("tx run", args);
 
-  //   const result = await og.bind(vm)(...args);
-  //   return result;
-  // };
-  const recorder = new TraceRecorder(vm);
+  // @ts-ignore
+  const tracerEnv = global.tracerEnv;
+  const recorder = new TraceRecorder(vm, tracerEnv);
   // @ts-ignore
   global._hardhat_tracer_recorder = recorder;
 

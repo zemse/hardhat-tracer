@@ -11,8 +11,9 @@ import { STATICCALL } from "./opcodes/staticcall";
 import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
-import { hexPrefix } from "../utils";
+import { checkIfOpcodesAreValid, hexPrefix } from "../utils";
 import { CREATE2 } from "./opcodes/create2";
+import { TracerEnv } from "../types";
 
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
@@ -23,10 +24,18 @@ interface NewContractEvent {
 }
 
 export class TraceRecorder {
+  vm: VM;
   previousTraces: TraceTransaction[] = [];
   trace: TraceTransaction | undefined;
   previousOpcode: string | undefined;
-  constructor(vm: VM) {
+  tracerEnv: TracerEnv;
+
+  constructor(vm: VM, tracerEnv: TracerEnv) {
+    this.vm = vm;
+    this.tracerEnv = tracerEnv;
+
+    checkIfOpcodesAreValid(tracerEnv.opcodes, vm);
+
     // this.txTrace = new TransactionTrace("", "", "", 0);
     vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
     vm.evm.events?.on("beforeMessage", this.handleBeforeMessage.bind(this));
@@ -179,9 +188,11 @@ export class TraceRecorder {
       throw new Error("internal error: trace is undefined");
     }
 
-    const item = parse(step.opcode.name, step);
-    if (item) {
-      this.trace.insertItem(item);
+    if (this.tracerEnv.opcodes.get(step.opcode.name)) {
+      const item = parse(step.opcode.name, step);
+      if (item) {
+        this.trace.insertItem(item);
+      }
     }
     // console.log(step.opcode.name);
     // switch (step.opcode.name) {
