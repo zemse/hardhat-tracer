@@ -21,7 +21,7 @@
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "mocha -t 300000 --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc",
-    "prepublish": "rm -rf dist && yarn build",
+    "prepublish": "rimraf dist && yarn build",
     "watch": "tsc -w",
     "start": "tsc -w"
   },
@@ -48,6 +48,7 @@
     "hardhat-gas-reporter": "^1.0.8",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
+    "rimraf": "^3.0.2",
     "solidity-coverage": "^0.7.21",
     "ts-node": "^10.7.0",
     "tslint": "^5.16.0",
