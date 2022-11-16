@@ -1,4 +1,4 @@
-import { Interface } from "ethers/lib/utils";
+import { ethers } from "ethers";
 import { TracerDependencies } from "../types";
 import { formatResult } from "./result";
 import consoleLogMethods from "./console-log-methods.json";
@@ -10,7 +10,8 @@ export function formatConsoleLog(
   data: string,
   dependencies: TracerDependencies
 ): string | never {
-  const iface = new Interface(consoleLogMethods);
+  ethers.utils.Logger.setLogLevel(ethers.utils.Logger.levels.ERROR);
+  const iface = new ethers.utils.Interface(consoleLogMethods);
 
   const signature = data.slice(0, 10);
   const result = iface.decodeFunctionData(signature, data);
