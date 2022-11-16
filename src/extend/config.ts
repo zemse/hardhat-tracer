@@ -23,15 +23,17 @@ extendConfig(
     // config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
 
     const opcodes = new Map<string, boolean>();
+    const opcodesToActivate = ["RETURN", "REVERT"]; // always active opcodes
     if (userConfig.tracer?.opcodes) {
       if (!Array.isArray(userConfig.tracer.opcodes)) {
         throw new Error(
           "tracer.opcodes in hardhat user config should be array"
         );
       }
-      for (const opcode of userConfig.tracer.opcodes) {
-        opcodes.set(opcode, true);
-      }
+      opcodesToActivate.push(...userConfig.tracer.opcodes);
+    }
+    for (const opcode of opcodesToActivate) {
+      opcodes.set(opcode, true);
     }
 
     config.tracer = {
