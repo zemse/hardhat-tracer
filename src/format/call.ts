@@ -1,5 +1,10 @@
 import { BigNumber, BigNumberish, ethers } from "ethers";
-import { FunctionFragment, Interface, Result } from "ethers/lib/utils";
+import {
+  Fragment,
+  FunctionFragment,
+  Interface,
+  Result,
+} from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
@@ -18,58 +23,61 @@ export async function formatCall(
   gas: BigNumberish,
   dependencies: TracerDependencies
 ) {
-  const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
+  // const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
 
   // TODO handle if `to` is console.log address
 
   let contractName: string | undefined;
-  let result: Result | undefined;
-  let result2: Result | undefined;
-  let functionFragment: FunctionFragment | undefined;
-  for (const name of names) {
-    const _artifact = await dependencies.artifacts.readArtifact(name);
-    const iface = new Interface(_artifact.abi);
+  let inputResult: Result | undefined;
+  let returnResult: Result | undefined;
+  let fragment: Fragment | undefined;
 
-    // try to find the contract name
-    if (
-      compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
-      (to === ethers.constants.AddressZero && toBytecode.length <= 2)
-    ) {
-      // if bytecode of "to" is the same as the deployed bytecode
-      // we can use the artifact name
-      contractName = _artifact.contractName;
-    }
+  ({
+    fragment,
+    contractName,
+    inputResult,
+    returnResult,
+  } = await dependencies.tracerEnv.decoder!.decode(input, ret));
 
-    // try to parse the arguments
-    try {
-      // if this doesnt throw, we likely found an Artifact that recognizes the input
-      const signature = input.slice(0, 10);
-      result = iface.decodeFunctionData(signature, input);
-      try {
-        result2 = iface.decodeFunctionResult(signature, ret);
-      } catch {}
+  // use just contract name
+  contractName = contractName.split(":")[1];
 
-      functionFragment = iface.getFunction(signature);
-    } catch {}
+  // TODO Find a better contract name
+  // 1. See if there is a name() method that gives string or bytes32
+  // 2. Match bytecode
 
-    // if we got both the contract name and arguments parsed so far, we can stop
-    if (contractName && result) {
-      break;
-    }
-  }
+  // for (const name of names) {
+  //   const _artifact = await dependencies.artifacts.readArtifact(name);
+  //   const iface = new Interface(_artifact.abi);
 
-  if (result && functionFragment) {
+  //   // try to find the contract name
+  //   if (
+  //     compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
+  //     (to === ethers.constants.AddressZero && toBytecode.length <= 2)
+  //   ) {
+  //     // if bytecode of "to" is the same as the deployed bytecode
+  //     // we can use the artifact name
+  //     contractName = _artifact.contractName;
+  //   }
+
+  //   // if we got both the contract name and arguments parsed so far, we can stop
+  //   if (contractName) {
+  //     break;
+  //   }
+  // }
+
+  if (inputResult && fragment) {
     const inputArgs = formatResult(
-      result,
-      functionFragment,
+      inputResult,
+      fragment,
       { decimals: -1, isInput: true, shorten: false },
       dependencies
     );
-    const outputArgs = result2
+    const outputArgs = returnResult
       ? formatResult(
-          result2,
-          functionFragment,
+          returnResult,
+          fragment,
           { decimals: -1, isInput: false, shorten: true },
           dependencies
         )
@@ -92,13 +100,13 @@ export async function formatCall(
             to,
             dependencies
           )}>`
-    }.${colorFunction(functionFragment.name)}${
+    }.${colorFunction(fragment.name)}${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
   // TODO add flag to hide unrecognized stuff
-  if (toBytecode.length > 2 && contractName) {
+  if (contractName) {
     return `${colorContract(contractName)}.<${colorFunction(
       "UnknownFunction"
     )}>(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(

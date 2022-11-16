@@ -224,7 +224,7 @@ export class TraceRecorder {
     }
 
     this.trace.returnCurrentCall(
-      evmResult.execResult.returnValue.toString("hex")
+      "0x" + evmResult.execResult.returnValue.toString("hex")
     );
     resolve?.();
   }

@@ -1,6 +1,7 @@
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { Artifacts, EthereumProvider } from "hardhat/types";
 import { TraceRecorder } from "./trace/recorder";
+import { Decoder } from "./decoder";
 
 export interface NameTags {
   [address: string]: string;
@@ -35,6 +36,7 @@ export interface TracerEnv {
       | "already printed";
   };
   recorder?: TraceRecorder;
+  decoder?: Decoder;
 }
 
 export interface TracerDependencies {

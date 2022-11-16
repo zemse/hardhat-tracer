@@ -7,6 +7,7 @@ import {
   HardhatRuntimeEnvironment,
   RequestArguments,
 } from "hardhat/types";
+import { Decoder } from "./decoder";
 
 import { ProviderLike, TracerDependencies, TracerEnv } from "./types";
 
@@ -113,6 +114,7 @@ export function wrapEthersProvider(
       _internal: {
         printNameTagTip: undefined,
       },
+      decoder: new Decoder(artifacts),
     };
   }
 
