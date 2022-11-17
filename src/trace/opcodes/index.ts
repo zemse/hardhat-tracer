@@ -1,13 +1,13 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { AwaitedItem, Item } from "../transaction";
-
-import sload from "./sload";
-import sstore from "./sstore";
+import call from "./call";
 import create from "./create";
 import create2 from "./create2";
-import call from "./call";
-import staticcall from "./staticcall";
+import delegatecall from "./delegatecall";
 import revert from "./revert";
+import sload from "./sload";
+import sstore from "./sstore";
+import staticcall from "./staticcall";
+import { AwaitedItem, Item } from "../transaction";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerDependencies } from "../../types";
 
 export function parse(
@@ -35,6 +35,8 @@ export async function format(
   switch (item.opcode) {
     case "CALL":
       return await call.format(item, dependencies);
+    case "DELEGATECALL":
+      return await delegatecall.format(item, dependencies);
     case "STATICCALL":
       return await staticcall.format(item, dependencies);
     case "CREATE":
