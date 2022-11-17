@@ -1,4 +1,5 @@
 // export type AbstractParams = { [key: string]: any };
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { TracerDependencies } from "../types";
 import { format } from "./opcodes";
@@ -10,6 +11,12 @@ export interface Item<Params> {
   children?: Item<Params>[];
   format?: () => string;
 }
+
+export type AwaitedItem<T> = {
+  isAwaitedItem: true;
+  next: number;
+  parse: (step: InterpreterStep) => Item<T>;
+};
 
 export interface CallParams {
   to?: string;

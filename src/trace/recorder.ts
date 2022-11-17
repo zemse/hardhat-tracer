@@ -3,7 +3,7 @@ import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import { AfterTxEvent } from "@nomicfoundation/ethereumjs-vm";
-import { Item, TraceTransaction } from "./transaction";
+import { AwaitedItem, Item, TraceTransaction } from "./transaction";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 // import { call } from "./opcodes/call";
 import { parse } from "./opcodes";
@@ -11,7 +11,11 @@ import { STATICCALL } from "./opcodes/staticcall";
 import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
-import { checkIfOpcodesAreValid, hexPrefix } from "../utils";
+import {
+  checkIfOpcodesAreValid,
+  hexPrefix,
+  isItem,
+} from "../utils";
 import { CREATE2 } from "./opcodes/create2";
 import { TracerEnv } from "../types";
 
@@ -29,12 +33,15 @@ export class TraceRecorder {
   trace: TraceTransaction | undefined;
   previousOpcode: string | undefined;
   tracerEnv: TracerEnv;
+  awaitedItems: AwaitedItem<any>[];
 
   constructor(vm: VM, tracerEnv: TracerEnv) {
     this.vm = vm;
     this.tracerEnv = tracerEnv;
 
     checkIfOpcodesAreValid(tracerEnv.opcodes, vm);
+
+    this.awaitedItems = [];
 
     // this.txTrace = new TransactionTrace("", "", "", 0);
     vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
@@ -188,12 +195,38 @@ export class TraceRecorder {
       throw new Error("internal error: trace is undefined");
     }
 
-    if (this.tracerEnv.opcodes.get(step.opcode.name)) {
-      const item = parse(step.opcode.name, step);
-      if (item) {
-        this.trace.insertItem(item);
+    if (this.awaitedItems.length) {
+      this.awaitedItems = this.awaitedItems.filter(
+        (awaitedItems) => awaitedItems.next > 0
+      );
+      for (const awaitedItem of this.awaitedItems) {
+        // console.log("awaitedItem", awaitedItem);
+
+        awaitedItem.next--;
+        if (awaitedItem.next === 0) {
+          // try {
+          const item = awaitedItem.parse(step);
+          // // console.log({ item });
+          this.trace.insertItem(item);
+          // } catch {
+          //   console.log(step);
+          // }
+        }
       }
     }
+
+    // console.log(step.opcode.name);
+    if (this.tracerEnv.opcodes.get(step.opcode.name)) {
+      const result = parse(step.opcode.name, step);
+      if (result) {
+        if (isItem(result)) {
+          this.trace.insertItem(result);
+        } else {
+          this.awaitedItems.push(result);
+        }
+      }
+    }
+
     // console.log(step.opcode.name);
     // switch (step.opcode.name) {
     //   // case "CALL":
@@ -245,6 +278,7 @@ export class TraceRecorder {
     // clear the trace
     this.trace = undefined;
     this.previousOpcode = undefined;
+    this.awaitedItems = [];
 
     resolve?.();
   }

@@ -18,6 +18,7 @@ import {
   getOpcodesForHF,
   Opcode,
 } from "@nomicfoundation/ethereumjs-evm/dist/opcodes";
+import { Item } from "./trace/transaction";
 
 export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
@@ -201,4 +202,8 @@ export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
       );
     }
   }
+}
+
+export function isItem(item: any): item is Item<any> {
+  return item && typeof item.opcode === "string";
 }

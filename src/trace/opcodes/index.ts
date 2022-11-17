@@ -1,6 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { Item } from "../transaction";
+import { AwaitedItem, Item } from "../transaction";
 
+import sload from "./sload";
 import sstore from "./sstore";
 import create from "./create";
 import create2 from "./create2";
@@ -12,10 +13,12 @@ import { TracerDependencies } from "../../types";
 export function parse(
   opcode: string,
   step: InterpreterStep
-): Item<any> | undefined {
+): Item<any> | AwaitedItem<any> | undefined {
   switch (step.opcode.name) {
     // case "CALL":
     //   this.trace.insertItem(call.parseStep(step));
+    case "SLOAD":
+      return sload.parse(step);
     case "SSTORE":
       return sstore.parse(step);
     case "REVERT":
@@ -38,6 +41,8 @@ export async function format(
       return await create.format(item, dependencies);
     case "CREATE2":
       return await create2.format(item, dependencies);
+    case "SLOAD":
+      return await sload.format(item);
     case "SSTORE":
       return await sstore.format(item);
     case "REVERT":

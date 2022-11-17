@@ -11,8 +11,8 @@ function parse(step: InterpreterStep): Item<SSTORE> {
   return {
     opcode: "SSTORE",
     params: {
-      key: hexPrefix(step.stack[0].toString()),
-      value: hexPrefix(step.stack[1].toString()),
+      key: hexPrefix(step.stack[step.stack.length - 1].toString()),
+      value: hexPrefix(step.stack[step.stack.length - 2].toString()),
     },
     format(): string {
       return format(this);
@@ -21,7 +21,7 @@ function parse(step: InterpreterStep): Item<SSTORE> {
 }
 
 function format(item: Item<SSTORE>): string {
-  return `SSTORE ${item.params.key} ${item.params.value}`;
+  return `SSTORE ${item.params.key} <= ${item.params.value}`;
 }
 
 export default { parse, format };
