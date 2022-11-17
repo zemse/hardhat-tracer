@@ -10,11 +10,23 @@ contract Hello {
 
     uint256 heyy;
 
+    struct Person {
+        string name;
+        uint256 age;
+        Props props;
+    }
+
+    struct Props {
+        uint256 id;
+        string name;
+        uint256 age;
+    }
+
     constructor() {
         emit WhatsUp("Hello, world!");
     }
 
-    function hit() external {
+    function hit(Person memory person, uint256 time) external {
         Child c = new Child(address(0));
         emit WhatsUp(c.hi());
         Child c2 = new Child{salt: bytes32("hello")}(address(0));

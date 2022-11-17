@@ -36,8 +36,8 @@ export async function formatContract(
         );
         const inputArgs = formatResult(
           constructorParamsDecoded,
-          iface.deploy,
-          { decimals: -1, isInput: true, shorten: false },
+          iface.deploy.inputs,
+          { decimals: -1, shorten: false },
           dependencies
         );
         const extra = [];

@@ -94,15 +94,15 @@ export async function formatCall(
   if (inputResult && fragment) {
     const inputArgs = formatResult(
       inputResult,
-      fragment,
-      { decimals: contractDecimals, isInput: true, shorten: false },
+      fragment.inputs,
+      { decimals: contractDecimals, shorten: false },
       dependencies
     );
     const outputArgs = returnResult
       ? formatResult(
           returnResult,
-          fragment,
-          { decimals: contractDecimals, isInput: false, shorten: true },
+          (fragment as FunctionFragment).outputs,
+          { decimals: contractDecimals, shorten: true },
           dependencies
         )
       : "";

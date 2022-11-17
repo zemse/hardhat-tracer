@@ -17,8 +17,8 @@ export function formatConsoleLog(
   const result = iface.decodeFunctionData(signature, data);
   return formatResult(
     result,
-    iface.getFunction(signature),
-    { isInput: true },
+    iface.getFunction(signature).inputs,
+    {},
     dependencies
   );
 }

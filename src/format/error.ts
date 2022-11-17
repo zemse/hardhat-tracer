@@ -61,8 +61,8 @@ export async function formatError(
 
     const formatted = formatResult(
       parsed.args,
-      parsed.functionFragment,
-      { decimals: -1, isInput: true, shorten: false },
+      parsed.functionFragment.inputs,
+      { decimals: -1, shorten: false },
       dependencies
     );
 
@@ -80,8 +80,8 @@ export async function formatError(
       const errorDesc = iface.parseError(revertData);
       return `${colorError(errorDesc.name)}(${formatResult(
         errorDesc.args,
-        errorDesc.errorFragment,
-        { decimals: -1, isInput: true, shorten: false },
+        errorDesc.errorFragment.inputs,
+        { decimals: -1, shorten: false },
         dependencies
       )})`;
     } catch {}

@@ -13,7 +13,18 @@ describe("Hello", () => {
 
     hre.tracer.enabled = true;
     console.log("========> hello.hit()");
-    await hello.hit();
+    await hello.hit(
+      {
+        name: "hello",
+        age: 23,
+        props: {
+          id: 12,
+          name: "yello",
+          age: 99,
+        },
+      },
+      1234
+    );
     console.log("========> hello.kick()");
     hre.tracer.ignoreNext = true;
     try {
