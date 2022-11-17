@@ -33,15 +33,17 @@ export async function formatCall(
   let returnResult: Result | undefined;
   let fragment: Fragment | undefined;
 
-  ({
-    fragment,
-    contractName,
-    inputResult,
-    returnResult,
-  } = await dependencies.tracerEnv.decoder!.decode(input, ret));
+  try {
+    ({
+      fragment,
+      contractName,
+      inputResult,
+      returnResult,
+    } = await dependencies.tracerEnv.decoder!.decode(input, ret));
 
-  // use just contract name
-  contractName = contractName.split(":")[1];
+    // use just contract name
+    contractName = contractName.split(":")[1];
+  } catch {}
 
   // TODO Find a better contract name
   // 1. See if there is a name() method that gives string or bytes32

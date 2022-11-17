@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import {
   ErrorFragment,
+  fetchJson,
   Fragment,
   FunctionFragment,
   Interface,
@@ -71,78 +72,141 @@ function copyFragments(
   mapping: Mapping<Fragment>
 ) {
   for (const fragment of Object.values(fragments)) {
-    const selector = ethers.utils.Interface.getSighash(fragment);
-    let fragments = mapping.get(selector);
-    if (!fragments) {
-      mapping.set(selector, (fragments = []));
-    }
-    fragments.push({ contractName, fragment });
+    addFragmentToMapping(contractName, fragment, mapping);
   }
 }
 
-function decode(
+function addFragmentToMapping(
+  contractName: string,
+  fragment: Fragment,
+  mapping: Mapping<Fragment>
+) {
+  const selector = ethers.utils.Interface.getSighash(fragment);
+  let fragments = mapping.get(selector);
+  if (!fragments) {
+    mapping.set(selector, (fragments = []));
+  }
+  fragments.push({ contractName, fragment });
+}
+
+async function decode(
   inputData: string,
   returnData: string,
   type: "function",
   mapping: Mapping<FunctionFragment>
-): {
+): Promise<{
   fragment: Fragment;
   inputResult: Result;
   returnResult: Result | undefined;
   contractName: string;
-};
+}>;
 
-function decode(
+async function decode(
   inputData: string,
   returnData: string,
   type: "error",
   mapping: Mapping<ErrorFragment>
-): {
+): Promise<{
   fragment: Fragment;
   inputResult: Result;
   returnResult: Result | undefined;
   contractName: string;
-};
+}>;
 
-function decode(
+async function decode(
   inputData: string,
   returnData: string,
   type: string,
   mapping: Mapping<Fragment>
 ) {
   const selector = inputData.slice(0, 10);
+  // console.log("selector", selector);
 
+  // if we have a local fragment for this selector, try using it
   const fragments = mapping.get(selector);
-  if (!fragments) {
-    throw decodeError(selector);
+  if (fragments) {
+    for (const { fragment, contractName } of fragments) {
+      try {
+        const iface = new Interface([fragment]);
+        if (type === "function") {
+          const inputResult = iface.decodeFunctionData(
+            inputData.slice(0, 10),
+            inputData
+          );
+
+          let returnResult: Result | undefined;
+          try {
+            returnResult = iface.decodeFunctionResult(
+              inputData.slice(0, 10),
+              returnData
+            );
+          } catch {}
+
+          return { fragment, inputResult, returnResult, contractName };
+        } else if (type === "error") {
+          const inputResult = iface.decodeErrorResult(
+            fragment as ErrorFragment,
+            inputData
+          );
+          return { fragment, inputResult, contractName };
+        }
+      } catch {}
+    }
   }
 
-  for (const { fragment, contractName } of fragments) {
+  // we couldn't decode it using local ABI, try 4byte.directory
+  try {
+    const { fragment, inputResult } = await decodeUsing4byteDirectory(
+      selector,
+      inputData,
+      mapping
+    );
+    return { fragment, inputResult };
+  } catch {}
+
+  // we couldn't decode it after even using 4byte.directory, give up
+  throw decodeError(selector);
+}
+
+async function decodeUsing4byteDirectory(
+  selector: string,
+  inputData: string,
+  mapping: Mapping<Fragment>
+): Promise<{
+  fragment: Fragment;
+  inputResult: Result;
+}> {
+  const response = await fetchJson(
+    "https://www.4byte.directory/api/v1/signatures/?hex_signature=" + selector
+  );
+  // console.log("response", response);
+
+  for (const result of response.results) {
+    // console.log({ result });
+
     try {
-      const iface = new Interface([fragment]);
-      if (type === "function") {
-        const inputResult = iface.decodeFunctionData(
-          inputData.slice(0, 10),
-          inputData
-        );
+      const iface = new Interface(["function " + result.text_signature]);
 
-        let returnResult: Result | undefined;
-        try {
-          returnResult = iface.decodeFunctionResult(
-            inputData.slice(0, 10),
-            returnData
-          );
-        } catch {}
+      const inputResult = iface.decodeFunctionData(
+        inputData.slice(0, 10),
+        inputData
+      );
 
-        return { fragment, inputResult, returnResult, contractName };
-      } else if (type === "error") {
-        const inputResult = iface.decodeErrorResult(
-          fragment as ErrorFragment,
-          inputData
-        );
-        return { fragment, inputResult, contractName };
+      // there's some weird Node.js bug, error from above line doesn't get catched by try/catch
+      // the following line looks inside inputResult, so Node.js has to resolve it.
+      for (const _ of inputResult) {
       }
-    } catch {}
+
+      // cache the fragment for next time (within the same run)
+      const fragment = iface.getFunction(result.text_signature);
+      // console.log(fragment);
+
+      addFragmentToMapping("", fragment, mapping);
+
+      return { fragment, inputResult };
+    } catch (E) {
+      // console.log("error xyzzz", E);
+    }
   }
 
   throw decodeError(selector);

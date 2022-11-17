@@ -12,7 +12,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it.only("works", async function () {
+    it("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         opcodes: "SSTORE,SLOAD",
@@ -31,15 +31,16 @@ describe("Hardhat Runtime Environment extension", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
-    it("mainnet by rpc", async function () {
+    it.only("mainnet by rpc", async function () {
       await this.hre.run("compile");
       await this.hre.run("trace", {
         hash:
-          "0xc7f743c1bcd7fddfd6b644f6e5a3a97bdf5a02dfdff180a79f79f7c7481a5b0f",
+          "0xc645204e28ffc9f75812e598c6ee7a959c501756062195b2f0fb003276fa39a7",
         rpc: "https://eth-mainnet.alchemyapi.io/v2/AS_LAx2_WJh1iEAqxd1-AHQ-yb71CiCHF".replace(
           "_",
           ""
         ),
+        opcodes: ["SSTORE", "SLOAD"].join(","),
       });
     });
 

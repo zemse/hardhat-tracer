@@ -116,7 +116,7 @@ addCliParams(task("trace", "Traces a transaction hash"))
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
-    recorder.previousTraces[recorder.previousTraces.length - 1].print({
+    await recorder.previousTraces[recorder.previousTraces.length - 1].print({
       artifacts: hre.artifacts,
       tracerEnv: hre.tracer,
       provider: hre.ethers.provider,
