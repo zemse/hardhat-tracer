@@ -6,9 +6,10 @@ import "hardhat/console.sol";
 
 contract Hello {
     event WhatsUp(string message);
+    event WhatsUp2(uint256 no);
     event Transfer(address indexed from, address indexed to, uint256 value);
 
-    uint256 heyy;
+    uint256 heyy = 3;
 
     struct Person {
         string name;
@@ -60,11 +61,21 @@ contract Hello {
         return hello;
     }
 
-    function kick() public view returns (string memory) {
-        this.reverts();
+    function kick() public view returns (uint256) {
+        uint256 _heyy = heyy;
+        // emit WhatsUp2(_heyy);
+        this.reverts(_heyy);
+        return _heyy;
     }
 
-    function reverts() public pure returns (string memory) {
+    function kick2() public returns (uint256) {
+        uint256 _heyy = heyy;
+        emit WhatsUp2(_heyy);
+        this.reverts(_heyy);
+        return _heyy;
+    }
+
+    function reverts(uint256) public pure returns (string memory) {
         revert("kick");
     }
 }

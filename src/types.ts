@@ -21,12 +21,6 @@ export interface TracerEnv {
   enabled: boolean;
   ignoreNext: boolean;
   verbosity: number;
-  // verbosity: 0 => no printing
-  // verbosity: 1 => only failed eth_call or eth_estimateGas or eth_sendTransaction
-  // verbosity: 2 => print logs for everything i.e. all eth_call, eth_estimateGas, eth_sendTransaction
-  // verbosity: 3 => print calls + logs for everything i.e. all eth_call, eth_estimateGas, eth_sendTransaction
-  // verbosity: 4 => print calls + logs + specified opcodes for everything
-
   gasCost: boolean;
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;

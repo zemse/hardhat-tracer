@@ -10,6 +10,7 @@ import {
 import { Decoder } from "./decoder";
 
 import { ProviderLike, TracerDependencies, TracerEnv } from "./types";
+import { DEFAULT_VERBOSITY } from "./utils";
 
 /**
  * Wrapped provider which extends requests
@@ -44,18 +45,35 @@ class TracerWrapper extends ProviderWrapper {
     const isEthCall = args.method === "eth_call";
     const isEstimateGas = args.method === "eth_estimateGas";
 
+    const isSendTransactionFailed = isSendTransaction && !!error;
     const isEthCallFailed = isEthCall && !!error;
     const isEstimateGasFailed = isEstimateGas && !!error;
+
+    let shouldPrint: boolean;
+
+    switch (this.dependencies.tracerEnv.verbosity) {
+      case 0:
+        shouldPrint = false;
+        break;
+      case 1:
+      case 2:
+        shouldPrint =
+          isSendTransactionFailed || isEthCallFailed || isEstimateGasFailed;
+        break;
+      case 3:
+      case 4:
+        shouldPrint = true;
+        break;
+      default:
+        throw new Error(
+          "Invalid verbosity value: " + this.dependencies.tracerEnv.verbosity
+        );
+    }
 
     if (this.dependencies.tracerEnv.ignoreNext) {
       this.dependencies.tracerEnv.ignoreNext = false;
     } else {
-      if (
-        isEstimateGasFailed ||
-        isEthCallFailed ||
-        (this.dependencies.tracerEnv.enabled &&
-          (isSendTransaction || isEthCall))
-      ) {
+      if (this.dependencies.tracerEnv.enabled && shouldPrint) {
         await this.dependencies.tracerEnv.recorder?.previousTraces?.[
           this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
         ]?.print?.(this.dependencies);
@@ -106,7 +124,7 @@ export function wrapEthersProvider(
     tracerEnv = {
       enabled: false,
       ignoreNext: false,
-      verbosity: 1,
+      verbosity: DEFAULT_VERBOSITY,
       gasCost: false,
       opcodes: new Map(),
       nameTags: {},

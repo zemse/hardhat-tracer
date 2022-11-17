@@ -30,6 +30,6 @@ describe("Hello", () => {
     try {
       await hello.kick();
     } catch {}
-    await hello.kick();
+    await hello.kick2();
   });
 });

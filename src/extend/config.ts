@@ -7,6 +7,7 @@ import { MessageTrace } from "hardhat/internal/hardhat-network/stack-traces/mess
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
 import { TracerEnv, TracerEnvUser } from "../types";
+import { DEFAULT_VERBOSITY } from "../utils";
 
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {
@@ -23,16 +24,9 @@ extendConfig(
     // config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
 
     const opcodes = new Map<string, boolean>();
+
     // always active opcodes
-    const opcodesToActivate = [
-      "RETURN",
-      "REVERT",
-      "LOG0",
-      "LOG1",
-      "LOG2",
-      "LOG3",
-      "LOG4",
-    ];
+    const opcodesToActivate = [];
     if (userConfig.tracer?.opcodes) {
       if (!Array.isArray(userConfig.tracer.opcodes)) {
         throw new Error(
@@ -48,7 +42,7 @@ extendConfig(
     config.tracer = {
       enabled: userConfig.tracer?.enabled ?? false,
       ignoreNext: false,
-      verbosity: userConfig.tracer?.defaultVerbosity ?? 1,
+      verbosity: userConfig.tracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
       gasCost: userConfig.tracer?.gasCost ?? false,
       opcodes,
       nameTags: userConfig.tracer?.nameTags ?? {},

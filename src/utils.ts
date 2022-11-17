@@ -31,7 +31,10 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
     task
       // enable flag
-      .addFlag("trace", "enable tracer to print calls and logs in tests")
+      .addFlag(
+        "trace",
+        "enable tracer to print calls and logs in tests (with verbosity 3 by default)"
+      )
 
       // params
       .addOptionalParam("opcodes", "specify more opcodes to print")
@@ -49,24 +52,45 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
   );
 }
 
+export const DEFAULT_VERBOSITY = 3;
+
 export function applyCliArgsToTracer(
   args: any,
   hre: HardhatRuntimeEnvironment
 ) {
-  // if any flag is present, then enable tracer
-  if (args.trace) {
-    hre.tracer.enabled = true;
+  // enabled by default
+  hre.tracer.enabled = true;
+
+  // for not enabling tracer from the start
+  if (args.disabletracer) {
+    hre.tracer.enabled = false;
   }
+
+  // always active opcodes
+  const opcodesToActivate = ["RETURN", "REVERT"];
+
+  const logOpcodes = ["LOG0", "LOG1", "LOG2", "LOG3", "LOG4"];
+  const storageOpcodes = ["SLOAD", "SSTORE"];
 
   // setting verbosity
   if (args.vvvv) {
     hre.tracer.verbosity = 4;
+    opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
   } else if (args.vvv) {
     hre.tracer.verbosity = 3;
+    opcodesToActivate.push(...logOpcodes);
   } else if (args.vv) {
     hre.tracer.verbosity = 2;
+    opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
   } else if (args.v) {
+    opcodesToActivate.push(...logOpcodes);
     hre.tracer.verbosity = 1;
+  } else if (args.trace) {
+    hre.tracer.verbosity = DEFAULT_VERBOSITY;
+  }
+
+  for (const opcode of opcodesToActivate) {
+    hre.tracer.opcodes.set(opcode, true);
   }
 
   if (args.opcodes) {
@@ -88,8 +112,9 @@ export function applyCliArgsToTracer(
   }
 }
 
+// TODO remove
 export function isOnlyLogs(env: TracerEnv): boolean {
-  return env.verbosity === 2;
+  return env.verbosity === 1;
 }
 
 export function getFromNameTags(
