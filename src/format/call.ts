@@ -9,7 +9,12 @@ import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
 import { ProviderLike, TracerDependencies } from "../types";
-import { compareBytecode, fetchContractName, getFromNameTags } from "../utils";
+import {
+  compareBytecode,
+  fetchContractDecimals,
+  fetchContractName,
+  getFromNameTags,
+} from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -28,6 +33,7 @@ export async function formatCall(
   // TODO handle if `to` is console.log address
 
   let contractName: string | undefined;
+  let contractDecimals: number | undefined;
   let inputResult: Result | undefined;
   let returnResult: Result | undefined;
   let fragment: Fragment | undefined;
@@ -77,18 +83,26 @@ export async function formatCall(
     }
   }
 
+  if (
+    input.slice(0, 10) === "0x70a08231" || // balanceOf
+    input.slice(0, 10) === "0xa9059cbb" || // transfer
+    input.slice(0, 10) === "0x23b872dd" // transferFrom
+  ) {
+    contractDecimals = await fetchContractDecimals(to, dependencies.provider);
+  }
+
   if (inputResult && fragment) {
     const inputArgs = formatResult(
       inputResult,
       fragment,
-      { decimals: -1, isInput: true, shorten: false },
+      { decimals: contractDecimals, isInput: true, shorten: false },
       dependencies
     );
     const outputArgs = returnResult
       ? formatResult(
           returnResult,
           fragment,
-          { decimals: -1, isInput: false, shorten: true },
+          { decimals: contractDecimals, isInput: false, shorten: true },
           dependencies
         )
       : "";

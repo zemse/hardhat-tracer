@@ -301,3 +301,24 @@ export async function fetchContractNameFromMethodName(
   }
   return undefined;
 }
+
+export async function fetchContractDecimals(
+  to: string,
+  provider: ProviderLike
+): Promise<number | undefined> {
+  const iface1 = new Interface([
+    `function decimals() public view returns (uint8)`,
+  ]);
+  let result1;
+  try {
+    result1 = await provider.send("eth_call", [
+      {
+        to,
+        data: iface1.encodeFunctionData("decimals", []),
+      },
+    ]);
+    const d = iface1.decodeFunctionResult("decimals", result1);
+    return d[0];
+  } catch {}
+  return undefined;
+}

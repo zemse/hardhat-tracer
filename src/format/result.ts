@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers";
 import {
   formatUnits,
   Fragment,
@@ -37,8 +38,9 @@ export function formatResult(
     const name = param.name ?? `arg_${i}`;
     stringifiedArgs.push([
       name,
-      decimals !== -1 && i === 2 // display formatted value for erc20 transfer events
-        ? formatUnits(result[2], decimals)
+      // use decimals if available to format amount
+      decimals !== -1 && BigNumber.isBigNumber(result[i])
+        ? formatUnits(result[i], decimals)
         : formatParam(result[i], dependencies),
     ]);
   }
