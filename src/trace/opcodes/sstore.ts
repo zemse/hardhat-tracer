@@ -11,8 +11,8 @@ function parse(step: InterpreterStep): Item<SSTORE> {
   return {
     opcode: "SSTORE",
     params: {
-      key: hexPrefix(step.stack[step.stack.length - 1].toString()),
-      value: hexPrefix(step.stack[step.stack.length - 2].toString()),
+      key: hexPrefix(step.stack[step.stack.length - 1].toString(16)),
+      value: hexPrefix(step.stack[step.stack.length - 2].toString(16)),
     },
     format(): string {
       return format(this);
