@@ -23,7 +23,16 @@ extendConfig(
     // config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
 
     const opcodes = new Map<string, boolean>();
-    const opcodesToActivate = ["RETURN", "REVERT"]; // always active opcodes
+    // always active opcodes
+    const opcodesToActivate = [
+      "RETURN",
+      "REVERT",
+      "LOG0",
+      "LOG1",
+      "LOG2",
+      "LOG3",
+      "LOG4",
+    ];
     if (userConfig.tracer?.opcodes) {
       if (!Array.isArray(userConfig.tracer.opcodes)) {
         throw new Error(

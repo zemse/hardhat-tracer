@@ -35,6 +35,7 @@ export class TraceRecorder {
   previousOpcode: string | undefined;
   tracerEnv: TracerEnv;
   awaitedItems: AwaitedItem<any>[];
+  addressStack: string[];
 
   constructor(vm: VM, tracerEnv: TracerEnv) {
     this.vm = vm;
@@ -47,6 +48,7 @@ export class TraceRecorder {
     }
 
     this.awaitedItems = [];
+    this.addressStack = [];
 
     // this.txTrace = new TransactionTrace("", "", "", 0);
     vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
@@ -87,6 +89,7 @@ export class TraceRecorder {
       if (message.to === undefined) {
         throw new Error("internal error: message.to is undefined");
       }
+      this.addressStack.push(message.to?.toString()!);
       item = {
         opcode: "STATICCALL",
         params: {
@@ -100,6 +103,7 @@ export class TraceRecorder {
       if (message.to === undefined) {
         throw new Error("internal error: message.to is undefined");
       }
+      this.addressStack.push(message.caller?.toString()!);
       item = {
         opcode: "DELEGATECALL",
         params: {
@@ -110,6 +114,7 @@ export class TraceRecorder {
         children: [],
       } as Item<DELEGATECALL>;
     } else if (message.to) {
+      this.addressStack.push(message.caller?.toString()!);
       item = {
         opcode: "CALL",
         params: {
@@ -188,6 +193,8 @@ export class TraceRecorder {
       }
     }
 
+    this.addressStack.push(contract.address.toString());
+
     resolve?.();
   }
 
@@ -210,7 +217,10 @@ export class TraceRecorder {
         awaitedItem.next--;
         if (awaitedItem.next === 0) {
           // try {
-          const item = awaitedItem.parse(step);
+          const item = awaitedItem.parse(
+            step,
+            this.addressStack[this.addressStack.length - 1]
+          );
           // // console.log({ item });
           this.trace.insertItem(item);
           // } catch {
@@ -222,7 +232,10 @@ export class TraceRecorder {
 
     // console.log(step.opcode.name);
     if (this.tracerEnv.opcodes.get(step.opcode.name)) {
-      const result = parse(step.opcode.name, step);
+      const result = parse(
+        step,
+        this.addressStack[this.addressStack.length - 1]
+      );
       if (result) {
         if (isItem(result)) {
           this.trace.insertItem(result);
@@ -264,6 +277,8 @@ export class TraceRecorder {
     this.trace.returnCurrentCall(
       "0x" + evmResult.execResult.returnValue.toString("hex")
     );
+    this.addressStack.pop();
+
     resolve?.();
   }
 
@@ -284,6 +299,7 @@ export class TraceRecorder {
     this.trace = undefined;
     this.previousOpcode = undefined;
     this.awaitedItems = [];
+    this.addressStack = [];
 
     resolve?.();
   }

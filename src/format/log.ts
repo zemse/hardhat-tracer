@@ -2,7 +2,7 @@ import { Interface, LogDescription } from "ethers/lib/utils";
 import { Artifact } from "hardhat/types";
 
 import { colorContract, colorEvent } from "../colors";
-import { TracerDependenciesExtended } from "../types";
+import { TracerDependencies, TracerDependenciesExtended } from "../types";
 import { compareBytecode, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
@@ -11,8 +11,9 @@ import { formatResult } from "./result";
 export async function formatLog(
   log: { data: string; topics: string[] },
   currentAddress: string | undefined,
-  dependencies: TracerDependenciesExtended
+  dependencies: TracerDependencies
 ) {
+  // TODO make the contractName code common between formatCall and formatLog
   const nameTag = currentAddress
     ? getFromNameTags(currentAddress, dependencies)
     : undefined;
@@ -41,10 +42,14 @@ export async function formatLog(
       const parsed = iface.parseLog(log);
       const decimals = -1;
 
+      if (!contractName) {
+        contractName = artifact.contractName;
+      }
+
       str = `${colorEvent(parsed.name)}(${formatResult(
         parsed.args,
-        parsed.eventFragment,
-        { decimals, isInput: true, shorten: false },
+        parsed.eventFragment.inputs,
+        { decimals, shorten: false },
         dependencies
       )})`;
     } catch {}

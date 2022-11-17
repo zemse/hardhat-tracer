@@ -15,7 +15,7 @@ export interface Item<Params> {
 export type AwaitedItem<T> = {
   isAwaitedItem: true;
   next: number;
-  parse: (step: InterpreterStep) => Item<T>;
+  parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
 };
 
 export interface CallParams {

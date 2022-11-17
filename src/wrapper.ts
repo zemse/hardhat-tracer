@@ -26,7 +26,7 @@ class TracerWrapper extends ProviderWrapper {
   public async request(args: RequestArguments): Promise<unknown> {
     let result;
     let error: any;
-    console.log("wrapper->args.method", args.method);
+    // console.log("wrapper->args.method", args.method);
 
     try {
       result = await this.dependencies.provider.send(

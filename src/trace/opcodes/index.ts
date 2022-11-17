@@ -2,6 +2,11 @@ import call from "./call";
 import create from "./create";
 import create2 from "./create2";
 import delegatecall from "./delegatecall";
+import log0 from "./log0";
+import log1 from "./log1";
+import log2 from "./log2";
+import log3 from "./log3";
+import log4 from "./log4";
 import revert from "./revert";
 import sload from "./sload";
 import sstore from "./sstore";
@@ -9,14 +14,25 @@ import staticcall from "./staticcall";
 import { AwaitedItem, Item } from "../transaction";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerDependencies } from "../../types";
+import log from "./log";
 
 export function parse(
-  opcode: string,
-  step: InterpreterStep
+  step: InterpreterStep,
+  currentAddress: string
 ): Item<any> | AwaitedItem<any> | undefined {
   switch (step.opcode.name) {
     // case "CALL":
     //   this.trace.insertItem(call.parseStep(step));
+    case "LOG0":
+      return log0.parse(step, currentAddress);
+    case "LOG1":
+      return log1.parse(step, currentAddress);
+    case "LOG2":
+      return log2.parse(step, currentAddress);
+    case "LOG3":
+      return log3.parse(step, currentAddress);
+    case "LOG4":
+      return log4.parse(step, currentAddress);
     case "SLOAD":
       return sload.parse(step);
     case "SSTORE":
@@ -43,6 +59,12 @@ export async function format(
       return await create.format(item, dependencies);
     case "CREATE2":
       return await create2.format(item, dependencies);
+    case "LOG0":
+    case "LOG1":
+    case "LOG2":
+    case "LOG3":
+    case "LOG4":
+      return await log.format(item, dependencies);
     case "SLOAD":
       return await sload.format(item);
     case "SSTORE":

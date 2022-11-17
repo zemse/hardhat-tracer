@@ -157,6 +157,10 @@ export function shallowCopyStack(stack: string[]): string[] {
   return [...stack];
 }
 
+export function shallowCopyStack2(stack: bigint[]): string[] {
+  return [...stack].map((x) => BigNumber.from(x).toHexString());
+}
+
 export function compareBytecode(
   artifactBytecode: string,
   contractBytecode: string
@@ -198,7 +202,7 @@ export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
   // fetch the opcodes which work on this VM
   let activeOpcodesMap = new Map<string, boolean>();
   for (const opcode of getOpcodesForHF(vm._common).opcodes.values()) {
-    activeOpcodesMap.set(opcode.name, true);
+    activeOpcodesMap.set(opcode.fullName, true);
   }
 
   // check if there are any opcodes specified in tracer which do not work
