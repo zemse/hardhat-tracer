@@ -1,4 +1,9 @@
-import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
+import {
+  arrayify,
+  hexStripZeros,
+  hexZeroPad,
+  Interface,
+} from "ethers/lib/utils";
 import { BigNumber, ethers } from "ethers";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 import {
@@ -7,6 +12,7 @@ import {
 } from "hardhat/types";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import {
+  ProviderLike,
   StateOverrides,
   StructLog,
   TracerDependencies,
@@ -252,4 +258,46 @@ export async function applyStateOverrides(
       }
     }
   }
+}
+
+export async function fetchContractName(to: string, provider: ProviderLike) {
+  let name = await fetchContractNameFromMethodName(to, "symbol", provider);
+  if (!name) {
+    name = await fetchContractNameFromMethodName(to, "name", provider);
+  }
+  if (name) {
+    name = name.split(" ").join("");
+  }
+  return name;
+}
+
+export async function fetchContractNameFromMethodName(
+  to: string,
+  methodName: string,
+  provider: ProviderLike
+): Promise<string | undefined> {
+  const iface1 = new Interface([
+    `function ${methodName}() public view returns (string)`,
+  ]);
+  let result1;
+  try {
+    result1 = await provider.send("eth_call", [
+      {
+        to,
+        data: iface1.encodeFunctionData(methodName, []),
+      },
+    ]);
+    const d = iface1.decodeFunctionResult(methodName, result1);
+    return d[0];
+  } catch {
+    try {
+      const iface2 = new Interface([
+        `function ${methodName}() public view returns (bytes32)`,
+      ]);
+      const d = iface2.decodeFunctionResult(methodName, result1);
+      const bytes32 = d[0];
+      return ethers.utils.toUtf8String(bytes32);
+    } catch {}
+  }
+  return undefined;
 }

@@ -8,8 +8,8 @@ import {
 import { Artifact } from "hardhat/types";
 
 import { colorContract, colorFunction, colorKey } from "../colors";
-import { TracerDependencies } from "../types";
-import { compareBytecode, getFromNameTags } from "../utils";
+import { ProviderLike, TracerDependencies } from "../types";
+import { compareBytecode, fetchContractName, getFromNameTags } from "../utils";
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -23,7 +23,6 @@ export async function formatCall(
   gas: BigNumberish,
   dependencies: TracerDependencies
 ) {
-  // const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
 
   // TODO handle if `to` is console.log address
@@ -47,27 +46,36 @@ export async function formatCall(
 
   // TODO Find a better contract name
   // 1. See if there is a name() method that gives string or bytes32
-  // 2. Match bytecode
+  const contractNameFromNameMethod = await fetchContractName(
+    to,
+    dependencies.provider
+  );
+  if (contractNameFromNameMethod !== undefined) {
+    contractName = contractNameFromNameMethod;
+  } else {
+    // 2. Match bytecode
+    let contractNameFromArtifacts;
+    const toBytecode = await dependencies.provider.send("eth_getCode", [to]);
+    for (const name of names) {
+      const _artifact = await dependencies.artifacts.readArtifact(name);
 
-  // for (const name of names) {
-  //   const _artifact = await dependencies.artifacts.readArtifact(name);
-  //   const iface = new Interface(_artifact.abi);
+      // try to find the contract name
+      if (
+        compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
+        (to === ethers.constants.AddressZero && toBytecode.length <= 2)
+      ) {
+        // if bytecode of "to" is the same as the deployed bytecode
+        // we can use the artifact name
+        contractNameFromArtifacts = _artifact.contractName;
+      }
 
-  //   // try to find the contract name
-  //   if (
-  //     compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
-  //     (to === ethers.constants.AddressZero && toBytecode.length <= 2)
-  //   ) {
-  //     // if bytecode of "to" is the same as the deployed bytecode
-  //     // we can use the artifact name
-  //     contractName = _artifact.contractName;
-  //   }
-
-  //   // if we got both the contract name and arguments parsed so far, we can stop
-  //   if (contractName) {
-  //     break;
-  //   }
-  // }
+      // if we got both the contract name and arguments parsed so far, we can stop
+      if (contractNameFromArtifacts) {
+        contractName = contractNameFromArtifacts;
+        break;
+      }
+    }
+  }
 
   if (inputResult && fragment) {
     const inputArgs = formatResult(
