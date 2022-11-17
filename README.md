@@ -1,13 +1,17 @@
 # hardhat-tracer 🕵️
 
+> This is a beta release. Some things might not work.
+
 Allows you to see events, calls and storage operations when running your tests.
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Test](#test): See debug trace when running test
-  - [Trace](#trace): Task to generate call tree for a transaction
-  - [Calldata decoder](#calldata-decoder): Task to simply decode an encoded data
-  - [Address name tags](#address-name-tags): Set alias for addresses with name
+- [hardhat-tracer 🕵️](#hardhat-tracer-️)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Test](#test)
+    - [Trace](#trace)
+    - [Calldata decoder](#calldata-decoder)
+    - [Address name tags](#address-name-tags)
+    - [State overrides](#state-overrides)
 
 ## Installation
 
@@ -27,12 +31,18 @@ require("hardhat-tracer");
 
 ### Test
 
-Just add the `--trace` or `--fulltrace` after your test command.
-
 ```shell
-npx hardhat test --trace      # shows logs + calls
-npx hardhat test --fulltrace  # shows logs + calls + sloads + sstores
-npx hardhat test --trace --opcodes ADD,SUB # shows any opcode specified
+npx hardhat test --trace # same as --vvv
+npx hardhat test --fulltrace # same as --vvvv
+
+npx hardhat test --v    # shows logs + calls for only failed txs
+npx hardhat test --vv   # shows logs + calls + storage for only failed txs
+npx hardhat test --vvv  # shows logs + calls for all txs
+npx hardhat test --vvvv # shows logs + calls + storage for all txs
+
+# specify opcode
+npx hardhat test --v --opcodes ADD,SUB   # shows any opcode specified for only failed txs
+npx hardhat test --vvv --opcodes ADD,SUB # shows any opcode specified for all txs
 ```
 
 <img width="1092" alt="Console testing" src="https://user-images.githubusercontent.com/22412996/160298216-f56b8244-ceb3-4a5a-86a8-0afb29734354.png">
@@ -56,7 +66,7 @@ npx hardhat trace --hash 0xTransactionHash --rpc https://url # must be archive n
 
 ### Calldata decoder
 
-If you are just looking for a quick decode of calldata or [Solidity's Custom Error](https://blog.soliditylang.org/2021/04/21/custom-errors/):
+If you are just looking for a quick decode of calldata or [Solidity"s Custom Error](https://blog.soliditylang.org/2021/04/21/custom-errors/):
 
 ```
 $ npx hardhat decode --data 0x095ea7b300000000000000000000000068b3465833fb72a70ecdf485e0e4c7bd8665fc45ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -75,9 +85,29 @@ or can be set in hardhat config
 
 ```ts
 tracer: {
-    nameTags: {
-        '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266': 'Hunter',
-        [someVariable]: 'MyContract',
+  nameTags: {
+    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": "Hunter",
+    [someVariable]: "MyContract",
+  },
+},
+```
+
+### State overrides
+
+These state overrides are applied when the EthereumJS/VM is created inside hardhat.
+
+```ts
+tracer: {
+  stateOverrides: {
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": {
+      storage: {
+        "0": 100,
+        "0x1abf42a573070203916aa7bf9118741d8da5f9522f66b5368aa0a2644f487b38": 0,
+      },
+      bytecode: "0x30FF",
+      balance: parseEther("2"),
+      nonce: 2
     },
+  },
 },
 ```
