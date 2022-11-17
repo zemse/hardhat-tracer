@@ -15,7 +15,7 @@ describe("Hardhat Runtime Environment extension", function () {
     it.only("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
-        trace: true,
+        fulltrace: true,
         // opcodes: "SSTORE,SLOAD",
       });
     });

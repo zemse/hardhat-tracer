@@ -30,25 +30,29 @@ import { Item } from "./trace/transaction";
 export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
     task
-      // enable flag
-      .addFlag(
-        "trace",
-        "enable tracer to print calls and logs in tests (with verbosity 3 by default)"
-      )
-
-      // params
-      .addOptionalParam("opcodes", "specify more opcodes to print")
-
       // verbosity flags
-      .addFlag("v", "set verbosity to 1")
-      .addFlag("vv", "set verbosity to 2")
-      .addFlag("vvv", "set verbosity to 3")
-      .addFlag("vvvv", "set verbosity to 4")
+      .addFlag("v", "set verbosity to 1, prints calls for only failed txs")
+      .addFlag(
+        "vv",
+        "set verbosity to 2, prints calls and storage for only failed txs"
+      )
+      .addFlag("vvv", "set verbosity to 3, prints calls for all txs")
+      .addFlag(
+        "vvvv",
+        "set verbosity to 4, prints calls and storage for all txs"
+      )
       .addFlag("gascost", "display gas cost")
       .addFlag(
         "disabletracer",
         "do not enable tracer at the start (for inline enabling tracer)"
       )
+
+      // params
+      .addOptionalParam("opcodes", "specify more opcodes to print")
+
+      // alias
+      .addFlag("trace", "enable tracer with verbosity 3")
+      .addFlag("fulltrace", "enable tracer with verbosity 4")
   );
 }
 
@@ -73,10 +77,10 @@ export function applyCliArgsToTracer(
   const storageOpcodes = ["SLOAD", "SSTORE"];
 
   // setting verbosity
-  if (args.vvvv) {
+  if (args.vvvv || args.fulltrace) {
     hre.tracer.verbosity = 4;
     opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
-  } else if (args.vvv) {
+  } else if (args.vvv || args.trace) {
     hre.tracer.verbosity = 3;
     opcodesToActivate.push(...logOpcodes);
   } else if (args.vv) {
@@ -85,8 +89,6 @@ export function applyCliArgsToTracer(
   } else if (args.v) {
     opcodesToActivate.push(...logOpcodes);
     hre.tracer.verbosity = 1;
-  } else if (args.trace) {
-    hre.tracer.verbosity = DEFAULT_VERBOSITY;
   }
 
   for (const opcode of opcodesToActivate) {
