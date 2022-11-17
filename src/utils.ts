@@ -5,8 +5,9 @@ import {
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
-
+import { Address } from "@nomicfoundation/ethereumjs-util";
 import {
+  StateOverrides,
   StructLog,
   TracerDependencies,
   TracerDependenciesExtended,
@@ -206,4 +207,49 @@ export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
 
 export function isItem(item: any): item is Item<any> {
   return item && typeof item.opcode === "string";
+}
+
+export async function applyStateOverrides(
+  stateOverrides: StateOverrides,
+  vm: VM
+) {
+  for (const [_address, overrides] of Object.entries(stateOverrides)) {
+    const address = Address.fromString(_address);
+    // for balance and nonce
+    if (overrides.balance !== undefined || overrides.nonce !== undefined) {
+      const account = await vm.stateManager.getAccount(address);
+      if (overrides.nonce !== undefined) {
+        account.nonce = BigNumber.from(overrides.nonce).toBigInt();
+      }
+      if (overrides.balance) {
+        account.balance = BigNumber.from(overrides.balance).toBigInt();
+      }
+      await vm.stateManager.putAccount(address, account);
+    }
+
+    // for bytecode
+    if (overrides.bytecode) {
+      await vm.stateManager.putContractCode(
+        address,
+        Buffer.from(overrides.bytecode, "hex")
+      );
+    }
+
+    // for storage slots
+    if (overrides.storage) {
+      for (const [key, value] of Object.entries(overrides.storage)) {
+        await vm.stateManager.putContractStorage(
+          address,
+          Buffer.from(
+            hexZeroPad(BigNumber.from(key).toHexString(), 32).slice(2),
+            "hex"
+          ),
+          Buffer.from(
+            hexZeroPad(BigNumber.from(value).toHexString(), 32).slice(2),
+            "hex"
+          )
+        );
+      }
+    }
+  }
 }

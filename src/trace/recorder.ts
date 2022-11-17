@@ -12,6 +12,7 @@ import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
 import {
+  applyStateOverrides,
   checkIfOpcodesAreValid,
   hexPrefix,
   isItem,
@@ -40,6 +41,10 @@ export class TraceRecorder {
     this.tracerEnv = tracerEnv;
 
     checkIfOpcodesAreValid(tracerEnv.opcodes, vm);
+
+    if (tracerEnv.stateOverrides) {
+      applyStateOverrides(tracerEnv.stateOverrides, vm);
+    }
 
     this.awaitedItems = [];
 

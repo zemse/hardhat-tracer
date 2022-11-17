@@ -2,6 +2,7 @@ import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { Artifacts, EthereumProvider } from "hardhat/types";
 import { TraceRecorder } from "./trace/recorder";
 import { Decoder } from "./decoder";
+import { BigNumberish } from "ethers";
 
 export interface NameTags {
   [address: string]: string;
@@ -13,6 +14,7 @@ export interface TracerEnvUser {
   gasCost?: boolean;
   opcodes?: string[];
   nameTags?: NameTags;
+  stateOverrides?: StateOverrides;
 }
 
 export interface TracerEnv {
@@ -37,6 +39,7 @@ export interface TracerEnv {
   };
   recorder?: TraceRecorder;
   decoder?: Decoder;
+  stateOverrides?: StateOverrides;
 }
 
 export interface TracerDependencies {
@@ -63,4 +66,15 @@ export interface StructLog {
   pc: number;
   stack: string[];
   storage: {};
+}
+
+export interface StateOverrides {
+  [address: string]: {
+    storage?: {
+      [slot: string | number]: BigNumberish;
+    };
+    bytecode?: string;
+    balance?: BigNumberish;
+    nonce?: BigNumberish;
+  };
 }

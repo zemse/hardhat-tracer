@@ -47,6 +47,7 @@ extendConfig(
       _internal: {
         printNameTagTip: undefined,
       },
+      stateOverrides: userConfig.tracer?.stateOverrides,
     };
   }
 );

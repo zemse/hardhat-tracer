@@ -24,6 +24,13 @@ const config: HardhatUserConfig = {
   paths: {},
   tracer: {
     // enabled: true,
+    stateOverrides: {
+      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": {
+        storage: {
+          "0x1abf42a573070203916aa7bf9118741d8da5f9522f66b5368aa0a2644f487b38": 0,
+        },
+      },
+    },
   },
 };
 
