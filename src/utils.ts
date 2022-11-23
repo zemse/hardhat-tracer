@@ -56,7 +56,7 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
   );
 }
 
-export const DEFAULT_VERBOSITY = 3;
+export const DEFAULT_VERBOSITY = 1;
 
 export function applyCliArgsToTracer(
   args: any,
