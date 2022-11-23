@@ -70,10 +70,10 @@ class TracerWrapper extends ProviderWrapper {
         );
     }
 
-    if (this.dependencies.tracerEnv.ignoreNext) {
-      this.dependencies.tracerEnv.ignoreNext = false;
-    } else {
-      if (this.dependencies.tracerEnv.enabled && shouldPrint) {
+    if (this.dependencies.tracerEnv.enabled && shouldPrint) {
+      if (this.dependencies.tracerEnv.ignoreNext) {
+        this.dependencies.tracerEnv.ignoreNext = false;
+      } else {
         await this.dependencies.tracerEnv.recorder?.previousTraces?.[
           this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
         ]?.print?.(this.dependencies);
