@@ -58,7 +58,11 @@ class TracerWrapper extends ProviderWrapper {
       case 1:
       case 2:
         shouldPrint =
-          isSendTransactionFailed || isEthCallFailed || isEstimateGasFailed;
+          isSendTransactionFailed ||
+          isEthCallFailed ||
+          isEstimateGasFailed ||
+          (!!this.dependencies.tracerEnv.printNext &&
+            (isSendTransaction || isEthCall || isEstimateGas));
         break;
       case 3:
       case 4:
@@ -124,6 +128,7 @@ export function wrapEthersProvider(
     tracerEnv = {
       enabled: false,
       ignoreNext: false,
+      printNext: false,
       verbosity: DEFAULT_VERBOSITY,
       gasCost: false,
       opcodes: new Map(),

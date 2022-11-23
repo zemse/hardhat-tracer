@@ -42,6 +42,7 @@ extendConfig(
     config.tracer = {
       enabled: userConfig.tracer?.enabled ?? false,
       ignoreNext: false,
+      printNext: false,
       verbosity: userConfig.tracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
       gasCost: userConfig.tracer?.gasCost ?? false,
       opcodes,

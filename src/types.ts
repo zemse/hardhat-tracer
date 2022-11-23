@@ -20,6 +20,7 @@ export interface TracerEnvUser {
 export interface TracerEnv {
   enabled: boolean;
   ignoreNext: boolean;
+  printNext: boolean;
   verbosity: number;
   gasCost: boolean;
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
