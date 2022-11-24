@@ -78,6 +78,7 @@ class TracerWrapper extends ProviderWrapper {
       if (this.dependencies.tracerEnv.ignoreNext) {
         this.dependencies.tracerEnv.ignoreNext = false;
       } else {
+        this.dependencies.tracerEnv.printNext = false;
         await this.dependencies.tracerEnv.recorder?.previousTraces?.[
           this.dependencies.tracerEnv.recorder?.previousTraces.length - 1
         ]?.print?.(this.dependencies);
