@@ -11,6 +11,7 @@ export interface NameTags {
 export interface TracerEnvUser {
   enabled?: boolean;
   defaultVerbosity?: number;
+  showAddresses?: boolean;
   gasCost?: boolean;
   opcodes?: string[];
   nameTags?: NameTags;
@@ -22,6 +23,7 @@ export interface TracerEnv {
   ignoreNext: boolean;
   printNext: boolean;
   verbosity: number;
+  showAddresses: boolean;
   gasCost: boolean;
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;

@@ -130,6 +130,7 @@ export function wrapEthersProvider(
       ignoreNext: false,
       printNext: false,
       verbosity: DEFAULT_VERBOSITY,
+      showAddresses: false,
       gasCost: false,
       opcodes: new Map(),
       nameTags: {},

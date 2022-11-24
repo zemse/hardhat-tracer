@@ -119,15 +119,13 @@ export async function formatCall(
       extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
     }
     const nameTag = getFromNameTags(to, dependencies);
+
+    let nameToPrint = nameTag ?? contractName ?? "UnknownContract";
+
     return `${
-      nameTag
-        ? colorContract(nameTag)
-        : contractName
-        ? colorContract(contractName)
-        : `<${colorContract("UnknownContract")} ${formatParam(
-            to,
-            dependencies
-          )}>`
+      dependencies.tracerEnv.showAddresses || nameToPrint === "UnknownContract"
+        ? `${colorContract(nameToPrint)}(${formatParam(to, dependencies)})`
+        : colorContract(nameToPrint)
     }.${colorFunction(fragment.name)}${
       extra.length !== 0 ? `{${extra.join(",")}}` : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;

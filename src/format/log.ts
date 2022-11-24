@@ -56,15 +56,20 @@ export async function formatLog(
 
     // if we got both the contract name and arguments parsed so far, we can stop
     if (contractName && str) {
-      return colorContract(contractName) + "." + str;
+      return (
+        colorContract(contractName) +
+        (dependencies.tracerEnv.showAddresses ? `(${currentAddress})` : "") +
+        "." +
+        str
+      );
     }
   }
 
   return (
-    `<${colorContract("UnknownContract")} ${formatParam(
+    `${colorContract("UnknownContract")}(${formatParam(
       currentAddress,
       dependencies
-    )}>.` +
+    )}).` +
     (str ??
       `${colorEvent("UnknownEvent")}(${formatParam(
         log.data,
