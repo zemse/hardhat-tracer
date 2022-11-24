@@ -101,12 +101,10 @@ export function applyCliArgsToTracer(
       hre.tracer.opcodes.set(opcode, true);
     }
 
-    if (hre.tracer.recorder === undefined) {
-      throw new Error(
-        `hardhat-tracer/utils/applyCliArgsToTracer: hre.tracer.recorder is undefined`
-      );
+    // if recorder was already created, then check opcodes, else it will be checked later
+    if (hre.tracer.recorder !== undefined) {
+      checkIfOpcodesAreValid(hre.tracer.opcodes, hre.tracer.recorder.vm);
     }
-    checkIfOpcodesAreValid(hre.tracer.opcodes, hre.tracer.recorder.vm);
   }
 
   if (args.gascost) {
