@@ -40,7 +40,7 @@
     "@types/node": "^8.10.38",
     "@types/readable-stream": "^2.3.14",
     "chai": "^4.2.0",
-    "hardhat": "^2.11.2",
+    "hardhat": "^2.12.2",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
     "ts-node": "^10.7.0",
