@@ -51,6 +51,7 @@ extendConfig(
       // @ts-ignore TODO remove, this has no place in "config"
       _internal: {
         printNameTagTip: undefined,
+        tokenDecimalsCache: new Map(),
       },
       stateOverrides: userConfig.tracer?.stateOverrides,
     };

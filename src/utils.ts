@@ -351,3 +351,55 @@ export async function fetchContractDecimals(
   } catch {}
   return undefined;
 }
+
+export async function fetchContractNameUsingArtifacts(
+  address: string,
+  dependencies: TracerDependencies
+): Promise<string | undefined> {
+  const toBytecode = await dependencies.provider.send("eth_getCode", [address]);
+  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
+  for (const name of names) {
+    const _artifact = await dependencies.artifacts.readArtifact(name);
+
+    // try to find the contract name
+    if (
+      compareBytecode(_artifact.deployedBytecode, toBytecode) > 0.5 ||
+      (address === ethers.constants.AddressZero && toBytecode.length <= 2)
+    ) {
+      // if bytecode of "to" is the same as the deployed bytecode
+      // we can use the artifact name
+      return _artifact.contractName;
+    }
+  }
+}
+
+export async function getBetterContractName(
+  address: string,
+  dependencies: TracerDependencies
+): Promise<string | undefined> {
+  // 1. See if nameTag exists already
+  const nameTag = getFromNameTags(address, dependencies);
+  if (nameTag) {
+    return nameTag;
+  }
+
+  // 2. See if there is a name() method that gives string or bytes32
+  const contractNameFromNameMethod = await fetchContractName(
+    address,
+    dependencies.provider
+  );
+  if (contractNameFromNameMethod) {
+    dependencies.tracerEnv.nameTags[address] = contractNameFromNameMethod;
+    return contractNameFromNameMethod;
+  }
+
+  // 3. Match bytecode
+  const contractNameFromArtifacts = await fetchContractNameUsingArtifacts(
+    address,
+    dependencies
+  );
+  if (contractNameFromArtifacts) {
+    dependencies.tracerEnv.nameTags[address] = contractNameFromArtifacts;
+    return contractNameFromArtifacts;
+  }
+}

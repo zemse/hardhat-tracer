@@ -29,6 +29,7 @@ export interface TracerEnv {
   nameTags: NameTags;
   // todo remove internal
   _internal: {
+    tokenDecimalsCache: Map<string, number>;
     printNameTagTip:
       | undefined // meaning "no need to print"
       | "print it"
