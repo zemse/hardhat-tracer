@@ -3,6 +3,7 @@ import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { TracerDependencies } from "../types";
 import { format } from "./opcodes";
+import { CALL } from "./opcodes/call";
 
 export interface Item<Params> {
   opcode: string;
@@ -18,16 +19,7 @@ export type AwaitedItem<T> = {
   parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
 };
 
-export interface CallParams {
-  to?: string;
-  inputData: string;
-  value: string; // hex string
-  returnData?: string;
-  gasLimit: number;
-  gasUsed?: number;
-}
-
-export interface CallItem extends Item<CallParams> {
+export interface CallItem extends Item<CALL> {
   opcode: CALL_OPCODES;
   children: Item<any>[];
 }
@@ -91,9 +83,10 @@ export class TraceTransaction {
   }
 
   // TODO see how to do this
-  returnCurrentCall(returnData: string) {
+  returnCurrentCall(returnData: string, success: boolean) {
     if (!this.parent) throw new Error("this.parent is undefined");
     this.parent.params.returnData = returnData;
+    this.parent.params.success = success;
     this.parent = this.parent.parent as CallItem;
   }
 

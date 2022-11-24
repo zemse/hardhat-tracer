@@ -21,6 +21,7 @@ addCliParams(task("decode", "Decodes calldata or error data"))
       "0x",
       0,
       0,
+      true,
       td
     );
 

@@ -268,14 +268,15 @@ export class TraceRecorder {
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // console.log("handleAfterMessage");
+    // console.log("handleAfterMessage", !evmResult?.execResult?.exceptionError);
 
     if (!this.trace) {
       throw new Error("internal error: trace is undefined");
     }
 
     this.trace.returnCurrentCall(
-      "0x" + evmResult.execResult.returnValue.toString("hex")
+      "0x" + evmResult.execResult.returnValue.toString("hex"),
+      !evmResult?.execResult?.exceptionError
     );
     this.addressStack.pop();
 

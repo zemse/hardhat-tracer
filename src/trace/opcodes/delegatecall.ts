@@ -8,6 +8,7 @@ export interface DELEGATECALL {
   returnData?: string;
   gasLimit: number;
   gasUsed?: number;
+  success?: boolean;
 }
 
 async function format(
@@ -23,6 +24,7 @@ async function format(
       item.params.returnData ?? "0x",
       0, // TODO show some how that msg.value
       item.params.gasLimit,
+      item.params.success ?? true, // if we don't have success, assume it was successful
       dependencies
     ))
   );

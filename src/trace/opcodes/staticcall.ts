@@ -15,6 +15,7 @@ export interface STATICCALL {
   returnData?: string;
   gasLimit: number;
   gasUsed?: number;
+  success?: boolean;
 }
 
 async function format(
@@ -39,6 +40,7 @@ async function format(
       item.params.returnData ?? "0x",
       0,
       item.params.gasLimit,
+      item.params.success ?? true, // if we don't have success, assume it was successful
       dependencies
     ))
   );

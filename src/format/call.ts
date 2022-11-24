@@ -26,6 +26,7 @@ export async function formatCall(
   ret: string,
   value: BigNumberish,
   gas: BigNumberish,
+  success: boolean,
   dependencies: TracerDependencies
 ) {
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
@@ -105,6 +106,9 @@ export async function formatCall(
           { decimals: contractDecimals, shorten: true },
           dependencies
         )
+      : // if return data is not decoded, then show return data only if call was success
+      ret !== "0x" && success !== false // success can be undefined
+      ? ret
       : "";
 
     const extra = [];
