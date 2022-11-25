@@ -1,79 +1,65 @@
-import { Interface, LogDescription } from "ethers/lib/utils";
-import { Artifact } from "hardhat/types";
-
 import { colorContract, colorEvent } from "../colors";
-import { TracerDependencies, TracerDependenciesExtended } from "../types";
-import { compareBytecode, getFromNameTags } from "../utils";
-
+import { EventFragment, Result } from "ethers/lib/utils";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { getBetterContractName } from "../utils";
+import { TracerDependencies } from "../types";
 
 export async function formatLog(
   log: { data: string; topics: string[] },
   currentAddress: string | undefined,
   dependencies: TracerDependencies
 ) {
-  // TODO make the contractName code common between formatCall and formatLog
-  const nameTag = currentAddress
-    ? getFromNameTags(currentAddress, dependencies)
-    : undefined;
-  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
-  const code =
-    !nameTag && currentAddress
-      ? ((await dependencies.provider.send("eth_getCode", [
-          currentAddress,
-          "latest",
-        ])) as string)
-      : undefined;
+  let fragment: EventFragment | undefined,
+    result: Result | undefined,
+    contractName: string | undefined;
+  try {
+    ({
+      fragment,
+      result,
+      contractName,
+    } = await dependencies.tracerEnv.decoder!.decodeEvent(
+      log.topics,
+      log.data
+    ));
 
-  let str: string | undefined;
-  let contractName: string | undefined = nameTag;
-  for (const name of names) {
-    const artifact = await dependencies.artifacts.readArtifact(name);
-    const iface = new Interface(artifact.abi);
+    // use just contract name
+    contractName = contractName.split(":")[1];
+  } catch {}
 
-    // try to find the contract name
-    if (compareBytecode(artifact.deployedBytecode, code ?? "0x") > 0.5) {
-      contractName = artifact.contractName;
-    }
-
-    // try to parse the arguments
-    try {
-      const parsed = iface.parseLog(log);
-      const decimals = -1;
-
-      if (!contractName) {
-        contractName = artifact.contractName;
-      }
-
-      str = `${colorEvent(parsed.name)}(${formatResult(
-        parsed.args,
-        parsed.eventFragment.inputs,
-        { decimals, shorten: false },
-        dependencies
-      )})`;
-    } catch {}
-
-    // if we got both the contract name and arguments parsed so far, we can stop
-    if (contractName && str) {
-      return (
-        colorContract(contractName) +
-        (dependencies.tracerEnv.showAddresses ? `(${currentAddress})` : "") +
-        "." +
-        str
-      );
+  // find a better contract name
+  if (currentAddress) {
+    const betterContractName = await getBetterContractName(
+      currentAddress,
+      dependencies
+    );
+    if (betterContractName) {
+      contractName = betterContractName;
+    } else if (contractName) {
+      dependencies.tracerEnv.nameTags[currentAddress] = contractName;
     }
   }
 
-  return (
-    `${colorContract("UnknownContract")}(${formatParam(
-      currentAddress,
-      dependencies
-    )}).` +
-    (str ??
-      `${colorEvent("UnknownEvent")}(${formatParam(
-        log.data,
-        dependencies
-      )}, ${formatParam(log.topics, dependencies)})`)
-  );
+  const firstPart = `${colorContract(
+    contractName ? contractName : "UnknownContract"
+  )}${
+    dependencies.tracerEnv.showAddresses || !contractName
+      ? `(${currentAddress})`
+      : ""
+  }`;
+
+  const secondPart =
+    fragment && result
+      ? `${colorEvent(fragment.name)}(${formatResult(
+          result,
+          fragment.inputs,
+          { decimals: -1, shorten: false },
+          dependencies
+        )})`
+      : `${colorEvent("UnknownEvent")}(${formatParam(
+          log.data,
+          dependencies
+        )}, ${formatParam(log.topics, dependencies)})`;
+
+  return `${firstPart}.${secondPart}`;
 }

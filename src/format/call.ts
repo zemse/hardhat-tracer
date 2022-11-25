@@ -1,25 +1,11 @@
-import { BigNumber, BigNumberish, ethers } from "ethers";
-import {
-  Fragment,
-  FunctionFragment,
-  Interface,
-  Result,
-} from "ethers/lib/utils";
-import { Artifact } from "hardhat/types";
-
+import { BigNumber, BigNumberish } from "ethers";
 import { colorContract, colorFunction, colorKey } from "../colors";
-import { ProviderLike, TracerDependencies } from "../types";
-import {
-  compareBytecode,
-  fetchContractDecimals,
-  fetchContractName,
-  getBetterContractName,
-  getFromNameTags,
-} from "../utils";
-
+import { fetchContractDecimals, getBetterContractName } from "../utils";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { Fragment, FunctionFragment, Result } from "ethers/lib/utils";
 import { SEPARATOR } from "./separator";
+import { TracerDependencies } from "../types";
 
 export async function formatCall(
   to: string,
@@ -30,10 +16,6 @@ export async function formatCall(
   success: boolean,
   dependencies: TracerDependencies
 ) {
-  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
-
-  // TODO handle if `to` is console.log address
-
   let contractName: string | undefined;
   let contractDecimals: number | undefined;
   let inputResult: Result | undefined;
@@ -52,7 +34,7 @@ export async function formatCall(
     contractName = contractName.split(":")[1];
   } catch {}
 
-  // TODO Find a better contract name
+  // find a better contract name
   const betterContractName = await getBetterContractName(to, dependencies);
   if (betterContractName) {
     contractName = betterContractName;

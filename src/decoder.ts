@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import {
   ErrorFragment,
+  EventFragment,
   fetchJson,
   Fragment,
   FunctionFragment,
   Interface,
   Result,
 } from "ethers/lib/utils";
-import { string } from "hardhat/internal/core/params/argumentTypes";
 import { Artifacts } from "hardhat/types";
 
 type Mapping<FragmentType> = Map<
@@ -18,6 +18,7 @@ type Mapping<FragmentType> = Map<
 export class Decoder {
   functionFragmentsBySelector: Mapping<FunctionFragment> = new Map();
   errorFragmentsBySelector: Mapping<ErrorFragment> = new Map();
+  eventFragmentsByTopic0: Mapping<EventFragment> = new Map();
 
   ready: Promise<void>;
 
@@ -34,6 +35,7 @@ export class Decoder {
 
       copyFragments(name, iface.functions, this.functionFragmentsBySelector);
       copyFragments(name, iface.errors, this.errorFragmentsBySelector);
+      copyFragments(name, iface.events, this.eventFragmentsByTopic0);
     }
   }
 
@@ -64,6 +66,34 @@ export class Decoder {
       this.errorFragmentsBySelector
     );
   }
+
+  async decodeEvent(
+    topics: string[],
+    data: string
+  ): Promise<{
+    fragment: EventFragment;
+    result: Result;
+    contractName: string;
+  }> {
+    await this.ready;
+
+    if (topics.length === 0) {
+      throw new Error("No topics, cannot decode");
+    }
+
+    const topic0 = topics[0];
+    const fragments = this.eventFragmentsByTopic0.get(topic0);
+    if (fragments) {
+      for (const { contractName, fragment } of fragments) {
+        try {
+          const iface = new ethers.utils.Interface([fragment]);
+          const result = iface.parseLog({ data, topics });
+          return { fragment, result: result.args, contractName };
+        } catch {}
+      }
+    }
+    throw decodeError(topic0);
+  }
 }
 
 function copyFragments(
@@ -81,7 +111,9 @@ function addFragmentToMapping(
   fragment: Fragment,
   mapping: Mapping<Fragment>
 ) {
-  const selector = ethers.utils.Interface.getSighash(fragment);
+  const selector = EventFragment.isEventFragment(fragment)
+    ? ethers.utils.Interface.getEventTopic(fragment)
+    : ethers.utils.Interface.getSighash(fragment);
   let fragments = mapping.get(selector);
   if (!fragments) {
     mapping.set(selector, (fragments = []));
