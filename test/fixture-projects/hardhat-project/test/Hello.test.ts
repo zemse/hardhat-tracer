@@ -1,3 +1,4 @@
+import { parseEther } from "ethers/lib/utils";
 import hre from "hardhat";
 
 // process.env.DEBUG = "*";
@@ -23,7 +24,10 @@ describe("Hello", () => {
           age: 99,
         },
       },
-      1234
+      1234,
+      {
+        value: parseEther("1"),
+      }
     );
     console.log("========> hello.kick()");
     hre.tracer.ignoreNext = true;

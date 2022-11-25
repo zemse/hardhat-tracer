@@ -3,7 +3,12 @@ import { colorContract, colorFunction, colorKey } from "../colors";
 import { fetchContractDecimals, getBetterContractName } from "../utils";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
-import { Fragment, FunctionFragment, Result } from "ethers/lib/utils";
+import {
+  formatEther,
+  Fragment,
+  FunctionFragment,
+  Result,
+} from "ethers/lib/utils";
 import { SEPARATOR } from "./separator";
 import { TracerDependencies } from "../types";
 
@@ -87,7 +92,7 @@ export async function formatCall(
 
     const extra = [];
     if ((value = BigNumber.from(value)).gt(0)) {
-      extra.push(`value${SEPARATOR}${formatParam(value, dependencies)}`);
+      extra.push(`value${SEPARATOR}${formatEther(value)}`);
     }
     if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
       extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);

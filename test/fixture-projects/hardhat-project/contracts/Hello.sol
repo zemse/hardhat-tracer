@@ -27,7 +27,7 @@ contract Hello {
         emit WhatsUp("Hello, world!");
     }
 
-    function hit(Person memory person, uint256 time) external {
+    function hit(Person memory person, uint256 time) external payable {
         Child c = new Child(address(0));
         emit WhatsUp(c.hi());
         Child c2 = new Child{salt: bytes32("hello")}(address(0));
