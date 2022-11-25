@@ -1,9 +1,7 @@
 import { ethers } from "ethers";
-import { arrayify } from "ethers/lib/utils";
 
 import { task } from "hardhat/config";
 import { getNode } from "../get-vm";
-import { printDebugTrace, printDebugTraceOrLogs } from "../print";
 
 import { addCliParams, applyCliArgsToTracer } from "../utils";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
