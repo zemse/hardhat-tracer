@@ -384,10 +384,13 @@ export async function getBetterContractName(
   }
 
   // 2. See if there is a name() method that gives string or bytes32
+  dependencies.tracerEnv.enabled = false; // disable tracer to avoid tracing these calls
   const contractNameFromNameMethod = await fetchContractName(
     address,
     dependencies.provider
   );
+  dependencies.tracerEnv.enabled = true; // enable tracer back
+
   if (contractNameFromNameMethod) {
     dependencies.tracerEnv.nameTags[address] = contractNameFromNameMethod;
     return contractNameFromNameMethod;
