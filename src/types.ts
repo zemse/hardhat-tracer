@@ -71,8 +71,17 @@ export interface StateOverrides {
     storage?: {
       [slot: string | number]: BigNumberish;
     };
-    bytecode?: string;
+    bytecode?: ContractInfo;
     balance?: BigNumberish;
     nonce?: BigNumberish;
   };
 }
+
+export type ContractInfo =
+  | string // bytecode in hex or name of the contract
+  | {
+      name: string;
+      libraries?: {
+        [libraryName: string]: ContractInfo;
+      };
+    };

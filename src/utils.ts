@@ -7,11 +7,13 @@ import {
 import { BigNumber, ethers } from "ethers";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 import {
+  Artifacts,
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import {
+  ContractInfo,
   ProviderLike,
   StateOverrides,
   StructLog,
@@ -244,11 +246,47 @@ export function isItem(item: any): item is Item<any> {
   return item && typeof item.opcode === "string";
 }
 
+function getBytecode(
+  contractInfo: ContractInfo,
+  artifacts: Artifacts,
+  addressThis: string
+) {
+  if (typeof contractInfo === "string") {
+    if (ethers.utils.isHexString(contractInfo)) {
+      // directly bytecode was given
+      return contractInfo;
+    } else {
+      // name was given
+      contractInfo = {
+        name: contractInfo,
+      };
+    }
+  }
+
+  const artifact = artifacts.readArtifactSync(contractInfo.name);
+  let bytecode = artifact.deployedBytecode;
+
+  if (bytecode.startsWith("0x730000000000000000000000000000000000000000")) {
+    // this is a library, so we need to replace the placeholder address
+    bytecode = "0x" + addressThis.slice(2) + bytecode.slice(44);
+  }
+
+  // TODO add support for linking libraries
+  // artifact.deployedLinkReferences;
+
+  return bytecode;
+}
+
 export async function applyStateOverrides(
   stateOverrides: StateOverrides,
-  vm: VM
+  vm: VM,
+  artifacts: Artifacts
 ) {
   for (const [_address, overrides] of Object.entries(stateOverrides)) {
+    if (!ethers.utils.isAddress(_address)) {
+      throw new Error(`Invalid address ${_address} in stateOverrides`);
+    }
+
     const address = Address.fromString(_address);
     // for balance and nonce
     if (overrides.balance !== undefined || overrides.nonce !== undefined) {
@@ -264,9 +302,10 @@ export async function applyStateOverrides(
 
     // for bytecode
     if (overrides.bytecode) {
+      const bytecode = getBytecode(overrides.bytecode, artifacts, _address);
       await vm.stateManager.putContractCode(
         address,
-        Buffer.from(overrides.bytecode, "hex")
+        Buffer.from(bytecode.slice(2), "hex")
       );
     }
 

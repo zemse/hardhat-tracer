@@ -21,10 +21,12 @@ extendEnvironment((hre) => {
 
   // @ts-ignore
   global.tracerEnv = hre.tracer;
+  // @ts-ignore
+  global.hreArtifacts = hre.artifacts;
 
   getVM(hre)
     .then((vm) => {
-      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer, hre.artifacts);
     })
     .catch(() => {
       // if for some reason we can't get the vm, disable hardhat-tracer

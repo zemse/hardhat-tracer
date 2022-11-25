@@ -27,6 +27,10 @@ contract Hello {
         emit WhatsUp("Hello, world!");
     }
 
+    fallback() external {
+        revert("gg");
+    }
+
     function hit(Person memory person, uint256 time) external payable {
         Child c = new Child(address(0));
         emit WhatsUp(c.hi());

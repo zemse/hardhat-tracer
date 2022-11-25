@@ -15,7 +15,9 @@ VM.create = async function (...args) {
 
   // @ts-ignore
   const tracerEnv = global.tracerEnv;
-  const recorder = new TraceRecorder(vm, tracerEnv);
+  // @ts-ignore
+  const hreArtifacts = global.hreArtifacts;
+  const recorder = new TraceRecorder(vm, tracerEnv, hreArtifacts);
   tracerEnv.recorder = recorder;
   // @ts-ignore
   global._hardhat_tracer_recorder = recorder;
