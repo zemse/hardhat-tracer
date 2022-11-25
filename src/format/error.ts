@@ -11,18 +11,14 @@ export async function formatError(
   revertData: string,
   dependencies: TracerDependencies
 ) {
-  const commonErrors = [
-    "function Error(string reason)",
-    "function Panic(uint256 code)",
-  ];
   try {
-    const iface = new Interface(commonErrors);
-    const parsed = iface.parseTransaction({
-      data: revertData,
-    });
+    const {
+      fragment,
+      revertResult,
+    } = await dependencies.tracerEnv.decoder!.decodeError(revertData);
 
-    if (parsed.name === "Panic") {
-      const panicCode = parsed.args.code.toNumber();
+    if (fragment.name === "Panic") {
+      const panicCode = revertResult.code.toNumber();
       let situation = "";
       switch (panicCode) {
         case 0x01:
@@ -53,40 +49,23 @@ export async function formatError(
           situation = "zero internal function";
           break;
       }
-      return `${colorError(parsed.name)}(${formatObject({
+      return `${colorError(fragment.name)}(${formatObject({
         code: panicCode,
         situation,
       })})`;
     }
 
     const formatted = formatResult(
-      parsed.args,
-      parsed.functionFragment.inputs,
+      revertResult,
+      fragment.inputs,
       { decimals: -1, shorten: false },
       dependencies
     );
 
-    return `${colorError(parsed.name)}(${formatted})`;
+    return `${colorError(fragment.name)}(${formatted})`;
   } catch {}
 
-  // if error not common then try to parse it as a custom error
-  const names = await dependencies.artifacts.getAllFullyQualifiedNames();
-
-  for (const name of names) {
-    const artifact = await dependencies.artifacts.readArtifact(name);
-    const iface = new Interface(artifact.abi);
-
-    try {
-      const errorDesc = iface.parseError(revertData);
-      return `${colorError(errorDesc.name)}(${formatResult(
-        errorDesc.args,
-        errorDesc.errorFragment.inputs,
-        { decimals: -1, shorten: false },
-        dependencies
-      )})`;
-    } catch {}
-  }
-
+  // if error could not be decoded, then just show the data
   return `${colorError("UnknownError")}(${formatParam(
     revertData,
     dependencies

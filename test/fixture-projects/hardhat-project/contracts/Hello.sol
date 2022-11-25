@@ -71,12 +71,14 @@ contract Hello {
     function kick2() public returns (uint256) {
         uint256 _heyy = heyy;
         emit WhatsUp2(_heyy);
-        this.reverts(_heyy);
+        this.reverts(100);
         return _heyy;
     }
 
-    function reverts(uint256) public pure returns (string memory) {
-        revert("kick");
+    function reverts(uint256 x) public pure returns (uint256) {
+        uint256 y = 1 - x;
+        // revert("kick");
+        return y;
     }
 }
 
@@ -92,6 +94,7 @@ contract Child {
     }
 
     function kick() public pure returns (string memory) {
+        // 1 - 2;
         revert("kick");
     }
 }

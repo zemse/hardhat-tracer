@@ -28,7 +28,7 @@ export async function formatCall(
       contractName,
       inputResult,
       returnResult,
-    } = await dependencies.tracerEnv.decoder!.decode(input, ret));
+    } = await dependencies.tracerEnv.decoder!.decodeFunction(input, ret));
 
     // use just contract name
     contractName = contractName.split(":")[1];

@@ -37,6 +37,14 @@ export class Decoder {
       copyFragments(name, iface.errors, this.errorFragmentsBySelector);
       copyFragments(name, iface.events, this.eventFragmentsByTopic0);
     }
+
+    // common errors, these are in function format because Ethers.js does not accept them as errors
+    const commonErrors = [
+      "function Error(string reason)",
+      "function Panic(uint256 code)",
+    ];
+    const iface = new Interface(commonErrors);
+    copyFragments("", iface.functions, this.errorFragmentsBySelector);
   }
 
   async decode(
@@ -65,6 +73,43 @@ export class Decoder {
       "error",
       this.errorFragmentsBySelector
     );
+  }
+
+  async decodeFunction(
+    inputData: string,
+    returnData: string
+  ): Promise<{
+    fragment: Fragment;
+    inputResult: Result;
+    returnResult: Result | undefined;
+    contractName: string;
+  }> {
+    await this.ready;
+
+    return decode(
+      inputData,
+      returnData,
+      "function",
+      this.functionFragmentsBySelector
+    );
+  }
+
+  async decodeError(
+    revertData: string
+  ): Promise<{
+    fragment: Fragment;
+    revertResult: Result;
+    contractName: string;
+  }> {
+    await this.ready;
+
+    const { fragment, inputResult, contractName } = await decode(
+      revertData,
+      "0x",
+      "error",
+      this.errorFragmentsBySelector
+    );
+    return { fragment, revertResult: inputResult, contractName };
   }
 
   async decodeEvent(
@@ -118,6 +163,7 @@ function addFragmentToMapping(
   if (!fragments) {
     mapping.set(selector, (fragments = []));
   }
+  // TODO while adding, see if we already have a same signature fragment
   fragments.push({ contractName, fragment });
 }
 
