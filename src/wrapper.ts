@@ -7,6 +7,7 @@ import {
   HardhatRuntimeEnvironment,
   RequestArguments,
 } from "hardhat/types";
+import { TracerCache } from "./cache";
 import { Decoder } from "./decoder";
 
 import { ProviderLike, TracerDependencies, TracerEnv } from "./types";
@@ -125,6 +126,8 @@ export function wrapEthersProvider(
 ): ethers.providers.Provider {
   // ensure env is present
   // const tracerEnv = getTracerEnvFromUserInput(tracerEnvUser);
+  const cache = new TracerCache();
+  const decoder = new Decoder(artifacts, cache);
   if (!tracerEnv) {
     tracerEnv = {
       enabled: false,
@@ -138,9 +141,10 @@ export function wrapEthersProvider(
       // @ts-ignore TODO remove, this has no place in "config"
       _internal: {
         printNameTagTip: undefined,
-        tokenDecimalsCache: new Map(),
+        // tokenDecimalsCache: new Map(),
+        cache,
       },
-      decoder: new Decoder(artifacts),
+      decoder,
     };
   }
 

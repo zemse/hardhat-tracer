@@ -17,7 +17,7 @@ extendEnvironment((hre) => {
   // copy reference of config.tracer to tracer
   // TODO take this properly, env can contain things that config does not need to.
   hre.tracer = hre.config.tracer;
-  hre.tracer.decoder = new Decoder(hre.artifacts);
+  hre.tracer.decoder = new Decoder(hre.artifacts, hre.tracer._internal.cache);
 
   // @ts-ignore
   global.tracerEnv = hre.tracer;

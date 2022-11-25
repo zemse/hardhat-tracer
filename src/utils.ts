@@ -328,14 +328,39 @@ export async function applyStateOverrides(
   }
 }
 
-export async function fetchContractName(to: string, provider: ProviderLike) {
-  let name = await fetchContractNameFromMethodName(to, "symbol", provider);
-  if (!name) {
-    name = await fetchContractNameFromMethodName(to, "name", provider);
+export async function fetchContractName(
+  to: string,
+  dependencies: TracerDependencies
+) {
+  const { cache } = dependencies.tracerEnv._internal;
+  const cacheResult = cache.contractNames.get(to);
+  if (cacheResult) {
+    if (cacheResult === "unknown") {
+      return undefined;
+    }
+    return cacheResult;
   }
+
+  let name = await fetchContractNameFromMethodName(
+    to,
+    "symbol",
+    dependencies.provider
+  );
+  if (!name) {
+    name = await fetchContractNameFromMethodName(
+      to,
+      "name",
+      dependencies.provider
+    );
+  }
+
   if (name) {
+    // format the name a bit
     name = name.split(" ").join("");
   }
+  // set the cache, so we don't do the request again
+  cache.contractNames.set(to, name ?? "unknown");
+  cache.save();
   return name;
 }
 
@@ -426,7 +451,7 @@ export async function getBetterContractName(
   dependencies.tracerEnv.enabled = false; // disable tracer to avoid tracing these calls
   const contractNameFromNameMethod = await fetchContractName(
     address,
-    dependencies.provider
+    dependencies
   );
   dependencies.tracerEnv.enabled = true; // enable tracer back
 

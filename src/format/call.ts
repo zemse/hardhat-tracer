@@ -54,8 +54,8 @@ export async function formatCall(
     input.slice(0, 10) === "0x23b872dd" // transferFrom
   ) {
     // see if we already know the decimals
-    const { tokenDecimalsCache } = dependencies.tracerEnv._internal;
-    const decimals = tokenDecimalsCache.get(to);
+    const { cache } = dependencies.tracerEnv._internal;
+    const decimals = cache.tokenDecimals.get(to);
     if (decimals) {
       // if we know decimals then use it
       contractDecimals = decimals !== -1 ? decimals : undefined;
@@ -64,10 +64,11 @@ export async function formatCall(
       contractDecimals = await fetchContractDecimals(to, dependencies.provider);
       // and cache it
       if (contractDecimals !== undefined) {
-        tokenDecimalsCache.set(to, contractDecimals);
+        cache.tokenDecimals.set(to, contractDecimals);
       } else {
-        tokenDecimalsCache.set(to, -1);
+        cache.tokenDecimals.set(to, -1);
       }
+      cache.save();
     }
   }
 

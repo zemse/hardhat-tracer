@@ -1,10 +1,7 @@
-import {
-  extendConfig,
-  extendEnvironment,
-  experimentalAddHardhatNetworkMessageTraceHook,
-} from "hardhat/config";
-import { MessageTrace } from "hardhat/internal/hardhat-network/stack-traces/message-trace";
+import { extendConfig } from "hardhat/config";
+
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
+import { TracerCache } from "../cache";
 
 import { TracerEnv, TracerEnvUser } from "../types";
 import { DEFAULT_VERBOSITY } from "../utils";
@@ -39,6 +36,10 @@ extendConfig(
       opcodes.set(opcode, true);
     }
 
+    const cache = new TracerCache();
+    cache.setCachePath(config.paths.cache);
+    cache.load();
+
     config.tracer = {
       enabled: userConfig.tracer?.enabled ?? false,
       ignoreNext: false,
@@ -51,7 +52,7 @@ extendConfig(
       // @ts-ignore TODO remove, this has no place in "config"
       _internal: {
         printNameTagTip: undefined,
-        tokenDecimalsCache: new Map(),
+        cache,
       },
       stateOverrides: userConfig.tracer?.stateOverrides,
     };

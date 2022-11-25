@@ -9,6 +9,7 @@ import {
   Result,
 } from "ethers/lib/utils";
 import { Artifacts } from "hardhat/types";
+import { TracerCache } from "./cache";
 
 type Mapping<FragmentType> = Map<
   string,
@@ -16,13 +17,16 @@ type Mapping<FragmentType> = Map<
 >;
 
 export class Decoder {
+  cache: TracerCache;
+
   functionFragmentsBySelector: Mapping<FunctionFragment> = new Map();
   errorFragmentsBySelector: Mapping<ErrorFragment> = new Map();
   eventFragmentsByTopic0: Mapping<EventFragment> = new Map();
 
   ready: Promise<void>;
 
-  constructor(artifacts: Artifacts) {
+  constructor(artifacts: Artifacts, cache: TracerCache) {
+    this.cache = cache;
     this.ready = this._updateArtifacts(artifacts);
   }
 
@@ -67,7 +71,8 @@ export class Decoder {
         inputData,
         returnData,
         "function",
-        this.functionFragmentsBySelector
+        this.functionFragmentsBySelector,
+        this.cache
       );
     } catch {}
 
@@ -75,7 +80,8 @@ export class Decoder {
       inputData,
       returnData,
       "error",
-      this.errorFragmentsBySelector
+      this.errorFragmentsBySelector,
+      this.cache
     );
   }
 
@@ -94,7 +100,8 @@ export class Decoder {
       inputData,
       returnData,
       "function",
-      this.functionFragmentsBySelector
+      this.functionFragmentsBySelector,
+      this.cache
     );
   }
 
@@ -111,7 +118,8 @@ export class Decoder {
       revertData,
       "0x",
       "error",
-      this.errorFragmentsBySelector
+      this.errorFragmentsBySelector,
+      this.cache
     );
     return { fragment, revertResult: inputResult, contractName };
   }
@@ -175,7 +183,8 @@ async function decode(
   inputData: string,
   returnData: string,
   type: "function",
-  mapping: Mapping<FunctionFragment>
+  mapping: Mapping<FunctionFragment>,
+  cache: TracerCache
 ): Promise<{
   fragment: Fragment;
   inputResult: Result;
@@ -187,7 +196,8 @@ async function decode(
   inputData: string,
   returnData: string,
   type: "error",
-  mapping: Mapping<ErrorFragment>
+  mapping: Mapping<ErrorFragment>,
+  cache: TracerCache
 ): Promise<{
   fragment: Fragment;
   inputResult: Result;
@@ -199,7 +209,8 @@ async function decode(
   inputData: string,
   returnData: string,
   type: string,
-  mapping: Mapping<Fragment>
+  mapping: Mapping<Fragment>,
+  cache: TracerCache
 ) {
   const selector = inputData.slice(0, 10);
   // console.log("selector", selector);
@@ -243,7 +254,8 @@ async function decode(
       const { fragment, inputResult } = await decodeUsing4byteDirectory(
         selector,
         inputData,
-        mapping
+        mapping,
+        cache
       );
       return { fragment, inputResult };
     } catch {}
@@ -256,17 +268,27 @@ async function decode(
 async function decodeUsing4byteDirectory(
   selector: string,
   inputData: string,
-  mapping: Mapping<Fragment>
+  mapping: Mapping<Fragment>,
+  cache: TracerCache
 ): Promise<{
   fragment: Fragment;
   inputResult: Result;
 }> {
-  const response = await fetchJson(
-    "https://www.4byte.directory/api/v1/signatures/?hex_signature=" + selector
-  );
+  let responseResults;
+  const cacheVal = cache.fourByteDir.get(selector);
+  if (cacheVal) {
+    responseResults = cacheVal;
+  } else {
+    const response = await fetchJson(
+      "https://www.4byte.directory/api/v1/signatures/?hex_signature=" + selector
+    );
+    responseResults = response.results;
+    cache.fourByteDir.set(selector, responseResults);
+    cache.save();
+  }
   // console.log("response", response);
 
-  for (const result of response.results) {
+  for (const result of responseResults) {
     // console.log({ result });
 
     try {

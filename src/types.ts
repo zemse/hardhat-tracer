@@ -1,8 +1,8 @@
-import { VM } from "@nomicfoundation/ethereumjs-vm";
-import { Artifacts, EthereumProvider } from "hardhat/types";
+import { Artifacts } from "hardhat/types";
 import { TraceRecorder } from "./trace/recorder";
 import { Decoder } from "./decoder";
 import { BigNumberish } from "ethers";
+import { TracerCache } from "./cache";
 
 export interface NameTags {
   [address: string]: string;
@@ -29,7 +29,7 @@ export interface TracerEnv {
   nameTags: NameTags;
   // todo remove internal
   _internal: {
-    tokenDecimalsCache: Map<string, number>;
+    cache: TracerCache;
     printNameTagTip:
       | undefined // meaning "no need to print"
       | "print it"
