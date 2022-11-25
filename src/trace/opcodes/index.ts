@@ -15,6 +15,7 @@ import { AwaitedItem, Item } from "../transaction";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerDependencies } from "../../types";
 import log from "./log";
+import selfdestruct from "./selfdestruct";
 
 export function parse(
   step: InterpreterStep,
@@ -71,6 +72,8 @@ export async function format(
       return await sstore.format(item);
     case "REVERT":
       return await revert.format(item, dependencies);
+    case "SELFDESTRUCT":
+      return await selfdestruct.format(item);
     default:
       return item.opcode + " not implemented";
   }

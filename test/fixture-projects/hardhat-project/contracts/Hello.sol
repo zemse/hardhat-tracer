@@ -42,6 +42,7 @@ contract Hello {
             "Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!"
         );
         emit WhatsUp(c.hi());
+        selfdestruct(payable(0));
     }
 
     function crash() external {

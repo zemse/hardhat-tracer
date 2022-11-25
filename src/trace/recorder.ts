@@ -275,6 +275,33 @@ export class TraceRecorder {
       throw new Error("internal error: trace is undefined");
     }
 
+    if (evmResult.execResult.selfdestruct) {
+      const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
+      for (const [address, beneficiary] of selfdestructs) {
+        console.log("selfdestruct");
+
+        // console.log(
+        //   "selfdestruct recorded",
+        //   address,
+        //   hexPrefix(beneficiary.toString("hex"))
+        // );
+
+        this.trace.insertItem({
+          opcode: "SELFDESTRUCT",
+          params: {
+            beneficiary: hexPrefix(beneficiary.toString("hex")),
+          },
+        });
+      }
+    }
+
+    // this.trace.insertItem({
+    //   opcode: "SELFDESTRUCT",
+    //   params: {
+    //     beneficiary: hexPrefix("1234"),
+    //   },
+    // });
+
     this.trace.returnCurrentCall(
       "0x" + evmResult.execResult.returnValue.toString("hex"),
       !evmResult?.execResult?.exceptionError
