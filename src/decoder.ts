@@ -237,14 +237,17 @@ async function decode(
   }
 
   // we couldn't decode it using local ABI, try 4byte.directory
-  try {
-    const { fragment, inputResult } = await decodeUsing4byteDirectory(
-      selector,
-      inputData,
-      mapping
-    );
-    return { fragment, inputResult };
-  } catch {}
+  // currently only supports function calls
+  if (type === "function") {
+    try {
+      const { fragment, inputResult } = await decodeUsing4byteDirectory(
+        selector,
+        inputData,
+        mapping
+      );
+      return { fragment, inputResult };
+    } catch {}
+  }
 
   // we couldn't decode it after even using 4byte.directory, give up
   throw decodeError(selector);
