@@ -4,6 +4,7 @@ import { HardhatUserConfig } from "hardhat/types";
 import "../../../src/index";
 
 import "@nomiclabs/hardhat-ethers";
+import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
@@ -32,6 +33,9 @@ const config: HardhatUserConfig = {
         },
       },
     },
+  },
+  namedAccounts: {
+    deployer: 0,
   },
 };
 

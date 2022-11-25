@@ -12,7 +12,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it.only("works", async function () {
+    it("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         fulltrace: true,
@@ -116,6 +116,13 @@ describe("Hardhat Runtime Environment extension", function () {
           ""
         ),
       });
+    });
+  });
+
+  describe("hardhat-deploy", function () {
+    useEnvironment("hardhat-project");
+    it.only("deploy should not fail", async function () {
+      await this.hre.run("deploy");
     });
   });
 });

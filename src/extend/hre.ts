@@ -5,6 +5,7 @@ import { getVM } from "../get-vm";
 import { TracerEnv } from "../types";
 import { TraceRecorder } from "../trace/recorder";
 import { Decoder } from "../decoder";
+import { hardhatArguments } from "hardhat";
 
 declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {
@@ -21,13 +22,12 @@ extendEnvironment((hre) => {
   // @ts-ignore
   global.tracerEnv = hre.tracer;
 
-  getVM(hre).then((vm) => {
-    hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
-    // vm.on("beforeTx", handleBeforeTx);
-    // vm.on("beforeMessage", handleBeforeMessage);
-    // vm.on("newContract", handleNewContract);
-    // vm.on("step", handleStep);
-    // vm.on("afterMessage", handleAfterMessage);
-    // vm.on("afterTx", handleAfterTx);
-  });
+  getVM(hre)
+    .then((vm) => {
+      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+    })
+    .catch(() => {
+      // if for some reason we can't get the vm, disable hardhat-tracer
+      hre.tracer.enabled = false;
+    });
 });
