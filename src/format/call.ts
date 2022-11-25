@@ -71,6 +71,14 @@ export async function formatCall(
     }
   }
 
+  const extra = [];
+  if ((value = BigNumber.from(value)).gt(0)) {
+    extra.push(`value${SEPARATOR}${formatEther(value)}`);
+  }
+  if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
+    extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
+  }
+
   if (inputResult && fragment) {
     const inputArgs = formatResult(
       inputResult,
@@ -90,14 +98,6 @@ export async function formatCall(
       ? ret
       : "";
 
-    const extra = [];
-    if ((value = BigNumber.from(value)).gt(0)) {
-      extra.push(`value${SEPARATOR}${formatEther(value)}`);
-    }
-    if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
-      extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
-    }
-
     let nameToPrint = contractName ?? "UnknownContract";
 
     return `${
@@ -111,16 +111,20 @@ export async function formatCall(
 
   // TODO add flag to hide unrecognized stuff
   if (contractName) {
-    return `${colorContract(contractName)}.<${colorFunction(
-      "UnknownFunction"
-    )}>(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
+    return `${
+      dependencies.tracerEnv.showAddresses
+        ? `${colorContract(contractName)}(${to})`
+        : colorContract(contractName)
+    }.<${colorFunction("UnknownFunction")}>${
+      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+    }(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
       "ret" + SEPARATOR
     )}${ret})`;
   } else {
-    return `${colorFunction("UnknownContractAndFunction")}(${colorKey(
-      "to" + SEPARATOR
-    )}${to}, ${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
-      "ret" + SEPARATOR
-    )}${ret || "0x"})`;
+    return `${colorFunction("UnknownContractAndFunction")}${
+      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+    }(${colorKey("to" + SEPARATOR)}${to}, ${colorKey(
+      "input" + SEPARATOR
+    )}${input}, ${colorKey("ret" + SEPARATOR)}${ret || "0x"})`;
   }
 }
