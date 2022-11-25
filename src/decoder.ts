@@ -23,10 +23,14 @@ export class Decoder {
   ready: Promise<void>;
 
   constructor(artifacts: Artifacts) {
-    this.ready = this._constructor(artifacts);
+    this.ready = this._updateArtifacts(artifacts);
   }
 
-  async _constructor(artifacts: Artifacts) {
+  async updateArtifacts(artifacts: Artifacts) {
+    this.ready = this._updateArtifacts(artifacts);
+  }
+
+  async _updateArtifacts(artifacts: Artifacts) {
     const names = await artifacts.getAllFullyQualifiedNames();
 
     for (const name of names) {
