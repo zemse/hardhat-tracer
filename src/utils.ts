@@ -269,7 +269,7 @@ function getBytecode(
 
   if (bytecode.startsWith("0x730000000000000000000000000000000000000000")) {
     // this is a library, so we need to replace the placeholder address
-    bytecode = "0x" + addressThis.slice(2) + bytecode.slice(44);
+    bytecode = "0x73" + addressThis.slice(2) + bytecode.slice(44);
   }
 
   // TODO add support for linking libraries
