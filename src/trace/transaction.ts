@@ -1,59 +1,11 @@
 // export type AbstractParams = { [key: string]: any };
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { TracerDependencies } from "../types";
+import { CallItem, Item } from "../utils";
 import { format } from "./opcodes";
 import { CALL } from "./opcodes/call";
 
-export interface Item<Params> {
-  opcode: string;
-  params: Params;
-  parent?: Item<Params>;
-  children?: Item<Params>[];
-  format?: () => string;
-}
-
-export type AwaitedItem<T> = {
-  isAwaitedItem: true;
-  next: number;
-  parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
-};
-
-export interface CallItem extends Item<CALL> {
-  opcode: CALL_OPCODES;
-  children: Item<any>[];
-}
-
-// interface CallItem extends Item {
-//   opcode: CALL_OPCODES;
-//   params: {
-//     to?: string;
-//     inputData: string;
-//     value: string; // hex string
-//     returnData?: string;
-//     gasLimit: number;
-//     gasUsed?: number;
-//   };
-//   children: Item[];
-// }
-
-type CALL_OPCODES =
-  | "CALL"
-  | "STATICCALL"
-  | "DELEGATECALL"
-  | "CALLCODE"
-  | "CREATE"
-  | "CREATE2";
-
-const callOpcodes = [
-  "CALL",
-  "STATICCALL",
-  "DELEGATECALL",
-  "CALLCODE",
-  "CREATE",
-  "CREATE2",
-];
-export class TraceTransaction {
+export class TransactionTrace {
   top?: CallItem;
   parent?: CallItem;
 

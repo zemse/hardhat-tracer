@@ -6,6 +6,7 @@ import {
 } from "ethers/lib/utils";
 import { BigNumber, ethers } from "ethers";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import {
   Artifacts,
   ConfigurableTaskDefinition,
@@ -27,7 +28,7 @@ import {
   getOpcodesForHF,
   Opcode,
 } from "@nomicfoundation/ethereumjs-evm/dist/opcodes";
-import { Item } from "./trace/transaction";
+import { CALL } from "./trace/opcodes/call";
 
 export function addCliParams(task: ConfigurableTaskDefinition) {
   return (
@@ -469,4 +470,44 @@ export async function getBetterContractName(
     dependencies.tracerEnv.nameTags[address] = contractNameFromArtifacts;
     return contractNameFromArtifacts;
   }
+}
+
+export interface Item<Params> {
+  opcode: string;
+  params: Params;
+  parent?: Item<Params>;
+  children?: Item<Params>[];
+  format?: () => string;
+}
+
+export type AwaitedItem<T> = {
+  isAwaitedItem: true;
+  next: number;
+  parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
+};
+
+export interface CallItem extends Item<CALL> {
+  opcode: CALL_OPCODES;
+  children: Item<any>[];
+}
+
+export const callOpcodes = [
+  "CALL",
+  "STATICCALL",
+  "DELEGATECALL",
+  "CALLCODE",
+  "CREATE",
+  "CREATE2",
+] as const;
+
+export type CALL_OPCODES =
+  | "CALL"
+  | "STATICCALL"
+  | "DELEGATECALL"
+  | "CALLCODE"
+  | "CREATE"
+  | "CREATE2";
+
+export function isCallItem(item: Item<any>): item is CallItem {
+  return callOpcodes.includes(item.opcode as CALL_OPCODES);
 }

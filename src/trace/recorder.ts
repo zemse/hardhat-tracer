@@ -3,7 +3,7 @@ import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import { AfterTxEvent } from "@nomicfoundation/ethereumjs-vm";
-import { AwaitedItem, Item, TraceTransaction } from "./transaction";
+import { TransactionTrace } from "./transaction";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 // import { call } from "./opcodes/call";
 import { parse } from "./opcodes";
@@ -13,9 +13,11 @@ import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
 import {
   applyStateOverrides,
+  AwaitedItem,
   checkIfOpcodesAreValid,
   hexPrefix,
   isItem,
+  Item,
 } from "../utils";
 import { CREATE2 } from "./opcodes/create2";
 import { TracerEnv } from "../types";
@@ -31,8 +33,8 @@ interface NewContractEvent {
 
 export class TraceRecorder {
   vm: VM;
-  previousTraces: TraceTransaction[] = [];
-  trace: TraceTransaction | undefined;
+  previousTraces: TransactionTrace[] = [];
+  trace: TransactionTrace | undefined;
   previousOpcode: string | undefined;
   tracerEnv: TracerEnv;
   awaitedItems: AwaitedItem<any>[];
@@ -71,7 +73,7 @@ export class TraceRecorder {
       throw new Error("internal error: trace is defined");
     }
 
-    this.trace = new TraceTransaction();
+    this.trace = new TransactionTrace();
 
     resolve?.();
   }

@@ -54,6 +54,13 @@ extendConfig(
         printNameTagTip: undefined,
         cache,
       },
+      lastTrace: function () {
+        if (this.recorder) {
+          return this.recorder.previousTraces[
+            this.recorder.previousTraces.length - 1
+          ];
+        }
+      },
       stateOverrides: userConfig.tracer?.stateOverrides,
     };
   }

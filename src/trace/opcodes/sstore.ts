@@ -1,6 +1,5 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { hexPrefix } from "../../utils";
-import { Item } from "../transaction";
+import { hexPrefix, Item } from "../../utils";
 
 export interface SSTORE {
   key: string;

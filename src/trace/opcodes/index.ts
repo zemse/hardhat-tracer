@@ -11,11 +11,11 @@ import revert from "./revert";
 import sload from "./sload";
 import sstore from "./sstore";
 import staticcall from "./staticcall";
-import { AwaitedItem, Item } from "../transaction";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerDependencies } from "../../types";
 import log from "./log";
 import selfdestruct from "./selfdestruct";
+import { AwaitedItem, Item } from "../../utils";
 
 export function parse(
   step: InterpreterStep,

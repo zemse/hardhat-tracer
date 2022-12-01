@@ -1,8 +1,9 @@
 import { Artifacts } from "hardhat/types";
 import { TraceRecorder } from "./trace/recorder";
 import { Decoder } from "./decoder";
-import { BigNumberish } from "ethers";
+import { BigNumberish, PopulatedTransaction } from "ethers";
 import { TracerCache } from "./cache";
+import { TransactionTrace } from "./trace/transaction";
 
 export interface NameTags {
   [address: string]: string;
@@ -36,6 +37,7 @@ export interface TracerEnv {
       | "already printed";
   };
   recorder?: TraceRecorder;
+  lastTrace: () => TransactionTrace | undefined;
   decoder?: Decoder;
   stateOverrides?: StateOverrides;
 }
@@ -85,3 +87,21 @@ export type ContractInfo =
         [libraryName: string]: ContractInfo;
       };
     };
+
+export interface ChaiMessageCallOptions {
+  isStaticCall?: boolean;
+  isDelegateCall?: boolean;
+  isSuccess?: boolean;
+  returnData?: string;
+}
+
+declare global {
+  export namespace Chai {
+    interface Assertion {
+      messageCall(
+        tx: PopulatedTransaction,
+        options?: ChaiMessageCallOptions
+      ): Assertion;
+    }
+  }
+}

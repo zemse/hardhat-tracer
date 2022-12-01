@@ -1,5 +1,6 @@
+import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 
 // process.env.DEBUG = "*";
 
@@ -29,6 +30,15 @@ describe("Hello", () => {
         value: parseEther("1"),
       }
     );
+
+    expect(hre.tracer.lastTrace()).to.have.messageCall(
+      await hello.populateTransaction.dm2("Heya!", hello.address),
+      {
+        isDelegateCall: false,
+        returnData: ethers.utils.defaultAbiCoder.encode(["string"], ["Heya!"]),
+      }
+    );
+
     console.log("========> hello.kick()");
     hre.tracer.ignoreNext = true;
     try {

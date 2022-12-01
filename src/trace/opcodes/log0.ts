@@ -1,8 +1,6 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { formatLog } from "../../format/log";
-import { TracerDependencies } from "../../types";
 import { hexPrefix, parseNumber, shallowCopyStack2 } from "../../utils";
-import { Item } from "../transaction";
+import { Item } from "../../utils";
 import { LOG } from "./log";
 
 export interface LOG0 extends LOG {

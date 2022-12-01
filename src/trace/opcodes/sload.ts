@@ -1,6 +1,5 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { hexPrefix } from "../../utils";
-import { Item, AwaitedItem } from "../transaction";
+import { AwaitedItem, Item, hexPrefix } from "../../utils";
 
 export interface SLOAD {
   key: string;

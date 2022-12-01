@@ -2,7 +2,7 @@ import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { formatError } from "../../format/error";
 import { TracerDependencies } from "../../types";
 import { hexPrefix } from "../../utils";
-import { Item } from "../transaction";
+import { Item } from "../../utils";
 
 export interface REVERT {
   data: string;

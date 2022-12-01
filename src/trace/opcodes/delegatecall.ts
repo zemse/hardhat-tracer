@@ -1,6 +1,6 @@
 import { formatCall } from "../../format/call";
 import { TracerDependencies } from "../../types";
-import { Item } from "../transaction";
+import { Item } from "../../utils";
 
 export interface DELEGATECALL {
   to: string;

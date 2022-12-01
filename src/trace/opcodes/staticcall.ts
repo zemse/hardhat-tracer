@@ -5,7 +5,7 @@ import {
   formatConsoleLog,
 } from "../../format/console-log";
 import { TracerDependencies } from "../../types";
-import { Item } from "../transaction";
+import { Item } from "../../utils";
 
 // ethers.utils.Logger.setLogLevel(ethers.utils.Logger.levels.ERROR);
 
