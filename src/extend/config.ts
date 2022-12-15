@@ -45,7 +45,7 @@ extendConfig(
       ignoreNext: false,
       printNext: false,
       verbosity: userConfig.tracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
-      showAddresses: userConfig.tracer?.showAddresses ?? false,
+      showAddresses: userConfig.tracer?.showAddresses ?? true,
       gasCost: userConfig.tracer?.gasCost ?? false,
       opcodes,
       nameTags: userConfig.tracer?.nameTags ?? {},
