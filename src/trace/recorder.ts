@@ -70,7 +70,7 @@ export class TraceRecorder {
 
     if (this.trace) {
       // TODO improve these errors
-      throw new Error("internal error: trace is defined");
+      throw new Error("[hardhat-tracer]: trace is defined in handleBeforeTx");
     }
 
     this.trace = new TransactionTrace();
@@ -85,12 +85,16 @@ export class TraceRecorder {
     // console.log("handleBeforeMessage");
 
     if (!this.trace) {
-      throw new Error("internal error: trace is undefined");
+      throw new Error(
+        "[hardhat-tracer]: trace is undefined in handleBeforeMessage"
+      );
     }
     let item: Item<any>;
     if (message.isStatic) {
       if (message.to === undefined) {
-        throw new Error("internal error: message.to is undefined");
+        throw new Error(
+          "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
+        );
       }
       this.addressStack.push(message.to?.toString()!);
       item = {
@@ -104,7 +108,9 @@ export class TraceRecorder {
       } as Item<STATICCALL>;
     } else if (message.delegatecall) {
       if (message.to === undefined) {
-        throw new Error("internal error: message.to is undefined");
+        throw new Error(
+          "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
+        );
       }
       this.addressStack.push(message.caller?.toString()!);
       item = {
@@ -207,7 +213,7 @@ export class TraceRecorder {
   ) {
     // console.log("handleStep");
     if (!this.trace) {
-      throw new Error("internal error: trace is undefined");
+      throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
     }
 
     if (this.awaitedItems.length) {
@@ -274,7 +280,9 @@ export class TraceRecorder {
     // console.log("handleAfterMessage", !evmResult?.execResult?.exceptionError);
 
     if (!this.trace) {
-      throw new Error("internal error: trace is undefined");
+      throw new Error(
+        "[hardhat-tracer]: trace is undefined in handleAfterMessage"
+      );
     }
 
     if (evmResult.execResult.selfdestruct) {
@@ -320,7 +328,7 @@ export class TraceRecorder {
     // console.log("handleAfterTx");
 
     if (!this.trace) {
-      throw new Error("internal error: trace is undefined");
+      throw new Error("[hardhat-tracer]: trace is undefined in handleAfterTx");
     }
 
     // store the trace for later use (printing or outputting)

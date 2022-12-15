@@ -36,7 +36,10 @@ export class TransactionTrace {
 
   // TODO see how to do this
   returnCurrentCall(returnData: string, success: boolean) {
-    if (!this.parent) throw new Error("this.parent is undefined");
+    if (!this.parent)
+      throw new Error(
+        "[hardhat-tracer]: this.parent is undefined in returnCurrentCall"
+      );
     this.parent.params.returnData = returnData;
     this.parent.params.success = success;
     this.parent = this.parent.parent as CallItem;
@@ -44,7 +47,8 @@ export class TransactionTrace {
 
   // TODO make dependencies optional
   async print(dependencies: TracerDependencies) {
-    if (!this.top) throw new Error("this.top is undefined");
+    if (!this.top)
+      throw new Error("[hardhat-tracer]: this.top is undefined in print");
     await print(dependencies, 0, this.top);
   }
 }

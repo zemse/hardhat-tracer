@@ -38,7 +38,7 @@ export class TracerCache {
 
   getTracerCachePath() {
     if (!this.cachePath) {
-      throw new Error("cachePath not set");
+      throw new Error("[hardhat-tracer]: cachePath not set");
     }
     return path.join(this.cachePath, "hardhat-tracer-cache", `data.json`);
   }

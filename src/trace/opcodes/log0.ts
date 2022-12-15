@@ -9,12 +9,14 @@ export interface LOG0 extends LOG {
 
 function parse(step: InterpreterStep, currentAddress?: string): Item<LOG0> {
   if (!currentAddress) {
-    throw new Error("currentAddress is required for log to be recorded");
+    throw new Error(
+      "[hardhat-tracer]: currentAddress is required for log to be recorded"
+    );
   }
 
   const stack = shallowCopyStack2(step.stack);
   if (stack.length < 2) {
-    throw new Error("Faulty LOG0");
+    throw new Error("[hardhat-tracer]: Faulty LOG0");
   }
 
   const dataOffset = parseNumber(stack.pop()!);
@@ -32,7 +34,7 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG0> {
       address: currentAddress,
     },
     format(): string {
-      throw new Error("Not implemented directly");
+      throw new Error("[hardhat-tracer]: Not implemented directly");
     },
   };
 }

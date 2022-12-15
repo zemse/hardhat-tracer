@@ -27,7 +27,7 @@ extendConfig(
     if (userConfig.tracer?.opcodes) {
       if (!Array.isArray(userConfig.tracer.opcodes)) {
         throw new Error(
-          "tracer.opcodes in hardhat user config should be array"
+          "[hardhat-tracer]: tracer.opcodes in hardhat user config should be array"
         );
       }
       opcodesToActivate.push(...userConfig.tracer.opcodes);

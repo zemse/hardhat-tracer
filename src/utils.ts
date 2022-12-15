@@ -158,7 +158,7 @@ export function findNextStructLogInDepth(
       return [structLogs[i], structLogs[i + 1]];
     }
   }
-  throw new Error("Could not find next StructLog in depth");
+  throw new Error("C[hardhat-tracer]: ould not find next StructLog in depth");
 }
 
 export function parseHex(str: string) {
@@ -237,7 +237,7 @@ export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
   for (const opcode of opcodes.keys()) {
     if (!activeOpcodesMap.get(opcode)) {
       throw new Error(
-        `The opcode "${opcode}" is not active on this VM. If the opcode name is misspelled in the config, please correct it.`
+        `[hardhat-tracer]: The opcode "${opcode}" is not active on this VM. If the opcode name is misspelled in the config, please correct it.`
       );
     }
   }
@@ -285,7 +285,9 @@ export async function applyStateOverrides(
 ) {
   for (const [_address, overrides] of Object.entries(stateOverrides)) {
     if (!ethers.utils.isAddress(_address)) {
-      throw new Error(`Invalid address ${_address} in stateOverrides`);
+      throw new Error(
+        `[hardhat-tracer]: Invalid address ${_address} in stateOverrides`
+      );
     }
 
     const address = Address.fromString(_address);

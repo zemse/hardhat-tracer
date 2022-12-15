@@ -41,17 +41,19 @@ addCliParams(task("trace", "Traces a transaction hash"))
       if (args.network) {
         const userNetworks = hre.userConfig.networks;
         if (userNetworks === undefined) {
-          throw new Error("No networks found in hardhat config");
+          throw new Error(
+            "[hardhat-tracer]: No networks found in hardhat config"
+          );
         }
         if (userNetworks[args.network] === undefined) {
           throw new Error(
-            `Network ${args.network} not found in hardhat config`
+            `[hardhat-tracer]: Network ${args.network} not found in hardhat config`
           );
         }
         const url = (userNetworks[args.network] as HttpNetworkUserConfig).url;
         if (url === undefined) {
           throw new Error(
-            `Url not found in hardhat-config->networks->${args.network}`
+            `[hardhat-tracer]: Url not found in hardhat-config->networks->${args.network}`
           );
         }
         args.rpc = url;
@@ -66,7 +68,7 @@ addCliParams(task("trace", "Traces a transaction hash"))
       if (!args.rpc) {
         // TODO add auto-detect network
         throw new Error(
-          "rpc url not provided, please either use --network <network-name> or --rpc <rpc-url>"
+          "[hardhat-tracer]: rpc url not provided, please either use --network <network-name> or --rpc <rpc-url>"
         );
       }
       const provider = new ethers.providers.StaticJsonRpcProvider(args.rpc);
@@ -74,13 +76,13 @@ addCliParams(task("trace", "Traces a transaction hash"))
 
       if (txFromRpc == null) {
         throw new Error(
-          "Transaction not found on rpc. Are you sure the transaction is confirmed on this network?"
+          "[hardhat-tracer]: Transaction not found on rpc. Are you sure the transaction is confirmed on this network?"
         );
       }
 
       if (!txFromRpc.blockNumber) {
         throw new Error(
-          "Transaction is not mined yet, please wait for it to be mined"
+          "[hardhat-tracer]: Transaction is not mined yet, please wait for it to be mined"
         );
       }
 

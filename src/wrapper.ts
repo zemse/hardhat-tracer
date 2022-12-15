@@ -71,7 +71,8 @@ class TracerWrapper extends ProviderWrapper {
         break;
       default:
         throw new Error(
-          "Invalid verbosity value: " + this.dependencies.tracerEnv.verbosity
+          "[hardhat-tracer]: Invalid verbosity value: " +
+            this.dependencies.tracerEnv.verbosity
         );
     }
 

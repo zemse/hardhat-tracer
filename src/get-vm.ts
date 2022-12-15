@@ -21,7 +21,7 @@ export async function getVM(hre: HardhatRuntimeEnvironment): Promise<VM> {
     currentLoopIterations += 1;
     if (currentLoopIterations > maxLoopIterations) {
       throw new Error(
-        `[smock]: unable to find base hardhat provider. are you sure you're running locally?`
+        `[hardhat-tracer]: unable to find base hardhat provider. are you sure you're running locally?`
       );
     }
   }
@@ -58,7 +58,7 @@ export async function getNode(
     currentLoopIterations += 1;
     if (currentLoopIterations > maxLoopIterations) {
       throw new Error(
-        `[smock]: unable to find base hardhat provider. are you sure you're running locally?`
+        `[hardhat-tracer]: unable to find base hardhat provider. are you sure you're running locally?`
       );
     }
   }
