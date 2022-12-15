@@ -5,7 +5,20 @@ import hre, { ethers } from "hardhat";
 // process.env.DEBUG = "*";
 
 describe("Hello", () => {
-  it("should run a test", async () => {
+  it.only("should run a test", async () => {
+    hre.tracer.enabled = false;
+    const HelloFactory = await hre.ethers.getContractFactory("Hello");
+    const hello = await HelloFactory.deploy();
+    // const tx = HelloFactory.getDeployTransaction();
+    // const signers = await hre.ethers.getSigners();
+    // await signers[0].estimateGas({ ...tx });
+
+    hre.tracer.enabled = true;
+    console.log("========> hello.hi2()");
+    await hello.hi2();
+  });
+
+  it("should run a test and check for message call", async () => {
     hre.tracer.enabled = false;
     const HelloFactory = await hre.ethers.getContractFactory("Hello");
     const hello = await HelloFactory.deploy();

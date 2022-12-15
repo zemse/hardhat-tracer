@@ -110,7 +110,7 @@ export class TraceRecorder {
       item = {
         opcode: "DELEGATECALL",
         params: {
-          to: hexPrefix(message.to.toString()),
+          to: hexPrefix((message._codeAddress ?? message.to).toString()),
           inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
         },

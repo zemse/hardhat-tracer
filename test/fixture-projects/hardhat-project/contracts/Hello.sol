@@ -31,11 +31,14 @@ contract Hello {
         revert("gg");
     }
 
+    function hi2() public {
+        Child c = new Child(address(0));
+        address(c).delegatecall(abi.encodeWithSignature("hi()"));
+    }
+
     function hit(Person memory person, uint256 time) external payable {
         Child c = new Child(address(0));
         emit WhatsUp(c.hi());
-        Child c2 = new Child{salt: bytes32("hello")}(address(0));
-        emit WhatsUp(c2.hi());
         this.dm();
         heyy = 23;
         console.log(
