@@ -16,6 +16,7 @@ import {
   applyCliArgsToTracer,
   applyStateOverrides,
 } from "../utils";
+import { printConsole } from "../print/console";
 
 const originalCreate = VM.create;
 
@@ -134,11 +135,14 @@ addCliParams(task("trace", "Traces a transaction hash"))
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
-    await recorder.previousTraces[recorder.previousTraces.length - 1].print({
-      artifacts: hre.artifacts,
-      tracerEnv: hre.tracer,
-      provider: hre.ethers.provider,
-    });
+    await printConsole(
+      recorder.previousTraces[recorder.previousTraces.length - 1],
+      {
+        artifacts: hre.artifacts,
+        tracerEnv: hre.tracer,
+        provider: hre.ethers.provider,
+      }
+    );
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return;

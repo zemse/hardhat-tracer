@@ -48,27 +48,4 @@ export class TransactionTrace {
     this.parent.params.exception = exception;
     this.parent = this.parent.parent as CallItem;
   }
-
-  // TODO make dependencies optional
-  async print(dependencies: TracerDependencies) {
-    if (!this.top)
-      throw new Error("[hardhat-tracer]: this.top is undefined in print");
-    await print(dependencies, 0, this.top);
-  }
-}
-
-async function print(
-  dependencies: TracerDependencies,
-  depth = 0,
-  item: Item<any>
-) {
-  const indentation = "   ".repeat(depth);
-
-  console.log(indentation + (await format(item, dependencies)));
-
-  if (!!item.children) {
-    for (const childItem of item.children) {
-      await print(dependencies, depth + 1, childItem);
-    }
-  }
 }
