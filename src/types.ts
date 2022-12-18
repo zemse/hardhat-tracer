@@ -125,6 +125,7 @@ export interface ChaiMessageCallOptions {
   isDelegateCall?: boolean;
   isSuccess?: boolean;
   returnData?: string;
+  from?: string;
 }
 
 declare global {

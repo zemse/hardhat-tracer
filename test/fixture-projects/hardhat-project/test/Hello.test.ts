@@ -49,7 +49,7 @@ describe("Hello", () => {
     //   },
     // });
     // const hello = await HelloFactory.deploy();
-    const hello = await hre.ethers.getContractAt(
+    const contract = await hre.ethers.getContractAt(
       "Hello",
       "0x0000000000000000000000000000001234567890"
     );
@@ -59,7 +59,7 @@ describe("Hello", () => {
 
     hre.tracer.enabled = true;
     console.log("========> hello.hit()");
-    await hello.hit(
+    await contract.hit(
       {
         name: "hello",
         age: 23,
@@ -70,10 +70,10 @@ describe("Hello", () => {
     );
 
     expect(hre.tracer.lastTrace()).to.have.messageCall(
-      await hello.populateTransaction.dm2("Heya!", hello.address),
+      await contract.populateTransaction.getData(),
       {
-        isDelegateCall: false,
-        returnData: ethers.utils.defaultAbiCoder.encode(["string"], ["Heya!"]),
+        returnData: ethers.utils.defaultAbiCoder.encode(["uint"], ["1234"]),
+        from: contract.address,
       }
     );
   });

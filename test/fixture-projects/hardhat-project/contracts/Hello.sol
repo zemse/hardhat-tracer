@@ -62,6 +62,7 @@ contract Hello {
     }
 
     function dm() external view returns (string memory) {
+        this.getData();
         return this.dm2("Heya!", msg.sender);
     }
 
@@ -71,6 +72,10 @@ contract Hello {
         returns (string memory)
     {
         return hello;
+    }
+
+    function getData() public view returns (uint256) {
+        return 1234;
     }
 
     function kick() public view returns (uint256) {

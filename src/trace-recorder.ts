@@ -90,6 +90,7 @@ export class TraceRecorder {
       item = {
         opcode: "STATICCALL",
         params: {
+          from: hexPrefix(message.caller.toString()),
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
@@ -106,6 +107,7 @@ export class TraceRecorder {
       item = {
         opcode: "DELEGATECALL",
         params: {
+          from: hexPrefix(message.caller.toString()),
           to: hexPrefix((message._codeAddress ?? message.to).toString()),
           inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
@@ -117,6 +119,7 @@ export class TraceRecorder {
       item = {
         opcode: "CALL",
         params: {
+          from: hexPrefix(message.caller.toString()),
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
@@ -128,6 +131,7 @@ export class TraceRecorder {
       item = {
         opcode: "CREATE",
         params: {
+          from: hexPrefix(message.caller.toString()),
           initCode: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString()),
@@ -138,6 +142,7 @@ export class TraceRecorder {
       item = {
         opcode: "CREATE2",
         params: {
+          from: hexPrefix(message.caller.toString()),
           initCode: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString()),

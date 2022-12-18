@@ -7,6 +7,7 @@ import { TracerDependencies } from "../types";
 // ethers.utils.Logger.setLogLevel(ethers.utils.Logger.levels.ERROR);
 
 export interface STATICCALL {
+  from: string;
   to: string;
   inputData: string;
   returnData?: string;

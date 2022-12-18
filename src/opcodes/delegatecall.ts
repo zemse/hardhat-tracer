@@ -3,6 +3,7 @@ import { TracerDependencies } from "../types";
 import { Item } from "../types";
 
 export interface DELEGATECALL {
+  from: string;
   to: string;
   inputData: string;
   returnData?: string;

@@ -3,6 +3,7 @@ import { TracerDependencies } from "../types";
 import { Item } from "../types";
 
 export interface CREATE {
+  from: string;
   initCode: string;
   value: string;
   deployedCode?: string;

@@ -4,6 +4,7 @@ import { Item } from "../types";
 import { TracerDependencies } from "../types";
 
 export interface CALL {
+  from: string;
   to: string;
   inputData: string;
   value: string;

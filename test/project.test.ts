@@ -12,7 +12,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it("works", async function () {
+    it.only("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         fulltrace: true,
@@ -32,7 +32,7 @@ describe("Hardhat Runtime Environment extension", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
-    it.only("mainnet by rpc", async function () {
+    it("mainnet by rpc", async function () {
       await this.hre.run("trace", {
         hash:
           "0xc645204e28ffc9f75812e598c6ee7a959c501756062195b2f0fb003276fa39a7",

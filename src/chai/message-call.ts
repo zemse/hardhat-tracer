@@ -57,7 +57,12 @@ function checkEqual(
   // console.log(item.params);
 
   // for contract creation, to is undefined, and note that undefined === undefined is true.
-  const isToSame = tx.to?.toLowerCase() === item.params.to?.toLowerCase();
+  const isToSame =
+    tx.to === undefined ||
+    tx.to?.toLowerCase() === item.params.to?.toLowerCase();
+  const isFromSame =
+    options.from === undefined ||
+    options.from?.toLowerCase() === item.params.from?.toLowerCase();
 
   const isDataSame =
     hexPrefix(tx.data ?? "0x").toLowerCase() === item.params.inputData;
@@ -66,7 +71,7 @@ function checkEqual(
   let error: Error | undefined;
 
   // basic matching requirement
-  if (!isToSame || !isDataSame) {
+  if (!isToSame || !isFromSame || !isDataSame) {
     error = new Error("Call does not match");
     return { error, matchQuotient };
   }
