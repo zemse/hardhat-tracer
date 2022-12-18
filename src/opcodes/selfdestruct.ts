@@ -1,4 +1,4 @@
-import { Item } from "../../utils";
+import { Item } from "../types";
 
 export interface SELFDESTRUCT {
   beneficiary: string;

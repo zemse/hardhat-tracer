@@ -1,23 +1,21 @@
+import { assert } from "console";
+import { ethers } from "ethers";
+import { FakeSenderAccessListEIP2930Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderAccessListEIP2930Transaction";
+import { FakeSenderEIP1559Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderEIP1559Transaction";
+import { FakeSenderTransaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderTransaction";
+import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
+import { getNode } from "../utils/hardhat";
+import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
+import { HttpNetworkUserConfig } from "hardhat/types";
+import { task } from "hardhat/config";
+import { TraceRecorder } from "../trace-recorder";
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 import {
   addCliParams,
   applyCliArgsToTracer,
   applyStateOverrides,
 } from "../utils";
-import { ethers } from "ethers";
-import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
-import { getNode } from "../get-vm";
-import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
-import { FakeSenderTransaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderTransaction";
-import { FakeSenderAccessListEIP2930Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderAccessListEIP2930Transaction";
-import { FakeSenderEIP1559Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderEIP1559Transaction";
-import { VMDebugTracer } from "hardhat/internal/hardhat-network/stack-traces/vm-debug-tracer";
-import { HttpNetworkUserConfig } from "hardhat/types";
-import { task } from "hardhat/config";
-import { TraceRecorder } from "../trace/recorder";
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
-import { RpcDebugTracingConfig } from "hardhat/internal/core/jsonrpc/types/input/debugTraceTransaction";
-import { assert } from "console";
 
 const originalCreate = VM.create;
 

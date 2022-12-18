@@ -1,17 +1,12 @@
-import { ethers } from "ethers";
 import { BackwardsCompatibilityProviderAdapter } from "hardhat/internal/core/providers/backwards-compatibility";
 import { ProviderWrapper } from "hardhat/internal/core/providers/wrapper";
+import { TracerDependencies } from "./types";
+
 import {
-  Artifacts,
   EIP1193Provider,
   HardhatRuntimeEnvironment,
   RequestArguments,
 } from "hardhat/types";
-import { TracerCache } from "./cache";
-import { Decoder } from "./decoder";
-
-import { ProviderLike, TracerDependencies, TracerEnv } from "./types";
-import { DEFAULT_VERBOSITY } from "./utils";
 
 /**
  * Wrapped provider which extends requests

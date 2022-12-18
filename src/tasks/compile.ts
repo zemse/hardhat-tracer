@@ -1,6 +1,6 @@
-import { TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS } from "hardhat/builtin-tasks/task-names";
-import { task } from "hardhat/config";
 import { applyStateOverrides } from "../utils";
+import { task } from "hardhat/config";
+import { TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS } from "hardhat/builtin-tasks/task-names";
 
 task(TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS).setAction(
   async (args, hre, runSuper) => {

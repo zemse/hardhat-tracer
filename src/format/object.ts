@@ -1,5 +1,5 @@
-import { colorKey } from "../colors";
-import { SEPARATOR } from "./separator";
+import { colorKey } from "../utils";
+import { SEPARATOR } from "../constants";
 
 export function formatObject(obj: any) {
   return Object.entries(obj)

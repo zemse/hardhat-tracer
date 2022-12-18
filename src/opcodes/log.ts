@@ -1,7 +1,7 @@
 import { parse } from ".";
-import { formatLog } from "../../format/log";
-import { TracerDependencies } from "../../types";
-import { Item } from "../../utils";
+import { formatLog } from "../format/log";
+import { TracerDependencies } from "../types";
+import { Item } from "../types";
 
 export interface LOG {
   data: string;

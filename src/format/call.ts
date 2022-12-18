@@ -1,21 +1,21 @@
 import { BigNumber, BigNumberish } from "ethers";
+import { fetchContractDecimals, getBetterContractName } from "../utils";
+import { formatParam } from "./param";
+import { formatResult } from "./result";
+import { SEPARATOR } from "../constants";
+import { TracerDependencies } from "../types";
 import {
   colorContract,
   colorFunctionSuccess,
   colorFunctioFail,
   colorKey,
-} from "../colors";
-import { fetchContractDecimals, getBetterContractName } from "../utils";
-import { formatParam } from "./param";
-import { formatResult } from "./result";
+} from "../utils/colors";
 import {
   formatEther,
   Fragment,
   FunctionFragment,
   Result,
 } from "ethers/lib/utils";
-import { SEPARATOR } from "./separator";
-import { TracerDependencies } from "../types";
 
 export async function formatCall(
   to: string,

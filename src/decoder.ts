@@ -1,4 +1,6 @@
+import { Artifacts } from "hardhat/types";
 import { ethers } from "ethers";
+import { TracerCache } from "./cache";
 import {
   ErrorFragment,
   EventFragment,
@@ -8,8 +10,6 @@ import {
   Interface,
   Result,
 } from "ethers/lib/utils";
-import { Artifacts } from "hardhat/types";
-import { TracerCache } from "./cache";
 
 type Mapping<FragmentType> = Map<
   string,

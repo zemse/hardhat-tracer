@@ -1,6 +1,6 @@
-import { VM } from "@nomicfoundation/ethereumjs-vm";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 
 // Credits: https://github.com/defi-wonderland/smock/blob/3c2b80b72fe146634b999df5b9bb9ef5ffc27508/src/utils/hardhat.ts#L20-L51
 export async function getVM(hre: HardhatRuntimeEnvironment): Promise<VM> {

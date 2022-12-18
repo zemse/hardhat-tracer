@@ -1,16 +1,8 @@
 import { BigNumber } from "ethers";
-import {
-  formatUnits,
-  Fragment,
-  FunctionFragment,
-  ParamType,
-  Result,
-} from "ethers/lib/utils";
-
-import { colorKey } from "../colors";
-import { TracerDependencies } from "../types";
-
+import { colorKey } from "../utils/colors";
 import { formatParam } from "./param";
+import { formatUnits, ParamType, Result } from "ethers/lib/utils";
+import { TracerDependencies } from "../types";
 
 interface FormatOptions {
   decimals?: number;

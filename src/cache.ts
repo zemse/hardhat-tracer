@@ -1,5 +1,5 @@
-import path from "path";
 import fs from "fs-extra";
+import path from "path";
 
 // To locally cache contract name, decimals, and ABI to prevent async API calls
 export class TracerCache {

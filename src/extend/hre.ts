@@ -1,12 +1,10 @@
+import { applyStateOverrides, getVM } from "../utils";
+import { Decoder } from "../decoder";
 import { extendEnvironment } from "hardhat/config";
+import { TraceRecorder } from "../trace-recorder";
+import { TracerEnv } from "../types";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
-import { getVM } from "../get-vm";
-import { TracerEnv } from "../types";
-import { TraceRecorder } from "../trace/recorder";
-import { Decoder } from "../decoder";
-import { hardhatArguments } from "hardhat";
-import { applyStateOverrides } from "../utils";
 
 declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {

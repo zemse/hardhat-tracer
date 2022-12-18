@@ -1,8 +1,8 @@
 import { Assertion } from "chai";
 import { BigNumber, PopulatedTransaction } from "ethers";
-import { TransactionTrace } from "../trace/transaction";
-import { ChaiMessageCallOptions } from "../types";
-import { CallItem, hexPrefix, isCallItem } from "../utils";
+import { CallItem, ChaiMessageCallOptions } from "../types";
+import { hexPrefix, isCallItem } from "../utils";
+import { TransactionTrace } from "../transaction-trace";
 
 Assertion.addMethod("messageCall", function (
   tx: PopulatedTransaction,

@@ -1,4 +1,4 @@
-import { colorContract, colorEvent } from "../colors";
+import { colorContract, colorEvent } from "../utils/colors";
 import { EventFragment, Result } from "ethers/lib/utils";
 import { formatParam } from "./param";
 import { formatResult } from "./result";

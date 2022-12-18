@@ -1,29 +1,22 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import { AfterTxEvent } from "@nomicfoundation/ethereumjs-vm";
-import { TransactionTrace } from "./transaction";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
-// import { call } from "./opcodes/call";
+import { AwaitedItem, Item } from "./types";
+import { CALL } from "./opcodes/call";
+import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
+import { CREATE } from "./opcodes/create";
+import { CREATE2 } from "./opcodes/create2";
+import { DELEGATECALL } from "./opcodes/delegatecall";
+import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
+import { EXCEPTION } from "./opcodes/exception";
+import { hexPrefix } from "./utils/hex";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { isItem } from "./utils/item";
 import { parse } from "./opcodes";
 import { STATICCALL } from "./opcodes/staticcall";
-import { DELEGATECALL } from "./opcodes/delegatecall";
-import { CALL } from "./opcodes/call";
-import { CREATE } from "./opcodes/create";
-import {
-  AwaitedItem,
-  checkIfOpcodesAreValid,
-  hexPrefix,
-  isItem,
-  Item,
-} from "../utils";
-import { CREATE2 } from "./opcodes/create2";
-import { TracerEnv } from "../types";
-import { EXCEPTION } from "./opcodes/exception";
-
-// const txs: TransactionTrace[] = [];
-// let txTrace: TransactionTrace;
+import { TracerEnv } from "./types";
+import { TransactionTrace } from "./transaction-trace";
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 
 interface NewContractEvent {
   address: Address;

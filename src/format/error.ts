@@ -1,11 +1,8 @@
-import { Interface } from "ethers/lib/utils";
-
-import { colorError } from "../colors";
-import { TracerDependencies } from "../types";
+import { colorError } from "../utils/colors";
 import { formatObject } from "./object";
-
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { TracerDependencies } from "../types";
 
 export async function formatError(
   revertData: string,

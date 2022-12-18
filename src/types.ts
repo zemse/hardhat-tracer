@@ -1,10 +1,11 @@
 import { Artifacts } from "hardhat/types";
-import { TraceRecorder } from "./trace/recorder";
-import { Decoder } from "./decoder";
 import { BigNumberish, PopulatedTransaction } from "ethers";
+import { CALL } from "./opcodes/call";
+import { Decoder } from "./decoder";
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerCache } from "./cache";
-import { TransactionTrace } from "./trace/transaction";
-
+import { TraceRecorder } from "./trace-recorder";
+import { TransactionTrace } from "./transaction-trace";
 export interface NameTags {
   [address: string]: string;
 }
@@ -87,6 +88,33 @@ export type ContractInfo =
         [libraryName: string]: ContractInfo;
       };
     };
+
+export interface Item<Params> {
+  opcode: string;
+  params: Params;
+  parent?: Item<Params>;
+  children?: Item<Params>[];
+  format?: () => string;
+}
+
+export type AwaitedItem<T> = {
+  isAwaitedItem: true;
+  next: number;
+  parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
+};
+
+export interface CallItem extends Item<CALL> {
+  opcode: CALL_OPCODES;
+  children: Item<any>[];
+}
+
+export type CALL_OPCODES =
+  | "CALL"
+  | "STATICCALL"
+  | "DELEGATECALL"
+  | "CALLCODE"
+  | "CREATE"
+  | "CREATE2";
 
 export interface ChaiMessageCallOptions {
   isStaticCall?: boolean;

@@ -1,7 +1,7 @@
-import { ethers } from "ethers";
-import { TracerDependencies } from "../types";
-import { formatResult } from "./result";
 import consoleLogMethods from "./console-log-methods.json";
+import { ethers } from "ethers";
+import { formatResult } from "./result";
+import { TracerDependencies } from "../types";
 
 // TODO try to import this from somewhere in hardhat
 export const CONSOLE_LOG_ADDRESS = "0x000000000000000000636f6e736f6c652e6c6f67";

@@ -1,6 +1,6 @@
-import { formatContract } from "../../format/contract";
-import { TracerDependencies } from "../../types";
-import { Item } from "../../utils";
+import { formatContract } from "../format/contract";
+import { TracerDependencies } from "../types";
+import { Item } from "../types";
 
 export interface CREATE {
   initCode: string;

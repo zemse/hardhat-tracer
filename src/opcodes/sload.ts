@@ -1,5 +1,6 @@
+import { AwaitedItem, Item } from "../types";
+import { hexPrefix } from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { AwaitedItem, Item, hexPrefix } from "../../utils";
 
 export interface SLOAD {
   key: string;

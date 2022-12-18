@@ -1,8 +1,8 @@
 import { addCliParams, applyCliArgsToTracer } from "../utils";
+import { ethers } from "ethers";
 import { HttpNetworkUserConfig } from "hardhat/types";
 import { task } from "hardhat/config";
-import { TraceRecorder } from "../trace/recorder";
-import { ethers } from "ethers";
+import { TraceRecorder } from "../trace-recorder";
 
 addCliParams(task("tracecall", "Traces a call"))
   .addParam("to", "destination address")

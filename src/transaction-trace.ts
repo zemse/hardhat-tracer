@@ -1,7 +1,7 @@
-import { CallItem, Item } from "../utils";
+import { CallItem, Item } from "./types";
 import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
 import { format } from "./opcodes";
-import { TracerDependencies } from "../types";
+import { TracerDependencies } from "./types";
 
 export class TransactionTrace {
   top?: CallItem;

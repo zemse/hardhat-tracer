@@ -1,12 +1,10 @@
-import { BigNumber, BigNumberish } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
-
-import { colorContract, colorFunctionSuccess, colorKey } from "../colors";
-import { TracerDependencies } from "../types";
+import { BigNumber, BigNumberish } from "ethers";
+import { colorContract, colorFunctionSuccess, colorKey } from "../utils/colors";
 import { compareBytecode } from "../utils";
-
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { TracerDependencies } from "../types";
 
 export async function formatContract(
   code: string,

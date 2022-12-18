@@ -1,18 +1,13 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import {
-  hexPrefix,
-  parseHex,
-  parseNumber,
-  shallowCopyStack2,
-} from "../../utils";
-import { Item } from "../../utils";
+import { hexPrefix, parseNumber, shallowCopyStack2 } from "../utils";
+import { Item } from "../types";
 import { LOG } from "./log";
 
-export interface LOG2 extends LOG {
-  topics: [string, string];
+export interface LOG0 extends LOG {
+  topics: [];
 }
 
-function parse(step: InterpreterStep, currentAddress?: string): Item<LOG2> {
+function parse(step: InterpreterStep, currentAddress?: string): Item<LOG0> {
   if (!currentAddress) {
     throw new Error(
       "[hardhat-tracer]: currentAddress is required for log to be recorded"
@@ -20,24 +15,22 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG2> {
   }
 
   const stack = shallowCopyStack2(step.stack);
-  if (stack.length < 4) {
-    throw new Error("[hardhat-tracer]: Faulty LOG2");
+  if (stack.length < 2) {
+    throw new Error("[hardhat-tracer]: Faulty LOG0");
   }
 
   const dataOffset = parseNumber(stack.pop()!);
   const dataSize = parseNumber(stack.pop()!);
-  const topic0 = parseHex(stack.pop()!);
-  const topic1 = parseHex(stack.pop()!);
 
   const data = hexPrefix(
     step.memory.slice(dataOffset, dataOffset + dataSize).toString("hex")
   );
 
   return {
-    opcode: "LOG2",
+    opcode: "LOG0",
     params: {
       data,
-      topics: [topic0, topic1],
+      topics: [],
       address: currentAddress,
     },
     format(): string {

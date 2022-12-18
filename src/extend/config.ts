@@ -1,10 +1,8 @@
+import { DEFAULT_VERBOSITY } from "../constants";
 import { extendConfig } from "hardhat/config";
-
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import { TracerCache } from "../cache";
-
 import { TracerEnv, TracerEnvUser } from "../types";
-import { DEFAULT_VERBOSITY } from "../utils";
 
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {

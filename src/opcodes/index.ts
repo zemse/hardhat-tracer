@@ -12,10 +12,10 @@ import sload from "./sload";
 import sstore from "./sstore";
 import staticcall from "./staticcall";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { TracerDependencies } from "../../types";
+import { TracerDependencies } from "../types";
 import log from "./log";
 import selfdestruct from "./selfdestruct";
-import { AwaitedItem, Item } from "../../utils";
+import { AwaitedItem, Item } from "../types";
 import exception from "./exception";
 
 export function parse(
