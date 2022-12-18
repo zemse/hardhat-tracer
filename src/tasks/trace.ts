@@ -1,4 +1,8 @@
-import { addCliParams, applyCliArgsToTracer } from "../utils";
+import {
+  addCliParams,
+  applyCliArgsToTracer,
+  applyStateOverrides,
+} from "../utils";
 import { ethers } from "ethers";
 import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
 import { getNode } from "../get-vm";
@@ -24,7 +28,12 @@ VM.create = async function (...args) {
   const tracerEnv = global.tracerEnv;
   // @ts-ignore
   const hreArtifacts = global.hreArtifacts;
-  const recorder = new TraceRecorder(vm, tracerEnv, hreArtifacts);
+  const recorder = new TraceRecorder(vm, tracerEnv);
+  if (tracerEnv.stateOverrides) {
+    try {
+      await applyStateOverrides(tracerEnv.stateOverrides, vm, hreArtifacts);
+    } catch {}
+  }
   tracerEnv.recorder = recorder;
   // @ts-ignore
   global._hardhat_tracer_recorder = recorder;

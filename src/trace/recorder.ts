@@ -12,7 +12,6 @@ import { DELEGATECALL } from "./opcodes/delegatecall";
 import { CALL } from "./opcodes/call";
 import { CREATE } from "./opcodes/create";
 import {
-  applyStateOverrides,
   AwaitedItem,
   checkIfOpcodesAreValid,
   hexPrefix,
@@ -21,7 +20,6 @@ import {
 } from "../utils";
 import { CREATE2 } from "./opcodes/create2";
 import { TracerEnv } from "../types";
-import { Artifacts } from "hardhat/types";
 
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
@@ -40,15 +38,11 @@ export class TraceRecorder {
   awaitedItems: AwaitedItem<any>[];
   addressStack: string[];
 
-  constructor(vm: VM, tracerEnv: TracerEnv, artifacts: Artifacts) {
+  constructor(vm: VM, tracerEnv: TracerEnv) {
     this.vm = vm;
     this.tracerEnv = tracerEnv;
 
     checkIfOpcodesAreValid(tracerEnv.opcodes, vm);
-
-    if (tracerEnv.stateOverrides) {
-      applyStateOverrides(tracerEnv.stateOverrides, vm, artifacts);
-    }
 
     this.awaitedItems = [];
     this.addressStack = [];

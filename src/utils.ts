@@ -266,15 +266,7 @@ async function setBytecode(
   }
 
   // its possible artifacts are not compiled here
-  let artifact;
-  try {
-    artifact = artifacts.readArtifactSync(contractInfo.name);
-  } catch {
-    console.warn(
-      `[hardhat-tracer]: Could not find artifact for ${contractInfo.name} specified in stateOverrides.`
-    );
-    return;
-  }
+  let artifact = artifacts.readArtifactSync(contractInfo.name);
   let bytecode = artifact.deployedBytecode;
 
   if (bytecode.startsWith("0x730000000000000000000000000000000000000000")) {

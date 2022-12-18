@@ -6,6 +6,7 @@ import { TracerEnv } from "../types";
 import { TraceRecorder } from "../trace/recorder";
 import { Decoder } from "../decoder";
 import { hardhatArguments } from "hardhat";
+import { applyStateOverrides } from "../utils";
 
 declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {
@@ -25,8 +26,17 @@ extendEnvironment((hre) => {
   global.hreArtifacts = hre.artifacts;
 
   getVM(hre)
-    .then((vm) => {
-      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer, hre.artifacts);
+    .then(async (vm) => {
+      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+      if (hre.tracer.stateOverrides) {
+        try {
+          await applyStateOverrides(
+            hre.tracer.stateOverrides,
+            vm,
+            hre.artifacts
+          );
+        } catch {}
+      }
     })
     .catch(() => {
       // if for some reason we can't get the vm, disable hardhat-tracer
