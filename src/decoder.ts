@@ -135,7 +135,7 @@ export class Decoder {
     await this.ready;
 
     if (topics.length === 0) {
-      throw new Error("No topics, cannot decode");
+      throw new Error("[hardhat-tracer]: No topics, cannot decode");
     }
 
     const topic0 = topics[0];
