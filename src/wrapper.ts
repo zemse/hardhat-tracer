@@ -39,10 +39,12 @@ class TracerWrapper extends ProviderWrapper {
     // if estimateGas fails then print it
     // sendTx should be printing it regardless of success or failure
     const isSendTransaction = args.method === "eth_sendTransaction";
+    const isSendRawTransaction = args.method === "eth_sendRawTransaction";
     const isEthCall = args.method === "eth_call";
     const isEstimateGas = args.method === "eth_estimateGas";
 
     const isSendTransactionFailed = isSendTransaction && !!error;
+    const isSendRawTransactionFailed = isSendRawTransaction && !!error;
     const isEthCallFailed = isEthCall && !!error;
     const isEstimateGasFailed = isEstimateGas && !!error;
 
@@ -56,14 +58,22 @@ class TracerWrapper extends ProviderWrapper {
       case 2:
         shouldPrint =
           isSendTransactionFailed ||
+          isSendRawTransactionFailed ||
           isEthCallFailed ||
           isEstimateGasFailed ||
           (!!this.dependencies.tracerEnv.printNext &&
-            (isSendTransaction || isEthCall || isEstimateGas));
+            (isSendTransaction ||
+              isSendRawTransaction ||
+              isEthCall ||
+              isEstimateGas));
         break;
       case 3:
       case 4:
-        shouldPrint = isSendTransaction || isEthCall || isEstimateGas;
+        shouldPrint =
+          isSendTransaction ||
+          isSendRawTransaction ||
+          isEthCall ||
+          isEstimateGas;
         break;
       default:
         throw new Error(
