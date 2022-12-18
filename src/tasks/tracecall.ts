@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { HttpNetworkUserConfig } from "hardhat/types";
 import { task } from "hardhat/config";
 import { TraceRecorder } from "../trace-recorder";
-import { printConsole } from "../print/console";
+import { print } from "../print";
 
 addCliParams(task("tracecall", "Traces a call"))
   .addParam("to", "destination address")
@@ -82,14 +82,11 @@ addCliParams(task("tracecall", "Traces a call"))
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
-    await printConsole(
-      recorder.previousTraces[recorder.previousTraces.length - 1],
-      {
-        artifacts: hre.artifacts,
-        tracerEnv: hre.tracer,
-        provider: hre.ethers.provider,
-      }
-    );
+    await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
+      artifacts: hre.artifacts,
+      tracerEnv: hre.tracer,
+      provider: hre.ethers.provider,
+    });
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return;

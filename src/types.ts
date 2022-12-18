@@ -6,6 +6,9 @@ import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { TracerCache } from "./cache";
 import { TraceRecorder } from "./trace-recorder";
 import { TransactionTrace } from "./transaction-trace";
+
+type PrintMode = "console" | "json";
+
 export interface NameTags {
   [address: string]: string;
 }
@@ -29,6 +32,7 @@ export interface TracerEnv {
   gasCost: boolean;
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
+  printMode: PrintMode;
   // todo remove internal
   _internal: {
     cache: TracerCache;

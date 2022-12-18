@@ -16,7 +16,7 @@ import {
   applyCliArgsToTracer,
   applyStateOverrides,
 } from "../utils";
-import { printConsole } from "../print/console";
+import { print } from "../print";
 
 const originalCreate = VM.create;
 
@@ -135,14 +135,11 @@ addCliParams(task("trace", "Traces a transaction hash"))
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
-    await printConsole(
-      recorder.previousTraces[recorder.previousTraces.length - 1],
-      {
-        artifacts: hre.artifacts,
-        tracerEnv: hre.tracer,
-        provider: hre.ethers.provider,
-      }
-    );
+    await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
+      artifacts: hre.artifacts,
+      tracerEnv: hre.tracer,
+      provider: hre.ethers.provider,
+    });
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return;
@@ -244,7 +241,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
       await vm.runTx({ tx: txWithCommon, block });
       currentProgress += Number(tx.gasLimit.toString());
       if (Date.now() - progressPrinted > 1000) {
-        console.log(
+        console.warn(
           "current progress",
           Math.floor((currentProgress / totalProgress) * 10000) / 100
         );

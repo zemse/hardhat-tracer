@@ -25,7 +25,8 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
       )
 
       // params
-      .addOptionalParam("opcodes", "specify more opcodes to print")
+      .addOptionalParam("opcodes", "specify more opcodes to include in trace")
+      .addOptionalParam("print", "specify print mode: console or json")
 
       // alias
       .addFlag("trace", "enable tracer with verbosity 3")
@@ -84,5 +85,9 @@ export function applyCliArgsToTracer(
 
   if (args.gascost) {
     hre.tracer.gasCost = true;
+  }
+
+  if (args.print) {
+    hre.tracer.printMode = args.print;
   }
 }

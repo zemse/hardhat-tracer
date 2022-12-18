@@ -7,7 +7,7 @@ import {
   HardhatRuntimeEnvironment,
   RequestArguments,
 } from "hardhat/types";
-import { printConsole } from "./print/console";
+import { print } from "./print";
 
 /**
  * Wrapped provider which extends requests
@@ -79,7 +79,7 @@ class TracerWrapper extends ProviderWrapper {
         this.dependencies.tracerEnv.printNext = false;
         const lastTrace = this.dependencies.tracerEnv.lastTrace();
         if (lastTrace) {
-          await printConsole(lastTrace, this.dependencies);
+          await print(lastTrace, this.dependencies);
         }
       }
     }

@@ -47,6 +47,7 @@ extendConfig(
       gasCost: userConfig.tracer?.gasCost ?? false,
       opcodes,
       nameTags: userConfig.tracer?.nameTags ?? {},
+      printMode: "console",
       // @ts-ignore TODO remove, this has no place in "config"
       _internal: {
         printNameTagTip: undefined,
