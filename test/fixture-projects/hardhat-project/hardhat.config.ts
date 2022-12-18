@@ -32,9 +32,14 @@ const config: HardhatUserConfig = {
           "0x1abf42a573070203916aa7bf9118741d8da5f9522f66b5368aa0a2644f487b38": 0,
         },
       },
-      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": {
-        // bytecode: "Hello",
-        bytecode: "0x61123460005260206000fd",
+      "0x0000000000000000000000000000001234567890": {
+        bytecode: "Hello",
+        // {
+        //   name: "Hello",
+        //   libraries: {
+        //     Lib: "Lib", // TODO try to take library automatically
+        //   },
+        // },
       },
     },
   },

@@ -247,10 +247,11 @@ export function isItem(item: any): item is Item<any> {
   return item && typeof item.opcode === "string";
 }
 
-function getBytecode(
+async function setBytecode(
   contractInfo: ContractInfo,
   artifacts: Artifacts,
-  addressThis: string
+  addressThis: string,
+  vm: VM
 ) {
   if (typeof contractInfo === "string") {
     if (ethers.utils.isHexString(contractInfo)) {
@@ -264,7 +265,16 @@ function getBytecode(
     }
   }
 
-  const artifact = artifacts.readArtifactSync(contractInfo.name);
+  // its possible artifacts are not compiled here
+  let artifact;
+  try {
+    artifact = artifacts.readArtifactSync(contractInfo.name);
+  } catch {
+    console.warn(
+      `[hardhat-tracer]: Could not find artifact for ${contractInfo.name} specified in stateOverrides.`
+    );
+    return;
+  }
   let bytecode = artifact.deployedBytecode;
 
   if (bytecode.startsWith("0x730000000000000000000000000000000000000000")) {
@@ -272,10 +282,65 @@ function getBytecode(
     bytecode = "0x73" + addressThis.slice(2) + bytecode.slice(44);
   }
 
-  // TODO add support for linking libraries
-  // artifact.deployedLinkReferences;
+  if (artifact.deployedLinkReferences) {
+    const paths = Object.keys(artifact.deployedLinkReferences);
+    for (const path of paths) {
+      const libraryNames = Object.keys(artifact.deployedLinkReferences[path]);
+      for (const libraryName of libraryNames) {
+        const fullName = path + ":" + libraryName;
 
-  return bytecode;
+        let libraryInfo =
+          contractInfo.libraries?.[libraryName] ??
+          contractInfo.libraries?.[fullName];
+
+        if (!libraryInfo) {
+          // add guess for library, if it's available in the same repo
+          libraryInfo = {
+            name: fullName,
+          };
+          // throw new Error(
+          //   `[hardhat-tracer]: Library ${libraryName} not found in libraries object for ${contractInfo.name}`
+          // );
+        }
+
+        let addressToLink;
+
+        if (
+          typeof libraryInfo === "string" &&
+          ethers.utils.isHexString(libraryInfo) &&
+          libraryInfo.length === 42
+        ) {
+          // address was given for library
+          addressToLink = libraryInfo;
+        } else {
+          // since we don't have an address for library, lets generate a random one
+          addressToLink = ethers.utils.id(fullName).slice(0, 42);
+          await setBytecode(libraryInfo, artifacts, addressToLink, vm);
+        }
+
+        // we have the address of library now, so let's link it
+        bytecode = bytecode.replace(
+          new RegExp(
+            `__\\$${ethers.utils.id(fullName).slice(2, 36)}\\$__`,
+            "g"
+          ),
+          addressToLink.replace(/^0x/, "").toLowerCase()
+        );
+      }
+    }
+  }
+
+  if (!ethers.utils.isHexString(bytecode)) {
+    throw new Error(
+      `[hardhat-tracer]: Invalid bytecode specified in stateOverrides for ${contractInfo.name}: ${bytecode}`
+    );
+  }
+
+  // set the bytecode
+  await vm.stateManager.putContractCode(
+    Address.fromString(addressThis),
+    Buffer.from(bytecode.slice(2), "hex")
+  );
 }
 
 export async function applyStateOverrides(
@@ -305,11 +370,7 @@ export async function applyStateOverrides(
 
     // for bytecode
     if (overrides.bytecode) {
-      const bytecode = getBytecode(overrides.bytecode, artifacts, _address);
-      await vm.stateManager.putContractCode(
-        address,
-        Buffer.from(bytecode.slice(2), "hex")
-      );
+      await setBytecode(overrides.bytecode, artifacts, _address, vm);
     }
 
     // for storage slots

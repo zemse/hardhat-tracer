@@ -7,8 +7,16 @@ import hre, { ethers } from "hardhat";
 describe("Hello", () => {
   it("should run a test", async () => {
     hre.tracer.enabled = false;
-    const HelloFactory = await hre.ethers.getContractFactory("Hello");
-    const hello = await HelloFactory.deploy();
+    // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
+    //   libraries: {
+    //     Lib: "0x0000000000000000000000000000000000000001",
+    //   },
+    // });
+    // const hello = await HelloFactory.deploy();
+    const hello = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890"
+    );
     // const tx = HelloFactory.getDeployTransaction();
     // const signers = await hre.ethers.getSigners();
     // await signers[0].estimateGas({ ...tx });
@@ -20,8 +28,16 @@ describe("Hello", () => {
 
   it("should run a test and check for message call", async () => {
     hre.tracer.enabled = false;
-    const HelloFactory = await hre.ethers.getContractFactory("Hello");
-    const hello = await HelloFactory.deploy();
+    // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
+    //   libraries: {
+    //     Lib: "0x0000000000000000000000000000000000000001",
+    //   },
+    // });
+    // const hello = await HelloFactory.deploy();
+    const hello = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890"
+    );
     // const tx = HelloFactory.getDeployTransaction();
     // const signers = await hre.ethers.getSigners();
     // await signers[0].estimateGas({ ...tx });

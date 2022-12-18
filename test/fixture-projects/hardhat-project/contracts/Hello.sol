@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.4;
 
+import {Lib} from "./Lib.sol";
+
 import "hardhat/console.sol";
 
 contract Hello {
@@ -34,6 +36,7 @@ contract Hello {
     function hi2() public {
         Child c = new Child(address(0));
         address(c).delegatecall(abi.encodeWithSignature("hi()"));
+        Lib.add(1, 2);
     }
 
     function hit(Person memory person, uint256 time) external payable {
