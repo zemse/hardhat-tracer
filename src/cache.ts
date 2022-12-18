@@ -29,11 +29,15 @@ export class TracerCache {
   save() {
     fs.ensureFileSync(this.getTracerCachePath());
 
-    fs.writeJSONSync(this.getTracerCachePath(), {
-      tokenDecimals: Array.from(this.tokenDecimals.entries()),
-      contractNames: Array.from(this.contractNames.entries()),
-      fourByteDir: Array.from(this.fourByteDir.entries()),
-    });
+    fs.writeJSONSync(
+      this.getTracerCachePath(),
+      {
+        tokenDecimals: Array.from(this.tokenDecimals.entries()),
+        contractNames: Array.from(this.contractNames.entries()),
+        fourByteDir: Array.from(this.fourByteDir.entries()),
+      },
+      { spaces: 2 }
+    );
   }
 
   getTracerCachePath() {
