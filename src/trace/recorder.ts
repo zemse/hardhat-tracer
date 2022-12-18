@@ -62,10 +62,11 @@ export class TraceRecorder {
   ) {
     // console.log("handleBeforeTx");
 
-    if (this.trace) {
-      // TODO improve these errors
-      throw new Error("[hardhat-tracer]: trace is defined in handleBeforeTx");
-    }
+    // TODO check why sometimes trace is defined
+    // if (this.trace) {
+    //   // TODO improve these errors
+    //   throw new Error("[hardhat-tracer]: trace is defined in handleBeforeTx");
+    // }
 
     this.trace = new TransactionTrace();
 
@@ -76,6 +77,7 @@ export class TraceRecorder {
     message: Message,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleBeforeMessage");
 
     if (!this.trace) {
@@ -166,6 +168,7 @@ export class TraceRecorder {
     contract: NewContractEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleNewContract");
 
     if (!this.trace || !this.trace.parent) {
@@ -205,6 +208,7 @@ export class TraceRecorder {
     step: InterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleStep");
     if (!this.trace) {
       throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
@@ -271,6 +275,7 @@ export class TraceRecorder {
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleAfterMessage", !evmResult?.execResult?.exceptionError);
 
     if (!this.trace) {
@@ -321,12 +326,16 @@ export class TraceRecorder {
   ) {
     // console.log("handleAfterTx");
 
-    if (!this.trace) {
-      throw new Error("[hardhat-tracer]: trace is undefined in handleAfterTx");
-    }
+    if (this.tracerEnv.enabled) {
+      if (!this.trace) {
+        throw new Error(
+          "[hardhat-tracer]: trace is undefined in handleAfterTx"
+        );
+      }
 
-    // store the trace for later use (printing or outputting)
-    this.previousTraces.push(this.trace);
+      // store the trace for later use (printing or outputting)
+      this.previousTraces.push(this.trace);
+    }
 
     // clear the trace
     this.trace = undefined;

@@ -61,7 +61,7 @@ export async function formatCall(
       contractDecimals = decimals !== -1 ? decimals : undefined;
     } else {
       // otherwise fetch it
-      contractDecimals = await fetchContractDecimals(to, dependencies.provider);
+      contractDecimals = await fetchContractDecimals(to, dependencies);
       // and cache it
       if (contractDecimals !== undefined) {
         cache.tokenDecimals.set(to, contractDecimals);

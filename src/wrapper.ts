@@ -67,7 +67,7 @@ class TracerWrapper extends ProviderWrapper {
         break;
       case 3:
       case 4:
-        shouldPrint = true;
+        shouldPrint = isSendTransaction || isEthCall || isEstimateGas;
         break;
       default:
         throw new Error(

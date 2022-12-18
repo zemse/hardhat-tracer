@@ -397,17 +397,9 @@ export async function fetchContractName(
     return cacheResult;
   }
 
-  let name = await fetchContractNameFromMethodName(
-    to,
-    "symbol",
-    dependencies.provider
-  );
+  let name = await fetchContractNameFromMethodName(to, "symbol", dependencies);
   if (!name) {
-    name = await fetchContractNameFromMethodName(
-      to,
-      "name",
-      dependencies.provider
-    );
+    name = await fetchContractNameFromMethodName(to, "name", dependencies);
   }
 
   if (name) {
@@ -423,19 +415,19 @@ export async function fetchContractName(
 export async function fetchContractNameFromMethodName(
   to: string,
   methodName: string,
-  provider: ProviderLike
+  dependencies: TracerDependencies
 ): Promise<string | undefined> {
   const iface1 = new Interface([
     `function ${methodName}() public view returns (string)`,
   ]);
   let result1;
   try {
-    result1 = await provider.send("eth_call", [
-      {
-        to,
-        data: iface1.encodeFunctionData(methodName, []),
-      },
+    const enabled = dependencies.tracerEnv.enabled;
+    dependencies.tracerEnv.enabled = false;
+    result1 = await dependencies.provider.send("eth_call", [
+      { to, data: iface1.encodeFunctionData(methodName, []) },
     ]);
+    dependencies.tracerEnv.enabled = enabled;
     const d = iface1.decodeFunctionResult(methodName, result1);
     return d[0];
   } catch {
@@ -453,19 +445,19 @@ export async function fetchContractNameFromMethodName(
 
 export async function fetchContractDecimals(
   to: string,
-  provider: ProviderLike
+  dependencies: TracerDependencies
 ): Promise<number | undefined> {
   const iface1 = new Interface([
     `function decimals() public view returns (uint8)`,
   ]);
   let result1;
   try {
-    result1 = await provider.send("eth_call", [
-      {
-        to,
-        data: iface1.encodeFunctionData("decimals", []),
-      },
+    const enabled = dependencies.tracerEnv.enabled;
+    dependencies.tracerEnv.enabled = false;
+    result1 = await dependencies.provider.send("eth_call", [
+      { to, data: iface1.encodeFunctionData("decimals", []) },
     ]);
+    dependencies.tracerEnv.enabled = enabled;
     const d = iface1.decodeFunctionResult("decimals", result1);
     return d[0];
   } catch {}

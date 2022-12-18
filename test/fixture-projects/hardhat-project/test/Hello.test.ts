@@ -26,7 +26,7 @@ describe("Hello", () => {
     await hello.hi2();
   });
 
-  it("should run a test and check for message call", async () => {
+  it.only("should run a test and check for message call", async () => {
     hre.tracer.enabled = false;
     // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
     //   libraries: {
