@@ -23,6 +23,7 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
         "disabletracer",
         "do not enable tracer at the start (for inline enabling tracer)"
       )
+      .addFlag("nocompile", "do not compile")
 
       // params
       .addOptionalParam("opcodes", "specify more opcodes to include in trace")

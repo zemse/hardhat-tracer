@@ -46,6 +46,10 @@ addCliParams(task("trace", "Traces a transaction hash"))
   .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
 
+    if (!args["nocompile"]) {
+      await hre.run("compile");
+    }
+
     const tx = await hre.network.provider.send("eth_getTransactionByHash", [
       args.hash,
     ]);

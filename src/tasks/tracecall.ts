@@ -17,6 +17,10 @@ addCliParams(task("tracecall", "Traces a call"))
   .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
 
+    if (!args["nocompile"]) {
+      await hre.run("compile");
+    }
+
     // try using current mainnet fork url as rpc url
     const mainnetForkUrl = (hre.network.config as any).forking?.url;
     if (mainnetForkUrl) {
