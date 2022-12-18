@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish } from "ethers";
 import { arrayify, Interface } from "ethers/lib/utils";
 
-import { colorContract, colorFunction, colorKey } from "../colors";
+import { colorContract, colorFunctionSuccess, colorKey } from "../colors";
 import { TracerDependencies } from "../types";
 import { compareBytecode } from "../utils";
 
@@ -52,7 +52,7 @@ export async function formatContract(
             )}`
           );
         }
-        return `${colorContract(artifact.contractName)}.${colorFunction(
+        return `${colorContract(artifact.contractName)}.${colorFunctionSuccess(
           "constructor"
         )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})${
           deployedAddress

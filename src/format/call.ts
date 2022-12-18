@@ -1,5 +1,10 @@
 import { BigNumber, BigNumberish } from "ethers";
-import { colorContract, colorFunction, colorKey } from "../colors";
+import {
+  colorContract,
+  colorFunctionSuccess,
+  colorFunctioFail,
+  colorKey,
+} from "../colors";
 import { fetchContractDecimals, getBetterContractName } from "../utils";
 import { formatParam } from "./param";
 import { formatResult } from "./result";
@@ -79,6 +84,8 @@ export async function formatCall(
   if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
     extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
   }
+
+  const colorFunction = success ? colorFunctionSuccess : colorFunctioFail;
 
   if (inputResult && fragment) {
     const inputArgs = formatResult(
