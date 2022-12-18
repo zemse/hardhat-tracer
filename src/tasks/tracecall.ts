@@ -11,6 +11,7 @@ addCliParams(task("tracecall", "Traces a call"))
   .addOptionalParam("gasLimit", "gas limit")
   .addOptionalParam("gasPrice", "gas price")
   .addOptionalParam("blocknumber", "block number")
+  .addOptionalParam("from", "from address")
   .addOptionalParam("rpc", "archive node")
   .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
@@ -72,6 +73,7 @@ addCliParams(task("tracecall", "Traces a call"))
         value: args.value,
         gasLimit: args.gasLimit,
         gasPrice: args.gasPrice,
+        from: args.from,
       });
       console.log("result:", result);
     } catch {}
