@@ -20,6 +20,7 @@ import {
 } from "../utils";
 import { CREATE2 } from "./opcodes/create2";
 import { TracerEnv } from "../types";
+import { EXCEPTION } from "./opcodes/exception";
 
 // const txs: TransactionTrace[] = [];
 // let txTrace: TransactionTrace;
@@ -77,7 +78,7 @@ export class TraceRecorder {
     message: Message,
     resolve: ((result?: any) => void) | undefined
   ) {
-    if (!this.tracerEnv.enabled) resolve?.();
+    // if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleBeforeMessage");
 
     if (!this.trace) {
@@ -168,7 +169,7 @@ export class TraceRecorder {
     contract: NewContractEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
-    if (!this.tracerEnv.enabled) resolve?.();
+    // if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleNewContract");
 
     if (!this.trace || !this.trace.parent) {
@@ -208,7 +209,7 @@ export class TraceRecorder {
     step: InterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
-    if (!this.tracerEnv.enabled) resolve?.();
+    // if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleStep");
     if (!this.trace) {
       throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
@@ -228,7 +229,7 @@ export class TraceRecorder {
             step,
             this.addressStack[this.addressStack.length - 1]
           );
-          // // console.log({ item });
+          // console.log({ item });
           this.trace.insertItem(item);
           // } catch {
           //   console.log(step);
@@ -275,7 +276,7 @@ export class TraceRecorder {
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
-    if (!this.tracerEnv.enabled) resolve?.();
+    // if (!this.tracerEnv.enabled) resolve?.();
     // console.log("handleAfterMessage", !evmResult?.execResult?.exceptionError);
 
     if (!this.trace) {
@@ -287,7 +288,7 @@ export class TraceRecorder {
     if (evmResult.execResult.selfdestruct) {
       const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
       for (const [address, beneficiary] of selfdestructs) {
-        console.log("selfdestruct");
+        // console.log("selfdestruct");
 
         // console.log(
         //   "selfdestruct recorded",
@@ -304,12 +305,18 @@ export class TraceRecorder {
       }
     }
 
-    // this.trace.insertItem({
-    //   opcode: "SELFDESTRUCT",
-    //   params: {
-    //     beneficiary: hexPrefix("1234"),
-    //   },
-    // });
+    if (
+      evmResult?.execResult.exceptionError &&
+      evmResult.execResult.exceptionError.error !== "revert"
+    ) {
+      this.trace.insertItem({
+        opcode: "EXCEPTION",
+        params: {
+          error: evmResult.execResult.exceptionError.error,
+          type: evmResult.execResult.exceptionError.errorType,
+        },
+      } as Item<EXCEPTION>);
+    }
 
     this.trace.returnCurrentCall(
       "0x" + evmResult.execResult.returnValue.toString("hex"),

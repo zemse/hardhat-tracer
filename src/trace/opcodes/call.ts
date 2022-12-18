@@ -1,12 +1,14 @@
+import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
 import { formatCall } from "../../format/call";
-import { TracerDependencies } from "../../types";
 import { Item } from "../../utils";
+import { TracerDependencies } from "../../types";
 
 export interface CALL {
   to: string;
   inputData: string;
   value: string;
   returnData?: string;
+  exception?: EvmError;
   gasLimit: number;
   gasUsed?: number;
   success?: boolean;

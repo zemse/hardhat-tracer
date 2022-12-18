@@ -16,6 +16,7 @@ import { TracerDependencies } from "../../types";
 import log from "./log";
 import selfdestruct from "./selfdestruct";
 import { AwaitedItem, Item } from "../../utils";
+import exception from "./exception";
 
 export function parse(
   step: InterpreterStep,
@@ -74,6 +75,8 @@ export async function format(
       return await revert.format(item, dependencies);
     case "SELFDESTRUCT":
       return await selfdestruct.format(item);
+    case "EXCEPTION":
+      return await exception.format(item);
     default:
       return item.opcode + " not implemented";
   }

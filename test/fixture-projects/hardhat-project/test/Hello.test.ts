@@ -26,7 +26,22 @@ describe("Hello", () => {
     await hello.hi2();
   });
 
-  it.only("should run a test and check for message call", async () => {
+  it("should ignore next", async () => {
+    console.log("========> hello.kick()");
+    const hello = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890"
+    );
+    hre.tracer.ignoreNext = true;
+    try {
+      await hello.kick();
+    } catch {}
+    await hello.kick2({
+      gasLimit: 22000,
+    });
+  });
+
+  it("should run a test and check for message call", async () => {
     hre.tracer.enabled = false;
     // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
     //   libraries: {
@@ -48,16 +63,10 @@ describe("Hello", () => {
       {
         name: "hello",
         age: 23,
-        props: {
-          id: 12,
-          name: "yello",
-          age: 99,
-        },
+        props: { id: 12, name: "yello", age: 99 },
       },
       1234,
-      {
-        value: parseEther("1"),
-      }
+      { value: parseEther("1") }
     );
 
     expect(hre.tracer.lastTrace()).to.have.messageCall(
@@ -67,12 +76,5 @@ describe("Hello", () => {
         returnData: ethers.utils.defaultAbiCoder.encode(["string"], ["Heya!"]),
       }
     );
-
-    console.log("========> hello.kick()");
-    hre.tracer.ignoreNext = true;
-    try {
-      await hello.kick();
-    } catch {}
-    await hello.kick2();
   });
 });

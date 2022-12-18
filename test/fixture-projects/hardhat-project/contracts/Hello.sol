@@ -37,6 +37,7 @@ contract Hello {
         Child c = new Child(address(0));
         address(c).delegatecall(abi.encodeWithSignature("hi()"));
         Lib.add(1, 2);
+        revert("hello");
     }
 
     function hit(Person memory person, uint256 time) external payable {
@@ -82,7 +83,7 @@ contract Hello {
     function kick2() public returns (uint256) {
         uint256 _heyy = heyy;
         emit WhatsUp2(_heyy);
-        this.reverts(100);
+        // this.reverts(100);
         return _heyy;
     }
 
