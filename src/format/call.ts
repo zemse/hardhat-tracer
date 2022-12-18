@@ -22,7 +22,8 @@ export async function formatCall(
   input: string,
   ret: string,
   value: BigNumberish,
-  gas: BigNumberish,
+  gasUsed: BigNumberish,
+  gasLimit: BigNumberish,
   success: boolean,
   dependencies: TracerDependencies
 ) {
@@ -81,8 +82,13 @@ export async function formatCall(
   if ((value = BigNumber.from(value)).gt(0)) {
     extra.push(`value${SEPARATOR}${formatEther(value)}`);
   }
-  if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
-    extra.push(`gas${SEPARATOR}${formatParam(gas, dependencies)}`);
+  if (
+    (gasLimit = BigNumber.from(gasLimit)).gt(0) &&
+    (gasUsed = BigNumber.from(gasUsed)).gt(0) &&
+    dependencies.tracerEnv.gasCost
+  ) {
+    extra.push(`gasLimit${SEPARATOR}${formatParam(gasLimit, dependencies)}`);
+    extra.push(`gasUsed${SEPARATOR}${formatParam(gasUsed, dependencies)}`);
   }
 
   const colorFunction = success ? colorFunctionSuccess : colorFunctioFail;
@@ -113,7 +119,7 @@ export async function formatCall(
         ? `${colorContract(nameToPrint)}(${to})`
         : colorContract(nameToPrint)
     }.${colorFunction(fragment.name)}${
-      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
@@ -124,13 +130,13 @@ export async function formatCall(
         ? `${colorContract(contractName)}(${to})`
         : colorContract(contractName)
     }.<${colorFunction("UnknownFunction")}>${
-      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
     }(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
       "ret" + SEPARATOR
     )}${ret})`;
   } else {
     return `${colorFunction("UnknownContractAndFunction")}${
-      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
     }(${colorKey("to" + SEPARATOR)}${to}, ${colorKey(
       "input" + SEPARATOR
     )}${input}, ${colorKey("ret" + SEPARATOR)}${ret || "0x"})`;

@@ -313,7 +313,8 @@ export class TraceRecorder {
 
     this.trace.returnCurrentCall(
       "0x" + evmResult.execResult.returnValue.toString("hex"),
-      !evmResult?.execResult?.exceptionError
+      Number(evmResult?.execResult.executionGasUsed),
+      evmResult?.execResult.exceptionError
     );
     this.addressStack.pop();
 

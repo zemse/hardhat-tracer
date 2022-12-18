@@ -1,9 +1,7 @@
-// export type AbstractParams = { [key: string]: any };
-
-import { TracerDependencies } from "../types";
 import { CallItem, Item } from "../utils";
+import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
 import { format } from "./opcodes";
-import { CALL } from "./opcodes/call";
+import { TracerDependencies } from "../types";
 
 export class TransactionTrace {
   top?: CallItem;
@@ -35,13 +33,19 @@ export class TransactionTrace {
   }
 
   // TODO see how to do this
-  returnCurrentCall(returnData: string, success: boolean) {
+  returnCurrentCall(
+    returnData: string,
+    executionGas: number,
+    exception?: EvmError
+  ) {
     if (!this.parent)
       throw new Error(
         "[hardhat-tracer]: this.parent is undefined in returnCurrentCall"
       );
     this.parent.params.returnData = returnData;
-    this.parent.params.success = success;
+    this.parent.params.gasUsed = executionGas;
+    this.parent.params.success = !exception;
+    this.parent.params.exception = exception;
     this.parent = this.parent.parent as CallItem;
   }
 

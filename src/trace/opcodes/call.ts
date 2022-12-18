@@ -24,6 +24,7 @@ async function format(
       // TODO refactor these input types or order
       item.params.returnData ?? "0x",
       item.params.value,
+      item.params.gasUsed ?? 0,
       item.params.gasLimit,
       item.params.success ?? true, // if we don't have success, assume it was successful
       dependencies
