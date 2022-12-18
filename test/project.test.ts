@@ -12,7 +12,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it.only("works", async function () {
+    it("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         fulltrace: true,
@@ -32,12 +32,12 @@ describe("Hardhat Runtime Environment extension", function () {
       assert.strictEqual(this.hre.tracer.enabled, true);
     });
 
-    it("mainnet by rpc", async function () {
+    it.only("mainnet by rpc", async function () {
       await this.hre.run("compile");
       await this.hre.run("trace", {
         hash:
-          // "0xc645204e28ffc9f75812e598c6ee7a959c501756062195b2f0fb003276fa39a7",
-          "0x23f7eb343fe541517cd7829763c46eca12c2987b4a2449d244babca77a72cf71",
+          "0xc645204e28ffc9f75812e598c6ee7a959c501756062195b2f0fb003276fa39a7",
+        // "0x23f7eb343fe541517cd7829763c46eca12c2987b4a2449d244babca77a72cf71",
         rpc: "https://eth-mainnet.alchemyapi.io/v2/AS_LAx2_WJh1iEAqxd1-AHQ-yb71CiCHF".replace(
           "_",
           ""

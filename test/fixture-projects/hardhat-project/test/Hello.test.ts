@@ -5,7 +5,7 @@ import hre, { ethers } from "hardhat";
 // process.env.DEBUG = "*";
 
 describe("Hello", () => {
-  it.only("should run a test", async () => {
+  it("should run a test", async () => {
     hre.tracer.enabled = false;
     const HelloFactory = await hre.ethers.getContractFactory("Hello");
     const hello = await HelloFactory.deploy();

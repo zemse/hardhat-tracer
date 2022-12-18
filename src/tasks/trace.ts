@@ -1,12 +1,19 @@
-import { ethers } from "ethers";
-
-import { task } from "hardhat/config";
-import { getNode } from "../get-vm";
-
 import { addCliParams, applyCliArgsToTracer } from "../utils";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
-import { TraceRecorder } from "../trace/recorder";
+import { ethers } from "ethers";
+import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
+import { getNode } from "../get-vm";
+import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
+import { FakeSenderTransaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderTransaction";
+import { FakeSenderAccessListEIP2930Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderAccessListEIP2930Transaction";
+import { FakeSenderEIP1559Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderEIP1559Transaction";
+import { VMDebugTracer } from "hardhat/internal/hardhat-network/stack-traces/vm-debug-tracer";
 import { HttpNetworkUserConfig } from "hardhat/types";
+import { task } from "hardhat/config";
+import { TraceRecorder } from "../trace/recorder";
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
+import { RpcDebugTracingConfig } from "hardhat/internal/core/jsonrpc/types/input/debugTraceTransaction";
+import { assert } from "console";
 
 const originalCreate = VM.create;
 
@@ -109,11 +116,12 @@ addCliParams(task("trace", "Traces a transaction hash"))
     const node = await getNode(hre);
 
     // we cant use this resp because stack and memory is not there (takes up lot of memory if enabled)
-    await node.traceTransaction(Buffer.from(args.hash.slice(2), "hex"), {
-      disableStorage: true,
-      disableMemory: true,
-      disableStack: true,
-    });
+    // await node.traceTransaction(Buffer.from(args.hash.slice(2), "hex"), {
+    //   disableStorage: true,
+    //   disableMemory: true,
+    //   disableStack: true,
+    // });
+    await traceTransctionWithProgress(node, args.hash);
 
     // TODO try to do this properly
     // @ts-ignore
@@ -128,3 +136,112 @@ addCliParams(task("trace", "Traces a transaction hash"))
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return;
   });
+
+async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
+  const hashBuffer = Buffer.from(hash.slice(2), "hex");
+  const block = await node.getBlockByTransactionHash(hashBuffer);
+  if (block === undefined) {
+    throw new Error(`Unable to find a block containing transaction ${hash}`);
+  }
+
+  // @ts-ignore
+  return node._runInBlockContext(block.header.number - 1n, async () => {
+    const blockNumber = block.header.number;
+    // @ts-ignore
+    const blockchain = node._blockchain;
+    // @ts-ignore
+    let vm = node._vm;
+    if (
+      blockchain instanceof ForkBlockchain &&
+      blockNumber <= blockchain.getForkBlockNumber()
+    ) {
+      assert(
+        // @ts-ignore
+        node._forkNetworkId !== undefined,
+        "this._forkNetworkId should exist if the blockchain is an instance of ForkBlockchain"
+      );
+
+      // @ts-ignore
+      const common = node._getCommonForTracing(
+        // @ts-ignore
+        node._forkNetworkId,
+        blockNumber
+      );
+
+      vm = await VM.create({
+        common,
+        activatePrecompiles: true,
+        // @ts-ignore
+        stateManager: node._vm.stateManager,
+        // @ts-ignore
+        blockchain: node._vm.blockchain,
+      });
+    }
+
+    // We don't support tracing transactions before the spuriousDragon fork
+    // to avoid having to distinguish between empty and non-existing accounts.
+    // We *could* do it during the non-forked mode, but for simplicity we just
+    // don't support it at all.
+    const isPreSpuriousDragon = !vm._common.gteHardfork("spuriousDragon");
+    if (isPreSpuriousDragon) {
+      throw new Error(
+        "Tracing is not supported for transactions using hardforks older than Spurious Dragon. "
+      );
+    }
+
+    let currentProgress = 0;
+    let totalProgress = 0;
+    let progressPrinted = Date.now();
+    for (const tx of block.transactions) {
+      totalProgress += Number(tx.gasLimit.toString());
+      if (tx.hash().equals(hashBuffer)) {
+        break;
+      }
+    }
+
+    for (const tx of block.transactions) {
+      let txWithCommon: TypedTransaction;
+      const sender = tx.getSenderAddress();
+      if (tx.type === 0) {
+        txWithCommon = new FakeSenderTransaction(sender, tx, {
+          common: vm._common,
+        });
+      } else if (tx.type === 1) {
+        txWithCommon = new FakeSenderAccessListEIP2930Transaction(sender, tx, {
+          common: vm._common,
+        });
+      } else if (tx.type === 2) {
+        txWithCommon = new FakeSenderEIP1559Transaction(
+          sender,
+          { ...tx, gasPrice: undefined },
+          {
+            common: vm._common,
+          }
+        );
+      } else {
+        // throw new Error("Only legacy, EIP2930, and EIP1559 txs are supported");
+        continue;
+      }
+
+      const txHash = txWithCommon.hash();
+      // console.log(txHash.toString("hex"));
+
+      if (txHash.equals(hashBuffer)) {
+        await vm.runTx({ tx: txWithCommon, block });
+        return; // stop here and print last trace
+      }
+      await vm.runTx({ tx: txWithCommon, block });
+      currentProgress += Number(tx.gasLimit.toString());
+      if (Date.now() - progressPrinted > 1000) {
+        console.log(
+          "current progress",
+          Math.floor((currentProgress / totalProgress) * 10000) / 100
+        );
+        progressPrinted = Date.now();
+      }
+    }
+    throw new Error(
+      `Unable to find a transaction in a block that contains that transaction, this should never happen`
+    );
+  });
+}
