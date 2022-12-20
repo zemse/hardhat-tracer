@@ -66,11 +66,16 @@ npx hardhat trace --hash 0xTransactionHash --rpc https://url # must be archive n
 
 ### Calldata decoder
 
-If you are just looking for a quick decode of calldata or [Solidity"s Custom Error](https://blog.soliditylang.org/2021/04/21/custom-errors/):
+If you are just looking for a quick decode of calldata, return data or [Solidity"s Custom Error](https://blog.soliditylang.org/2021/04/21/custom-errors/):
 
 ```
 $ npx hardhat decode --data 0x095ea7b300000000000000000000000068b3465833fb72a70ecdf485e0e4c7bd8665fc45ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ERC20.approve(spender=0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45, amount=115792089237316195423570985008687907853269984665640564039457584007913129639935)
+
+
+$ npx hardhat decode --data 0x3850c7bd --returndata 0x000000000000000000000000000000000000000000024d0fa9cd4ba6ff769172fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffcdea1000000000000000000000000000000000000000000000000000000000000a244000000000000000000000000000000000000000000000000000000000000ff78000000000000000000000000000000000000000000000000000000000000ffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+
+IUniswapV3Pool(0x0000000000000000000000000000000000000000).slot0() => (sqrtPriceX96: 2781762795090269932261746, tick: -205151, observationIndex: 41540, observationCardinality: 65400, observationCardinalityNext: 65535, feeProtocol: 0, unlocked: true)
 ```
 
 ### Address name tags

@@ -6,6 +6,7 @@ import { task } from "hardhat/config";
 
 addCliParams(task("decode", "Decodes calldata or error data"))
   .addParam("data", "Calldata or error data to decode")
+  .addOptionalParam("returndata", "Return data if any")
   .setAction(async (args, hre) => {
     const td = {
       artifacts: hre.artifacts,
@@ -18,7 +19,7 @@ addCliParams(task("decode", "Decodes calldata or error data"))
     const formattedCallPromise = formatCall(
       ethers.constants.AddressZero,
       args.data,
-      "0x",
+      args.returndata ?? "0x",
       0,
       0,
       0,
