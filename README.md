@@ -12,13 +12,14 @@ Allows you to see events, calls and storage operations when running your tests.
     - [Calldata decoder](#calldata-decoder)
     - [Address name tags](#address-name-tags)
     - [State overrides](#state-overrides)
+    - [Chai util](#chai-util)
 
 ## Installation
 
 **Step 1:** Install the package
 
 ```
-npm i hardhat-tracer
+npm i hardhat-tracer@beta
 ```
 
 **Step 2:** Add to your `hardhat.config.js` file
@@ -115,4 +116,21 @@ tracer: {
     },
   },
 },
+```
+
+### Chai util
+
+Allows to add a test case to check whether last tx did an internal message call.
+
+```ts
+expect(hre.tracer.lastTrace()).to.have.messageCall(
+  await contract.populateTransaction.getData(),
+  {
+    returnData: defaultAbiCoder.encode(["uint"], ["1234"]),
+    from: otherContract.address,
+    isDelegateCall: true,
+    isStaticCall: true,
+    isSuccess: true,
+  }
+);
 ```
