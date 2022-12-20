@@ -3,6 +3,7 @@ import { TracerDependencies } from "../types";
 import { Item } from "../types";
 
 export interface CREATE2 {
+  from: string;
   initCode: string;
   salt: string;
   value: string;
