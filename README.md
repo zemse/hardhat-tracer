@@ -1,6 +1,8 @@
-# hardhat-tracer 🕵️
+# hardhat-tracer 🕵️<!-- omit from toc -->
 
 Allows you to see events, calls and storage operations when running your tests.
+
+> NOTE: hardhat-tracer v2 is currently in beta. Please see [v2-beta](https://github.com/zemse/hardhat-tracer/tree/v2-beta) branch.
 
 - [Installation](#installation)
 - [Usage](#usage)
