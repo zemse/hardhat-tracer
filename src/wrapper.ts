@@ -65,7 +65,7 @@ class TracerWrapper extends ProviderWrapper {
             (isSendTransaction ||
               isSendRawTransaction ||
               isEthCall ||
-              isEstimateGas));
+              isEstimateGasFailed));
         break;
       case 3:
       case 4:
@@ -73,7 +73,7 @@ class TracerWrapper extends ProviderWrapper {
           isSendTransaction ||
           isSendRawTransaction ||
           isEthCall ||
-          isEstimateGas;
+          isEstimateGasFailed;
         break;
       default:
         throw new Error(
@@ -86,9 +86,9 @@ class TracerWrapper extends ProviderWrapper {
       if (this.dependencies.tracerEnv.ignoreNext) {
         this.dependencies.tracerEnv.ignoreNext = false;
       } else {
-        this.dependencies.tracerEnv.printNext = false;
         const lastTrace = this.dependencies.tracerEnv.lastTrace();
         if (lastTrace) {
+          this.dependencies.tracerEnv.printNext = false;
           await print(lastTrace, this.dependencies);
         }
       }

@@ -1,10 +1,20 @@
 import { expect } from "chai";
+import { Wallet } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import hre, { ethers } from "hardhat";
 
 // process.env.DEBUG = "*";
 
 describe("Hello", () => {
+  const wallet = Wallet.createRandom().connect(hre.ethers.provider);
+  before(async () => {
+    const signers = await hre.ethers.getSigners();
+    await signers[0].sendTransaction({
+      to: wallet.address,
+      value: parseEther("100"),
+    });
+  });
+
   it("should run a test", async () => {
     hre.tracer.enabled = false;
     // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
@@ -15,7 +25,8 @@ describe("Hello", () => {
     // const hello = await HelloFactory.deploy();
     const hello = await hre.ethers.getContractAt(
       "Hello",
-      "0x0000000000000000000000000000001234567890"
+      "0x0000000000000000000000000000001234567890",
+      wallet
     );
     // const tx = HelloFactory.getDeployTransaction();
     // const signers = await hre.ethers.getSigners();
@@ -30,15 +41,21 @@ describe("Hello", () => {
     console.log("========> hello.kick()");
     const hello = await hre.ethers.getContractAt(
       "Hello",
-      "0x0000000000000000000000000000001234567890"
+      "0x0000000000000000000000000000001234567890",
+      wallet
     );
     hre.tracer.ignoreNext = true;
     try {
       await hello.kick();
     } catch {}
+    console.log(1);
+
+    const estimated = await hello.estimateGas.kick2();
+    console.log(2);
     await hello.kick2({
-      gasLimit: 22000,
+      gasLimit: estimated,
     });
+    console.log(3);
   });
 
   it("should run a test and check for message call", async () => {
@@ -51,7 +68,8 @@ describe("Hello", () => {
     // const hello = await HelloFactory.deploy();
     const contract = await hre.ethers.getContractAt(
       "Hello",
-      "0x0000000000000000000000000000001234567890"
+      "0x0000000000000000000000000000001234567890",
+      wallet
     );
     // const tx = HelloFactory.getDeployTransaction();
     // const signers = await hre.ethers.getSigners();
