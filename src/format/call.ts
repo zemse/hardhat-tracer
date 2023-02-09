@@ -56,6 +56,14 @@ export async function formatCall(
     }
   }
 
+  const extra = [];
+  if ((value = BigNumber.from(value)).gt(0)) {
+    extra.push(`value: ${formatParam(value, dependencies)}`);
+  }
+  if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
+    extra.push(`gas: ${formatParam(gas, dependencies)}`);
+  }
+
   if (result && functionFragment) {
     const inputArgs = formatResult(
       result,
@@ -72,13 +80,6 @@ export async function formatCall(
         )
       : "";
 
-    const extra = [];
-    if ((value = BigNumber.from(value)).gt(0)) {
-      extra.push(`value: ${formatParam(value, dependencies)}`);
-    }
-    if ((gas = BigNumber.from(gas)).gt(0) && dependencies.tracerEnv.gasCost) {
-      extra.push(`gas: ${formatParam(gas, dependencies)}`);
-    }
     const nameTag = getFromNameTags(to, dependencies);
     return `${
       nameTag
@@ -98,9 +99,13 @@ export async function formatCall(
   if (toBytecode.length > 2 && contractName) {
     return `${colorContract(contractName)}.<${colorFunction(
       "UnknownFunction"
-    )}>(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
+    )}>${
+      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+    }(${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
   } else {
-    return `${colorFunction("UnknownContractAndFunction")}(${colorKey(
+    return `${colorFunction("UnknownContractAndFunction")}${
+      extra.length !== 0 ? `{${extra.join(",")}}` : ""
+    }(${colorKey(
       "to="
     )}${to}, ${colorKey("input=")}${input}, ${colorKey("ret=")}${ret})`;
   }
