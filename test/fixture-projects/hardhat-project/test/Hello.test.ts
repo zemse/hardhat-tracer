@@ -34,7 +34,10 @@ describe("Hello", () => {
 
     hre.tracer.enabled = true;
     console.log("========> hello.hi2()");
-    await hello.hi2();
+    await hello.hi2([
+      { id: 1, id2: 1 },
+      { id: 2, id2: 1 },
+    ]);
   });
 
   it("should ignore next", async () => {

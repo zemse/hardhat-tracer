@@ -30,16 +30,6 @@ export function formatResult(
     let value;
     if (decimals !== -1 && BigNumber.isBigNumber(result[i])) {
       value = formatUnits(result[i], decimals);
-    } else if (Array.isArray(param.components)) {
-      value =
-        "[" +
-        formatResult(
-          result[i],
-          param.components,
-          { decimals, shorten },
-          dependencies
-        ) +
-        "]";
     } else {
       value = formatParam(result[i], dependencies);
     }

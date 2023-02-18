@@ -1,5 +1,10 @@
 import { BigNumber } from "ethers";
-import { colorIndexed, colorNameTag } from "../utils";
+import {
+  colorIndexed,
+  colorKey,
+  colorNameTag,
+  removeNumericFromEthersResult,
+} from "../utils";
 import { getAddress } from "ethers/lib/utils";
 import { getFromNameTags } from "../utils";
 import { SEPARATOR } from "../constants";
@@ -26,7 +31,10 @@ export function formatParam(
       }
       return getAddress(value);
     }
-  } else if (Array.isArray(value)) {
+  } else if (
+    Array.isArray(value) &&
+    removeNumericFromEthersResult(value) === null
+  ) {
     return (
       "[" + value.map((v) => formatParam(v, dependencies)).join(", ") + "]"
     );
@@ -36,11 +44,12 @@ export function formatParam(
       dependencies
     )}`;
   } else if (typeof value === "object" && value !== null) {
+    const _value = removeNumericFromEthersResult(value);
     return (
       "{" +
-      Object.entries(value)
+      Object.entries(_value)
         .map((entry) => {
-          return `${entry[0]}${SEPARATOR}${formatParam(
+          return `${colorKey(entry[0] + SEPARATOR)}${formatParam(
             entry[1],
             dependencies
           )}`;

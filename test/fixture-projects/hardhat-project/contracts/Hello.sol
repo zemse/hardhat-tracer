@@ -33,7 +33,12 @@ contract Hello {
         revert("gg");
     }
 
-    function hi2() public {
+    struct Info {
+        uint256 id;
+        uint256 id2;
+    }
+
+    function hi2(Info[] memory) public {
         Child c = new Child(address(0));
         address(c).delegatecall(abi.encodeWithSignature("hi()"));
         Lib.add(1, 2);
