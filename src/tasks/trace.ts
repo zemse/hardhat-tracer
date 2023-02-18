@@ -75,12 +75,14 @@ addCliParams(task("trace", "Traces a transaction hash"))
             `[hardhat-tracer]: Url not found in hardhat-config->networks->${args.network}`
           );
         }
-        args.rpc = url;
+        if (args.rpc == undefined) {
+          args.rpc = url;
+        }
       }
 
       // try using current mainnet fork url as rpc url
       const mainnetForkUrl = (hre.network.config as any).forking?.url;
-      if (mainnetForkUrl) {
+      if (mainnetForkUrl && args.rpc == undefined) {
         args.rpc = mainnetForkUrl;
       }
 

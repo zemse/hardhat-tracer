@@ -23,7 +23,7 @@ addCliParams(task("tracecall", "Traces a call"))
 
     // try using current mainnet fork url as rpc url
     const mainnetForkUrl = (hre.network.config as any).forking?.url;
-    if (mainnetForkUrl) {
+    if (mainnetForkUrl && args.rpc == undefined) {
       args.rpc = mainnetForkUrl;
     }
 
