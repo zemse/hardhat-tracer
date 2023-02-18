@@ -1,7 +1,5 @@
 # hardhat-tracer 🕵️
 
-> This is a beta release. Some things might not work.
-
 Allows you to see events, calls and storage operations when running your tests.
 
 - [hardhat-tracer 🕵️](#hardhat-tracer-️)
@@ -19,7 +17,7 @@ Allows you to see events, calls and storage operations when running your tests.
 **Step 1:** Install the package
 
 ```
-npm i hardhat-tracer@beta
+npm i hardhat-tracer
 ```
 
 **Step 2:** Add to your `hardhat.config.js` file
@@ -33,13 +31,15 @@ require("hardhat-tracer");
 ### Test
 
 ```shell
-npx hardhat test --trace # same as --vvv
-npx hardhat test --fulltrace # same as --vvvv
+npx hardhat test --traceError # prints calls for failed txs
+npx hardhat test --fulltraceError # prints calls and storage ops for failed txs
+npx hardhat test --trace # prints calls for all txs
+npx hardhat test --fulltrace # prints calls and storage ops for all txs
 
-npx hardhat test --v    # shows logs + calls for only failed txs
-npx hardhat test --vv   # shows logs + calls + storage for only failed txs
-npx hardhat test --vvv  # shows logs + calls for all txs
-npx hardhat test --vvvv # shows logs + calls + storage for all txs
+npx hardhat test --v    # same as --traceError
+npx hardhat test --vv   # same as --fulltraceError
+npx hardhat test --vvv  # same as --trace
+npx hardhat test --vvvv # same as --fulltrace
 
 # specify opcode
 npx hardhat test --v --opcodes ADD,SUB   # shows any opcode specified for only failed txs
