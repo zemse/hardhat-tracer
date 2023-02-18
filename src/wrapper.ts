@@ -35,9 +35,7 @@ class TracerWrapper extends ProviderWrapper {
       error = _error;
     }
 
-    // TODO take decision whether to print or not
-    // if estimateGas fails then print it
-    // sendTx should be printing it regardless of success or failure
+    // take decision whether to print last trace or not
     const isSendTransaction = args.method === "eth_sendTransaction";
     const isSendRawTransaction = args.method === "eth_sendRawTransaction";
     const isEthCall = args.method === "eth_call";

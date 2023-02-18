@@ -53,7 +53,6 @@ function checkEqual(
   item: CallItem,
   options: ChaiMessageCallOptions
 ): { matchQuotient: number; error: Error | undefined } {
-  // TODO add from check
   // console.log(item.params);
 
   // for contract creation, to is undefined, and note that undefined === undefined is true.

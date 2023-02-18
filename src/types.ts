@@ -33,7 +33,6 @@ export interface TracerEnv {
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
   printMode: PrintMode;
-  // todo remove internal
   _internal: {
     cache: TracerCache;
     printNameTagTip:

@@ -32,7 +32,6 @@ export class TransactionTrace {
     }
   }
 
-  // TODO see how to do this
   returnCurrentCall(
     returnData: string,
     executionGas: number,
