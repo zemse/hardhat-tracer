@@ -48,14 +48,11 @@ describe("Hello", () => {
     try {
       await hello.kick();
     } catch {}
-    console.log(1);
 
     const estimated = await hello.estimateGas.kick2();
-    console.log(2);
     await hello.kick2({
       gasLimit: estimated,
     });
-    console.log(3);
   });
 
   it("should run a test and check for message call", async () => {

@@ -30,8 +30,12 @@ export function addCliParams(task: ConfigurableTaskDefinition) {
       .addOptionalParam("print", "specify print mode: console or json")
 
       // alias
+      .addFlag("traceError", "enable tracer with verbosity 1")
+      .addFlag("fulltraceError", "enable tracer with verbosity 2")
+      .addFlag("fullTraceError", "enable tracer with verbosity 2")
       .addFlag("trace", "enable tracer with verbosity 3")
       .addFlag("fulltrace", "enable tracer with verbosity 4")
+      .addFlag("fullTrace", "enable tracer with verbosity 4")
   );
 }
 
@@ -54,16 +58,16 @@ export function applyCliArgsToTracer(
   const storageOpcodes = ["SLOAD", "SSTORE"];
 
   // setting verbosity
-  if (args.vvvv || args.fulltrace) {
+  if (args.vvvv || args.fulltrace || args.fullTrace) {
     hre.tracer.verbosity = 4;
     opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
   } else if (args.vvv || args.trace) {
     hre.tracer.verbosity = 3;
     opcodesToActivate.push(...logOpcodes);
-  } else if (args.vv) {
+  } else if (args.vv || args["fulltraceError"] || args["fullTraceError"]) {
     hre.tracer.verbosity = 2;
     opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
-  } else if (args.v) {
+  } else if (args.v || args["traceError"]) {
     opcodesToActivate.push(...logOpcodes);
     hre.tracer.verbosity = 1;
   }
