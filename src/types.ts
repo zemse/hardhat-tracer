@@ -21,6 +21,7 @@ export interface TracerEnvUser {
   opcodes?: string[];
   nameTags?: NameTags;
   stateOverrides?: StateOverrides;
+  tasks?: string[];
 }
 
 export interface TracerEnv {

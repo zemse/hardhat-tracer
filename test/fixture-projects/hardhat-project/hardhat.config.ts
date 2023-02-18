@@ -43,6 +43,7 @@ const config: HardhatUserConfig = {
         // },
       },
     },
+    tasks: ["compile", "node", "deploy"],
   },
   namedAccounts: {
     deployer: 0,

@@ -3,6 +3,7 @@ import { extendConfig } from "hardhat/config";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import { TracerCache } from "../cache";
 import { TracerEnv, TracerEnvUser } from "../types";
+import { registerTask } from "../utils";
 
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {
@@ -61,5 +62,22 @@ extendConfig(
       },
       stateOverrides: userConfig.tracer?.stateOverrides,
     };
+
+    if (userConfig?.tracer?.tasks) {
+      if (!Array.isArray(userConfig?.tracer?.tasks)) {
+        throw new Error(
+          "[hardhat-tracer]: tracer.tasks in hardhat user config should be array"
+        );
+      }
+
+      for (const taskName of userConfig?.tracer?.tasks) {
+        if (typeof taskName !== "string") {
+          throw new Error(
+            "[hardhat-tracer]: tracer.tasks in hardhat user config should be array of strings"
+          );
+        }
+        registerTask(taskName);
+      }
+    }
   }
 );

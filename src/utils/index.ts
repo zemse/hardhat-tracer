@@ -1,5 +1,5 @@
 export * from "./check-opcodes";
-export * from "./cli";
+export * from "./task-helpers";
 export * from "./colors";
 export * from "./compare-bytecode";
 export * from "./ethers";

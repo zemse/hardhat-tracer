@@ -3,6 +3,20 @@ import {
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
+import { task } from "hardhat/config";
+import { wrapHardhatProvider } from "../wrapper";
+
+export function registerTask(taskName: string) {
+  return addCliParams(task(taskName, `Run hardhat: ${taskName}`)).setAction(
+    async (args, hre, runSuper) => {
+      applyCliArgsToTracer(args, hre);
+
+      wrapHardhatProvider(hre);
+
+      return runSuper(args);
+    }
+  );
+}
 
 export function addCliParams(task: ConfigurableTaskDefinition) {
   return (

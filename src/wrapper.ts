@@ -104,6 +104,9 @@ class TracerWrapper extends ProviderWrapper {
  * @param hre: HardhatRuntimeEnvironment - required to get access to contract artifacts and tracer env
  */
 export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
+  // do not wrap if already wrapped
+  if (isTracerAlreadyWrappedInHreProvider(hre)) return;
+
   const tracerProvider = new TracerWrapper({
     artifacts: hre.artifacts,
     tracerEnv: hre.tracer,
@@ -113,7 +116,29 @@ export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
     tracerProvider
   );
   hre.network.provider = compatibleProvider;
+}
 
-  // ensure env is present
-  // hre.tracer = hre.tracer ?? getTracerEnvFromUserInput(hre.tracer);
+export function isTracerAlreadyWrappedInHreProvider(
+  hre: HardhatRuntimeEnvironment
+) {
+  const maxLoopIterations = 1024;
+  let currentLoopIterations = 0;
+
+  let provider: any = hre.network.provider;
+  while (provider !== undefined) {
+    if (provider instanceof TracerWrapper) {
+      return true;
+    }
+
+    // move down the chain
+    provider = provider._wrapped;
+
+    // Just throw if we ever end up in (what seems to be) an infinite loop.
+    currentLoopIterations += 1;
+    if (currentLoopIterations > maxLoopIterations) {
+      return false;
+    }
+  }
+
+  return false;
 }
