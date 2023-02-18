@@ -30,20 +30,20 @@ addCliParams(task("decode", "Decodes calldata or error data"))
     const formattedErrorPromise = formatError(args.data, td);
 
     const formattedCall = await formattedCallPromise;
+    const uncolored = removeColor(formattedCall);
     if (
-      !removeColor(formattedCall).includes(
-        "UnknownContractAndFunction(to=0x0000000000000000000000000000000000000000"
-      )
+      !uncolored.startsWith("UnknownContractAndFunction(") &&
+      !uncolored.includes("<UnknownFunction>")
     ) {
       console.log(formattedCall);
     } else {
       // see the data is an error
       const formattedError = await formattedErrorPromise;
-
       if (!removeColor(formattedError).includes("UnknownError(")) {
         console.log(formattedError);
       } else {
         console.log("Failed to decode the data");
+        console.log(formattedCall);
       }
     }
   });

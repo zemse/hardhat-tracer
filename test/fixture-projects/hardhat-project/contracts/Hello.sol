@@ -11,6 +11,8 @@ contract Hello {
     event WhatsUp2(uint256 no);
     event Transfer(address indexed from, address indexed to, uint256 value);
 
+    error Errrrr();
+
     uint256 heyy = 3;
 
     struct Person {

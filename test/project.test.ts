@@ -5,6 +5,17 @@ import path from "path";
 import { useEnvironment } from "./helpers";
 
 describe("Hardhat Runtime Environment extension", function () {
+  describe("Decode task", function () {
+    useEnvironment("hardhat-project");
+
+    it("works", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("decode", {
+        data: "0xd6c04f27",
+      });
+    });
+  });
+
   describe("Test task", function () {
     useEnvironment("hardhat-project");
 
@@ -12,7 +23,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it.only("works", async function () {
+    it("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         traceError: true,
