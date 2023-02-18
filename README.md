@@ -6,7 +6,8 @@ Allows you to see events, calls and storage operations when running your tests.
   - [Installation](#installation)
   - [Usage](#usage)
     - [Test](#test)
-    - [Trace](#trace)
+    - [Trace Tx](#trace-tx)
+    - [Trace Call](#trace-call)
     - [Calldata decoder](#calldata-decoder)
     - [Address name tags](#address-name-tags)
     - [State overrides](#state-overrides)
@@ -56,14 +57,27 @@ await myContract.doStuff(val2);
 hre.tracer.enable = false;
 ```
 
-### Trace
+### Trace Tx
 
-You can trace a mainnet transaction and ABIs/artifacts in your project will be used to decode the internal message calls.
+You can trace a mainnet transaction and ABIs/artifacts in your project and 4byte directory will be used to decode the internal message calls.
 
 ```shell
 npx hardhat trace --hash 0xTransactionHash # works if mainnet fork is on
 npx hardhat trace --hash 0xTransactionHash --rpc https://url # must be archive node
 ```
+
+> Note: you can also use [state overrides](#state-overrides) to override any state, e.g. things like adding console logs to the contracts involved in the trace or change balances.
+
+### Trace Call
+
+You can trace a call on mainnet and ABIs/artifacts in your project and 4byte directory will be used to decode the internal message calls.
+
+```shell
+npx hardhat tracecall --to 0xAddr --data 0xData --from 0xAddr --value 123 # works if mainnet fork is on
+npx hardhat tracecall --to 0xAddr --data 0xData --opcodes SLOAD --rpc https://url --blocknumber 1200000 # must be archive node
+```
+
+> Note: you can also use [state overrides](#state-overrides) to override any state, e.g. things like adding console logs to the contracts involved in the trace or change balances.
 
 ### Calldata decoder
 
@@ -114,6 +128,9 @@ tracer: {
       balance: parseEther("2"),
       nonce: 2
     },
+    [someAddress]: {
+      bytecode: "MyContract" // will compile and use the bytecode and link any libraries needed
+    }
   },
 },
 ```
