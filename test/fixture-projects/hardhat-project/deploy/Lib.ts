@@ -3,23 +3,17 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {
-    deployments: { deploy, get },
+    deployments: { deploy },
     getNamedAccounts,
   } = hre;
 
   const { deployer } = await getNamedAccounts();
 
-  const Lib = await get("Lib");
-
-  await deploy("Hello", {
+  await deploy("Lib", {
     from: deployer,
     log: true,
-    libraries: {
-      Lib: Lib.address,
-    },
   });
 };
 
 export default func;
-func.tags = ["Hello"];
-func.dependencies = ["Lib"];
+func.tags = ["Lib"];

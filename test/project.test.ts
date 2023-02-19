@@ -16,6 +16,17 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
+  describe("Deploy task", function () {
+    useEnvironment("hardhat-project");
+
+    it.only("works", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("deploy", {
+        trace: true,
+      });
+    });
+  });
+
   describe("Test task", function () {
     useEnvironment("hardhat-project");
 
