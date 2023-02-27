@@ -12,7 +12,6 @@ import { hexPrefix } from "./utils/hex";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { isItem } from "./utils/item";
 import { parse } from "./opcodes";
-import { STATICCALL } from "./opcodes/staticcall";
 import { TracerEnv } from "./types";
 import { TransactionTrace } from "./transaction-trace";
 import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
@@ -41,7 +40,6 @@ export class TraceRecorder {
     this.awaitedItems = [];
     this.addressStack = [];
 
-    // this.txTrace = new TransactionTrace("", "", "", 0);
     vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
     vm.evm.events?.on("beforeMessage", this.handleBeforeMessage.bind(this));
     vm.evm.events?.on("newContract", this.handleNewContract.bind(this));
@@ -54,14 +52,6 @@ export class TraceRecorder {
     tx: TypedTransaction,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // console.log("handleBeforeTx");
-
-    // TODO check why sometimes trace is defined
-    // if (this.trace) {
-    //   // TODO improve these errors
-    //   throw new Error("[hardhat-tracer]: trace is defined in handleBeforeTx");
-    // }
-
     this.trace = new TransactionTrace();
 
     resolve?.();
@@ -71,9 +61,6 @@ export class TraceRecorder {
     message: Message,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // if (!this.tracerEnv.enabled) resolve?.();
-    // console.log("handleBeforeMessage");
-
     if (!this.trace) {
       throw new Error(
         "[hardhat-tracer]: trace is undefined in handleBeforeMessage"
@@ -150,9 +137,6 @@ export class TraceRecorder {
     contract: NewContractEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // if (!this.tracerEnv.enabled) resolve?.();
-    // console.log("handleNewContract");
-
     if (!this.trace || !this.trace.parent) {
       console.error("handleNewContract: trace.parent not present");
     } else {
@@ -190,8 +174,6 @@ export class TraceRecorder {
     step: InterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // if (!this.tracerEnv.enabled) resolve?.();
-    // console.log("handleStep");
     if (!this.trace) {
       throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
     }
@@ -201,25 +183,17 @@ export class TraceRecorder {
         (awaitedItems) => awaitedItems.next > 0
       );
       for (const awaitedItem of this.awaitedItems) {
-        // console.log("awaitedItem", awaitedItem);
-
         awaitedItem.next--;
         if (awaitedItem.next === 0) {
-          // try {
           const item = awaitedItem.parse(
             step,
             this.addressStack[this.addressStack.length - 1]
           );
-          // console.log({ item });
           this.trace.insertItem(item);
-          // } catch {
-          //   console.log(step);
-          // }
         }
       }
     }
 
-    // console.log(step.opcode.name);
     if (this.tracerEnv.opcodes.get(step.opcode.name)) {
       const result = parse(
         step,
@@ -234,22 +208,8 @@ export class TraceRecorder {
       }
     }
 
-    // console.log(step.opcode.name);
-    // switch (step.opcode.name) {
-    //   // case "CALL":
-    //   //   this.trace.insertItem(call.parseStep(step));
-    //   case "SSTORE":
-    //     this.trace.insertItem(sstore.parse(step));
-    //     break;
-    //   case "RETURN":
-    //     console.log("RETURN");
-    //     break;
-    //   default:
-    //     break;
-    // }
     this.previousOpcode = step.opcode.name;
-    // console.log(step.opcode.name);
-    // setTimeout(() => next(), 1);
+
     resolve?.();
   }
 
@@ -257,9 +217,6 @@ export class TraceRecorder {
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // if (!this.tracerEnv.enabled) resolve?.();
-    // console.log("handleAfterMessage", !evmResult?.execResult?.exceptionError);
-
     if (!this.trace) {
       throw new Error(
         "[hardhat-tracer]: trace is undefined in handleAfterMessage"
@@ -269,14 +226,6 @@ export class TraceRecorder {
     if (evmResult.execResult.selfdestruct) {
       const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
       for (const [address, beneficiary] of selfdestructs) {
-        // console.log("selfdestruct");
-
-        // console.log(
-        //   "selfdestruct recorded",
-        //   address,
-        //   hexPrefix(beneficiary.toString("hex"))
-        // );
-
         this.trace.insertItem({
           opcode: "SELFDESTRUCT",
           params: {
@@ -313,8 +262,6 @@ export class TraceRecorder {
     _tx: AfterTxEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
-    // console.log("handleAfterTx");
-
     if (this.tracerEnv.enabled) {
       if (!this.trace) {
         throw new Error(
