@@ -25,6 +25,7 @@ const config: HardhatUserConfig = {
   paths: {},
   tracer: {
     // enabled: true,
+    opcodes: ["EXTCODESIZE", "EXTCODEHASH"],
     showAddresses: true,
     gasCost: true,
     stateOverrides: {

@@ -17,6 +17,10 @@ export function parseAddress(str: string) {
   return hexZeroPad(hexStripZeros(parseHex(str)), 20);
 }
 
+export function parseBytes32(str: string) {
+  return hexZeroPad(hexStripZeros(parseHex(str)), 32);
+}
+
 export function parseMemory(strArr: string[]) {
   return arrayify(parseHex(strArr.join("")));
 }

@@ -126,6 +126,19 @@ contract Hello {
     function thirdDelegateCall() public view returns (uint256) {
         return 1234;
     }
+
+    function playWithOpcodes() public {
+        address someAddr = address(this);
+        assembly {
+            let size := extcodesize(someAddr)
+            let h := extcodehash(someAddr)
+
+            // to prevent soldity from removing dead code above
+            if iszero(h) {
+                revert(0, size)
+            }
+        }
+    }
 }
 
 contract Child {

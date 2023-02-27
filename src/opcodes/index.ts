@@ -2,6 +2,8 @@ import call from "./call";
 import create from "./create";
 import create2 from "./create2";
 import delegatecall from "./delegatecall";
+import extcodesize from "./extcodesize";
+import extcodehash from "./extcodehash";
 import log0 from "./log0";
 import log1 from "./log1";
 import log2 from "./log2";
@@ -23,8 +25,10 @@ export function parse(
   currentAddress: string
 ): Item<any> | AwaitedItem<any> | undefined {
   switch (step.opcode.name) {
-    // case "CALL":
-    //   this.trace.insertItem(call.parseStep(step));
+    case "EXTCODESIZE":
+      return extcodesize.parse(step);
+    case "EXTCODEHASH":
+      return extcodehash.parse(step);
     case "LOG0":
       return log0.parse(step, currentAddress);
     case "LOG1":
@@ -61,6 +65,10 @@ export async function format(
       return await create.format(item, dependencies);
     case "CREATE2":
       return await create2.format(item, dependencies);
+    case "EXTCODESIZE":
+      return extcodesize.format(item);
+    case "EXTCODEHASH":
+      return extcodehash.format(item);
     case "LOG0":
     case "LOG1":
     case "LOG2":

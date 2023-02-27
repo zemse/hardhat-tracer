@@ -102,8 +102,17 @@ describe("Hello", () => {
       "0x0000000000000000000000000000001234567890",
       wallet
     );
-    hre.tracer.enabled = true;
     hre.tracer.printNext = true;
     await contract.firstCall();
+  });
+
+  it("opcodes", async () => {
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+    hre.tracer.printNext = true;
+    await contract.playWithOpcodes();
   });
 });
