@@ -46,6 +46,7 @@ extendConfig(
       verbosity: userConfig.tracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
       showAddresses: userConfig.tracer?.showAddresses ?? true,
       gasCost: userConfig.tracer?.gasCost ?? false,
+      enableAllOpcodes: userConfig.tracer?.enableAllOpcodes ?? false,
       opcodes,
       nameTags: userConfig.tracer?.nameTags ?? {},
       printMode: "console",

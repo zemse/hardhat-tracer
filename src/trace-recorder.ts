@@ -194,7 +194,10 @@ export class TraceRecorder {
       }
     }
 
-    if (this.tracerEnv.opcodes.get(step.opcode.name)) {
+    if (
+      this.tracerEnv.enableAllOpcodes ||
+      this.tracerEnv.opcodes.get(step.opcode.name)
+    ) {
       const result = parse(
         step,
         this.addressStack[this.addressStack.length - 1]
