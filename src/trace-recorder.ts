@@ -80,24 +80,7 @@ export class TraceRecorder {
       );
     }
     let item: Item<any>;
-    if (message.isStatic) {
-      if (message.to === undefined) {
-        throw new Error(
-          "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
-        );
-      }
-      this.addressStack.push(message.to?.toString()!);
-      item = {
-        opcode: "STATICCALL",
-        params: {
-          from: hexPrefix(message.caller.toString()),
-          to: hexPrefix(message.to.toString()),
-          inputData: hexPrefix(message.data.toString("hex")),
-          gasLimit: Number(message.gasLimit.toString()),
-        },
-        children: [],
-      } as Item<STATICCALL>;
-    } else if (message.delegatecall) {
+    if (message.delegatecall) {
       if (message.to === undefined) {
         throw new Error(
           "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
@@ -117,7 +100,7 @@ export class TraceRecorder {
     } else if (message.to) {
       this.addressStack.push(message.caller?.toString()!);
       item = {
-        opcode: "CALL",
+        opcode: message.isStatic ? "STATICCALL" : "CALL",
         params: {
           from: hexPrefix(message.caller.toString()),
           to: hexPrefix(message.to.toString()),

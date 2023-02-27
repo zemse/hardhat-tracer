@@ -7,7 +7,7 @@ import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.4",
+  solidity: "0.8.19",
   defaultNetwork: "hardhat",
 
   networks: {

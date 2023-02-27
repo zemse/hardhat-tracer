@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.19;
 
 import {Lib} from "./Lib.sol";
 
@@ -56,7 +56,7 @@ contract Hello {
             "Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!Hey WTF!"
         );
         emit WhatsUp(c.hi());
-        selfdestruct(payable(0));
+        // selfdestruct(payable(0));
     }
 
     function crash() external {
@@ -103,6 +103,28 @@ contract Hello {
         uint256 y = 1 - x;
         // revert("kick");
         return y;
+    }
+
+    function firstCall() public returns (uint256) {
+        (, bytes memory ret) = address(this).staticcall(
+            abi.encodeCall(this.secondStaticCall, ())
+        );
+        assembly {
+            return(add(32, ret), mload(ret))
+        }
+    }
+
+    function secondStaticCall() public returns (uint256) {
+        (, bytes memory ret) = address(this).delegatecall(
+            abi.encodeCall(this.thirdDelegateCall, ())
+        );
+        assembly {
+            return(add(32, ret), mload(ret))
+        }
+    }
+
+    function thirdDelegateCall() public view returns (uint256) {
+        return 1234;
     }
 }
 

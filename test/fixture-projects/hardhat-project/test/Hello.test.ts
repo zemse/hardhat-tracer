@@ -47,7 +47,7 @@ describe("Hello", () => {
       "0x0000000000000000000000000000001234567890",
       wallet
     );
-    hre.tracer.ignoreNext = true;
+    // hre.tracer.ignoreNext = true;
     try {
       await hello.kick();
     } catch {}
@@ -94,5 +94,16 @@ describe("Hello", () => {
         from: contract.address,
       }
     );
+  });
+
+  it("should do a delegate call under static call", async () => {
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+    hre.tracer.enabled = true;
+    hre.tracer.printNext = true;
+    await contract.firstCall();
   });
 });
