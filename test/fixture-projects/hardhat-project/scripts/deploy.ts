@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import { wrapHardhatProvider } from "../../../../dist/src/wrapper";
+import { wrapHardhatProvider } from "../../../../src/wrapper";
 
 wrapHardhatProvider(hre);
 hre.tracer.enabled = true;
