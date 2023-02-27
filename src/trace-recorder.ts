@@ -53,6 +53,7 @@ export class TraceRecorder {
     resolve: ((result?: any) => void) | undefined
   ) {
     this.trace = new TransactionTrace();
+    this.trace.hash = hexPrefix(tx.hash().toString("hex"));
 
     resolve?.();
   }

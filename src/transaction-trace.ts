@@ -4,6 +4,7 @@ import { format } from "./opcodes";
 import { TracerDependencies } from "./types";
 
 export class TransactionTrace {
+  hash?: string;
   top?: CallItem;
   parent?: CallItem;
 
