@@ -19,11 +19,20 @@ describe("Hardhat Runtime Environment extension", function () {
   describe("Deploy task", function () {
     useEnvironment("hardhat-project");
 
-    it.only("works", async function () {
+    it("works", async function () {
       await this.hre.run("compile");
       await this.hre.run("deploy", {
         trace: true,
       });
+    });
+  });
+
+  describe("Run script", function () {
+    useEnvironment("hardhat-project");
+
+    it.only("works", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("run", { script: "scripts/deploy.ts", trace: true });
     });
   });
 
