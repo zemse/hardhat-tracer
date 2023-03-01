@@ -35,9 +35,19 @@ export async function getNode(
 
   // Sometimes the VM hasn't been initialized by the time we get here, depending on what the user
   // is doing with hardhat (e.g., sending a transaction before calling this function will
-  // initialize the vm). Initialize it here if it hasn't been already.
-  if (provider._node === undefined) {
+  // initialize the vm).
+  // Usually we should wait hardhat to initialize this. But if force initialize can be done by setting
+  // env variable HARDHAT_TRACER_FORCE_INITIALIZE_PROVIDER=true
+  if (
+    !!process.env.HARDHAT_TRACER_FORCE_INITIALIZE_PROVIDER &&
+    provider._node === undefined
+  ) {
     await provider._init();
+  }
+
+  // Wait for the VM to be initialized.
+  while (provider._node === undefined) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
   }
 
   // TODO: Figure out a reliable way to do a type check here. Source for inspiration:
