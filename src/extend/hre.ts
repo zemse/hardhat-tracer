@@ -23,9 +23,6 @@ extendEnvironment((hre) => {
   // @ts-ignore
   global.hreArtifacts = hre.artifacts;
 
-  // trigger VM initialization
-  hre.network.provider.send("eth_chainId", []).catch(() => {});
-
   // wait for VM to be initialized
   getVM(hre)
     .then(async (vm) => {
