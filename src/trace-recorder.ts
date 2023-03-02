@@ -94,7 +94,7 @@ export class TraceRecorder {
           to: hexPrefix(message.to.toString()),
           inputData: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
-          value: hexPrefix(message.value.toString()),
+          value: hexPrefix(message.value.toString(16)),
         },
         children: [],
       } as Item<CALL>;
@@ -105,7 +105,7 @@ export class TraceRecorder {
           from: hexPrefix(message.caller.toString()),
           initCode: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
-          value: hexPrefix(message.value.toString()),
+          value: hexPrefix(message.value.toString(16)),
         },
         children: [],
       } as Item<CREATE>;
@@ -116,7 +116,7 @@ export class TraceRecorder {
           from: hexPrefix(message.caller.toString()),
           initCode: hexPrefix(message.data.toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
-          value: hexPrefix(message.value.toString()),
+          value: hexPrefix(message.value.toString(16)),
           salt: hexPrefix(message.salt.toString("hex")),
         },
         children: [],
