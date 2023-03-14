@@ -52,9 +52,9 @@ npx hardhat test --vvv --opcodes ADD,SUB # shows any opcode specified for all tx
 You can just enable trace some code snippet in your tests:
 
 ```ts
-hre.tracer.enable = true;
+hre.tracer.enabled = true;
 await myContract.doStuff(val2);
-hre.tracer.enable = false;
+hre.tracer.enabled = false;
 ```
 
 ### Trace Tx
