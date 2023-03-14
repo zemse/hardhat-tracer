@@ -3,6 +3,7 @@ import {
   colorIndexed,
   colorKey,
   colorNameTag,
+  colorValue,
   removeNumericFromEthersResult,
 } from "../utils";
 import { getAddress } from "ethers/lib/utils";
@@ -15,9 +16,9 @@ export function formatParam(
   dependencies: TracerDependencies
 ): string {
   if (value?._isBigNumber) {
-    return BigNumber.from(value).toString();
+    return colorValue(BigNumber.from(value).toString());
   } else if (typeof value === "string" && value.slice(0, 2) !== "0x") {
-    return `"${value}"`;
+    return colorValue(`"${value}"`);
   } else if (
     typeof value === "string" &&
     value.slice(0, 2) === "0x" &&
@@ -29,7 +30,7 @@ export function formatParam(
       if (dependencies.tracerEnv._internal.printNameTagTip === undefined) {
         dependencies.tracerEnv._internal.printNameTagTip = "print it";
       }
-      return getAddress(value);
+      return colorValue(getAddress(value));
     }
   } else if (
     Array.isArray(value) &&

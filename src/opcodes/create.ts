@@ -1,6 +1,7 @@
 import { formatContract } from "../format/contract";
 import { TracerDependencies } from "../types";
 import { Item } from "../types";
+import { colorLabel } from "../utils";
 
 export interface CREATE {
   from: string;
@@ -17,7 +18,8 @@ async function format(
   dependencies: TracerDependencies
 ): Promise<string> {
   return (
-    "CREATE " +
+    colorLabel("[CREATE]") +
+    " " +
     (await formatContract(
       item.params.initCode,
       item.params.value,

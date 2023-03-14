@@ -1,6 +1,7 @@
 import chalk from "chalk";
 
-export const colorLabel = chalk.white;
+export const colorLabel = (...text: string[]) =>
+  chalk.italic(chalk.yellowBright(...text));
 
 export const colorContract = chalk.cyan;
 export const colorFunctionSuccess = chalk.green;
@@ -9,6 +10,8 @@ export const colorEvent = chalk.yellow;
 export const colorError = chalk.red;
 export const colorConsole = chalk.blue;
 export const colorKey = chalk.magenta;
+export const colorValue = chalk.whiteBright;
+export const colorExtra = chalk.gray;
 export const colorSload = chalk.blueBright;
 export const colorSstore = chalk.redBright;
 export const colorNameTag = chalk.italic;
