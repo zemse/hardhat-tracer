@@ -36,16 +36,18 @@ export class Decoder {
 
   async _updateArtifacts(artifacts: Artifacts) {
     const names = await artifacts.getAllFullyQualifiedNames();
-
-    for (const name of names) {
-      const artifact = await artifacts.readArtifact(name);
+    const everyArtifact = await Promise.all(names.map(name => artifacts.readArtifact(name)));
+    
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
+      const artifact = everyArtifact[i];
       const iface = new ethers.utils.Interface(artifact.abi);
 
       copyFragments(name, iface.functions, this.functionFragmentsBySelector);
       copyFragments(name, iface.errors, this.errorFragmentsBySelector);
       copyFragments(name, iface.events, this.eventFragmentsByTopic0);
     }
-
+    
     // common errors, these are in function format because Ethers.js does not accept them as errors
     const commonErrors = [
       "function Error(string reason)",
