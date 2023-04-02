@@ -1,5 +1,5 @@
 import { AwaitedItem, Item } from "../types";
-import { parseAddress } from "../utils";
+import { colorKey, colorLabel, colorValue, parseAddress } from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 export interface EXTCODESIZE {
@@ -28,7 +28,9 @@ function parse(step: InterpreterStep): AwaitedItem<EXTCODESIZE> {
 }
 
 function format(item: Item<EXTCODESIZE>): string {
-  return `EXTCODESIZE ${item.params.address} => ${item.params.size}`;
+  return `${colorLabel("[EXTCODESIZE]")} ${colorKey(
+    item.params.address
+  )} → ${colorValue(item.params.size.toString())}`;
 }
 
 export default { parse, format };

@@ -1,4 +1,4 @@
-import { colorConsole } from "../utils/colors";
+import { colorConsole, colorLabel } from "../utils/colors";
 import { CONSOLE_LOG_ADDRESS, formatConsoleLog } from "../format/console-log";
 import { formatCall } from "../format/call";
 import { Item } from "../types";
@@ -30,7 +30,8 @@ async function format(
   }
 
   return (
-    "STATICCALL " +
+    colorLabel("[STATICCALL]") +
+    " " +
     (await formatCall(
       item.params.to,
       item.params.inputData,

@@ -9,6 +9,8 @@ import {
   colorFunctionSuccess,
   colorFunctioFail,
   colorKey,
+  colorExtra,
+  colorValue,
 } from "../utils/colors";
 import {
   formatEther,
@@ -119,7 +121,7 @@ export async function formatCall(
         ? `${colorContract(nameToPrint)}(${to})`
         : colorContract(nameToPrint)
     }.${colorFunction(fragment.name)}${
-      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
+      extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
@@ -130,15 +132,15 @@ export async function formatCall(
         ? `${colorContract(contractName)}(${to})`
         : colorContract(contractName)
     }.<${colorFunction("UnknownFunction")}>${
-      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
-    }(${colorKey("input" + SEPARATOR)}${input}, ${colorKey(
+      extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
+    }(${colorKey("input" + SEPARATOR)}${colorValue(input)}, ${colorKey(
       "ret" + SEPARATOR
-    )}${ret})`;
+    )}${colorValue(ret)})`;
   } else {
     return `${colorFunction("UnknownContractAndFunction")}${
-      extra.length !== 0 ? `{${extra.join(", ")}}` : ""
-    }(${colorKey("to" + SEPARATOR)}${to}, ${colorKey(
+      extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
+    }(${colorKey("to" + SEPARATOR)}${colorValue(to)}, ${colorKey(
       "input" + SEPARATOR
-    )}${input}, ${colorKey("ret" + SEPARATOR)}${ret || "0x"})`;
+    )}${input}, ${colorKey("ret" + SEPARATOR)}${colorValue(ret || "0x")})`;
   }
 }

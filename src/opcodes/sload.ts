@@ -1,5 +1,5 @@
 import { AwaitedItem, Item } from "../types";
-import { hexPrefix } from "../utils";
+import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 export interface SLOAD {
@@ -30,7 +30,9 @@ function parse(step: InterpreterStep): AwaitedItem<SLOAD> {
 }
 
 function format(item: Item<SLOAD>): string {
-  return `SLOAD ${item.params.key} => ${item.params.value}`;
+  return `${colorLabel("[SLOAD]")}  ${colorKey(item.params.key)} → ${colorValue(
+    item.params.value
+  )}`;
 }
 
 export default { parse, format };

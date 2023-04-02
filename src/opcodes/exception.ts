@@ -1,4 +1,4 @@
-import { colorError } from "../utils/colors";
+import { colorError, colorLabel } from "../utils/colors";
 import { formatObject } from "../format/object";
 import { Item } from "../types";
 
@@ -8,7 +8,9 @@ export interface EXCEPTION {
 }
 
 async function format(item: Item<EXCEPTION>): Promise<string> {
-  return `EXCEPTION ${colorError(item.params.type)}(${formatObject({
+  return `${colorLabel("[EXCEPTION]")} ${colorError(
+    item.params.type
+  )}(${formatObject({
     reason: item.params.error,
   })})`;
 }

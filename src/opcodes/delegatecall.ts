@@ -1,6 +1,7 @@
 import { formatCall } from "../format/call";
 import { TracerDependencies } from "../types";
 import { Item } from "../types";
+import { colorLabel } from "../utils";
 
 export interface DELEGATECALL {
   from: string;
@@ -17,7 +18,8 @@ async function format(
   dependencies: TracerDependencies
 ): Promise<string> {
   return (
-    "DELEGATECALL " +
+    colorLabel("[DELEGATECALL]") +
+    " " +
     (await formatCall(
       item.params.to,
       item.params.inputData,

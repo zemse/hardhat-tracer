@@ -1,4 +1,4 @@
-import { colorKey } from "../utils";
+import { colorKey, colorValue } from "../utils";
 import { SEPARATOR } from "../constants";
 
 export function formatObject(obj: any) {
@@ -6,7 +6,7 @@ export function formatObject(obj: any) {
     .map((entries) => {
       let [key, value] = entries;
       if (typeof value === "string") {
-        value = `"${value}"`;
+        value = colorValue(`"${value}"`);
       } else if (Array.isArray(value)) {
         value = `[${value.map((v) => formatObject(v))}]`;
       } else if (typeof value === "object") {

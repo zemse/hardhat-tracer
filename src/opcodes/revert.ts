@@ -1,7 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { formatError } from "../format/error";
 import { TracerDependencies } from "../types";
-import { hexPrefix } from "../utils";
+import { colorLabel, hexPrefix } from "../utils";
 import { Item } from "../types";
 
 export interface REVERT {
@@ -25,7 +25,10 @@ async function format(
   item: Item<REVERT>,
   dependencies: TracerDependencies
 ): Promise<string> {
-  return `REVERT ${await formatError(item.params.data, dependencies)}`;
+  return `${colorLabel("[REVERT]")} ${await formatError(
+    item.params.data,
+    dependencies
+  )}`;
 }
 
 export default { parse, format };

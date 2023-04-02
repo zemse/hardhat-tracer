@@ -1,4 +1,4 @@
-import { hexPrefix } from "../utils";
+import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 import { Item } from "../types";
 
@@ -21,7 +21,9 @@ function parse(step: InterpreterStep): Item<SSTORE> {
 }
 
 function format(item: Item<SSTORE>): string {
-  return `SSTORE ${item.params.key} <= ${item.params.value}`;
+  return `${colorLabel("[SSTORE]")} ${colorKey(item.params.key)} ← ${colorValue(
+    item.params.value
+  )}`;
 }
 
 export default { parse, format };

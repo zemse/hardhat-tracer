@@ -1,5 +1,11 @@
 import { AwaitedItem, Item } from "../types";
-import { parseAddress, parseBytes32 } from "../utils";
+import {
+  colorKey,
+  colorLabel,
+  colorValue,
+  parseAddress,
+  parseBytes32,
+} from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 export interface EXTCODEHASH {
@@ -28,7 +34,9 @@ function parse(step: InterpreterStep): AwaitedItem<EXTCODEHASH> {
 }
 
 function format(item: Item<EXTCODEHASH>): string {
-  return `EXTCODEHASH ${item.params.address} => ${item.params.hash}`;
+  return `${colorLabel("[EXTCODEHASH]")} ${colorKey(
+    item.params.address
+  )} → ${colorValue(item.params.hash)}`;
 }
 
 export default { parse, format };
