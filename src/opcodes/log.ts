@@ -1,8 +1,8 @@
-import { parse } from ".";
 import { formatLog } from "../format/log";
-import { TracerDependencies } from "../types";
-import { Item } from "../types";
+import { Item, TracerDependencies } from "../types";
 import { colorLabel } from "../utils";
+
+import { parse } from ".";
 
 export interface LOG {
   data: string;

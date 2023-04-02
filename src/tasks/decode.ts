@@ -1,8 +1,9 @@
-import { addCliParams, removeColor } from "../utils";
 import { ethers } from "ethers";
+import { task } from "hardhat/config";
+
 import { formatCall } from "../format/call";
 import { formatError } from "../format/error";
-import { task } from "hardhat/config";
+import { addCliParams, removeColor } from "../utils";
 
 addCliParams(task("decode", "Decodes calldata or error data"))
   .addParam("data", "Calldata or error data to decode")

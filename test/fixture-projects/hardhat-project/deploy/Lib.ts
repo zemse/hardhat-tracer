@@ -1,3 +1,4 @@
+// tslint:disable:no-implicit-dependencies
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 

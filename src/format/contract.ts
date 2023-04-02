@@ -1,10 +1,12 @@
-import { arrayify, Interface } from "ethers/lib/utils";
 import { BigNumber, BigNumberish } from "ethers";
-import { colorContract, colorFunctionSuccess, colorKey } from "../utils/colors";
+import { arrayify, Interface } from "ethers/lib/utils";
+
+import { TracerDependencies } from "../types";
 import { compareBytecode } from "../utils";
+import { colorContract, colorFunctionSuccess, colorKey } from "../utils/colors";
+
 import { formatParam } from "./param";
 import { formatResult } from "./result";
-import { TracerDependencies } from "../types";
 
 export async function formatContract(
   code: string,
@@ -14,7 +16,9 @@ export async function formatContract(
   dependencies: TracerDependencies
 ) {
   value = BigNumber.from(value);
-  if (salt !== null) salt = BigNumber.from(salt);
+  if (salt !== null) {
+    salt = BigNumber.from(salt);
+  }
   const names = await dependencies.artifacts.getAllFullyQualifiedNames();
 
   for (const name of names) {

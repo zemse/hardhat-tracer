@@ -1,18 +1,20 @@
-import { colorContract, colorEvent } from "../utils/colors";
 import { EventFragment, Result } from "ethers/lib/utils";
+
+import { TracerDependencies } from "../types";
+import { getBetterContractName } from "../utils";
+import { colorContract, colorEvent } from "../utils/colors";
+
 import { formatParam } from "./param";
 import { formatResult } from "./result";
-import { getBetterContractName } from "../utils";
-import { TracerDependencies } from "../types";
 
 export async function formatLog(
   log: { data: string; topics: string[] },
   currentAddress: string | undefined,
   dependencies: TracerDependencies
 ) {
-  let fragment: EventFragment | undefined,
-    result: Result | undefined,
-    contractName: string | undefined;
+  let fragment: EventFragment | undefined;
+  let result: Result | undefined;
+  let contractName: string | undefined;
   try {
     ({
       fragment,

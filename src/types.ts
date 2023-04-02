@@ -1,9 +1,10 @@
-import { Artifacts } from "hardhat/types";
-import { BigNumberish, PopulatedTransaction } from "ethers";
-import { CALL } from "./opcodes/call";
-import { Decoder } from "./decoder";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { BigNumberish, PopulatedTransaction } from "ethers";
+import { Artifacts } from "hardhat/types";
+
 import { TracerCache } from "./cache";
+import { Decoder } from "./decoder";
+import { CALL } from "./opcodes/call";
 import { TraceRecorder } from "./trace-recorder";
 import { TransactionTrace } from "./transaction-trace";
 
@@ -99,19 +100,19 @@ export interface Item<Params> {
   opcode: string;
   params: Params;
   parent?: Item<Params>;
-  children?: Item<Params>[];
+  children?: Array<Item<Params>>;
   format?: () => string;
 }
 
-export type AwaitedItem<T> = {
+export interface AwaitedItem<T> {
   isAwaitedItem: true;
   next: number;
   parse: (step: InterpreterStep, currentAddress?: string) => Item<T>;
-};
+}
 
 export interface CallItem extends Item<CALL> {
   opcode: CALL_OPCODES;
-  children: Item<any>[];
+  children: Array<Item<any>>;
 }
 
 export type CALL_OPCODES =

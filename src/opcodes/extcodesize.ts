@@ -1,6 +1,7 @@
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+
 import { AwaitedItem, Item } from "../types";
 import { colorKey, colorLabel, colorValue, parseAddress } from "../utils";
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 export interface EXTCODESIZE {
   address: string;

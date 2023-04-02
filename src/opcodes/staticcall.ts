@@ -1,8 +1,7 @@
-import { colorConsole, colorLabel } from "../utils/colors";
-import { CONSOLE_LOG_ADDRESS, formatConsoleLog } from "../format/console-log";
 import { formatCall } from "../format/call";
-import { Item } from "../types";
-import { TracerDependencies } from "../types";
+import { CONSOLE_LOG_ADDRESS, formatConsoleLog } from "../format/console-log";
+import { Item, TracerDependencies } from "../types";
+import { colorConsole, colorLabel } from "../utils/colors";
 
 // ethers.utils.Logger.setLogLevel(ethers.utils.Logger.levels.ERROR);
 

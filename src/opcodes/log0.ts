@@ -1,6 +1,8 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { hexPrefix, parseNumber, shallowCopyStack2 } from "../utils";
+
 import { Item } from "../types";
+import { hexPrefix, parseNumber, shallowCopyStack2 } from "../utils";
+
 import { LOG } from "./log";
 
 export interface LOG0 extends LOG {

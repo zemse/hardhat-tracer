@@ -1,9 +1,10 @@
 import { Address } from "@nomicfoundation/ethereumjs-util";
-import { Artifacts } from "hardhat/types";
-import { BigNumber, ethers } from "ethers";
-import { ContractInfo, StateOverrides } from "../types";
-import { hexZeroPad } from "ethers/lib/utils";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
+import { BigNumber, ethers } from "ethers";
+import { hexZeroPad } from "ethers/lib/utils";
+import { Artifacts } from "hardhat/types";
+
+import { ContractInfo, StateOverrides } from "../types";
 
 async function setBytecode(
   contractInfo: ContractInfo,
@@ -24,7 +25,7 @@ async function setBytecode(
   }
 
   // its possible artifacts are not compiled here
-  let artifact = artifacts.readArtifactSync(contractInfo.name);
+  const artifact = artifacts.readArtifactSync(contractInfo.name);
   let bytecode = artifact.deployedBytecode;
 
   if (bytecode.startsWith("0x730000000000000000000000000000000000000000")) {

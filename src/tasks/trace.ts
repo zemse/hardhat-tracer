@@ -1,22 +1,23 @@
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
+import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { assert } from "console";
 import { ethers } from "ethers";
+import { task } from "hardhat/config";
+import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
+import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
 import { FakeSenderAccessListEIP2930Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderAccessListEIP2930Transaction";
 import { FakeSenderEIP1559Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderEIP1559Transaction";
 import { FakeSenderTransaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderTransaction";
-import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
-import { getNode } from "../utils/hardhat";
-import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
 import { HttpNetworkUserConfig } from "hardhat/types";
-import { task } from "hardhat/config";
+
+import { print } from "../print";
 import { TraceRecorder } from "../trace-recorder";
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
 import {
   addCliParams,
   applyCliArgsToTracer,
   applyStateOverrides,
 } from "../utils";
-import { print } from "../print";
+import { getNode } from "../utils/hardhat";
 
 const originalCreate = VM.create;
 
@@ -46,7 +47,7 @@ addCliParams(task("trace", "Traces a transaction hash"))
   .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
 
-    if (!args["nocompile"]) {
+    if (!args.nocompile) {
       await hre.run("compile");
     }
 
@@ -75,14 +76,14 @@ addCliParams(task("trace", "Traces a transaction hash"))
             `[hardhat-tracer]: Url not found in hardhat-config->networks->${args.network}`
           );
         }
-        if (args.rpc == undefined) {
+        if (args.rpc === undefined) {
           args.rpc = url;
         }
       }
 
       // try using current mainnet fork url as rpc url
       const mainnetForkUrl = (hre.network.config as any).forking?.url;
-      if (mainnetForkUrl && args.rpc == undefined) {
+      if (mainnetForkUrl && args.rpc === undefined) {
         args.rpc = mainnetForkUrl;
       }
 

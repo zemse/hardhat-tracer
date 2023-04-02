@@ -1,7 +1,7 @@
 import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
+
 import { formatCall } from "../format/call";
-import { Item } from "../types";
-import { TracerDependencies } from "../types";
+import { Item, TracerDependencies } from "../types";
 import { colorLabel } from "../utils";
 
 export interface CALL {

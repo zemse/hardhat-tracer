@@ -1,9 +1,10 @@
-import { addCliParams, applyCliArgsToTracer } from "../utils";
 import { ethers } from "ethers";
-import { HttpNetworkUserConfig } from "hardhat/types";
 import { task } from "hardhat/config";
-import { TraceRecorder } from "../trace-recorder";
+import { HttpNetworkUserConfig } from "hardhat/types";
+
 import { print } from "../print";
+import { TraceRecorder } from "../trace-recorder";
+import { addCliParams, applyCliArgsToTracer } from "../utils";
 
 addCliParams(task("tracecall", "Traces a call"))
   .addParam("to", "destination address")
@@ -17,13 +18,13 @@ addCliParams(task("tracecall", "Traces a call"))
   .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
 
-    if (!args["nocompile"]) {
+    if (!args.nocompile) {
       await hre.run("compile");
     }
 
     // try using current mainnet fork url as rpc url
     const mainnetForkUrl = (hre.network.config as any).forking?.url;
-    if (mainnetForkUrl && args.rpc == undefined) {
+    if (mainnetForkUrl && args.rpc === undefined) {
       args.rpc = mainnetForkUrl;
     }
 

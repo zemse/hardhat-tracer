@@ -1,10 +1,10 @@
 // We load the plugin here.
+// tslint:disable:no-implicit-dependencies
+import "@nomiclabs/hardhat-ethers";
+import "hardhat-deploy";
 import { HardhatUserConfig } from "hardhat/types";
 
 import "../../../src/index";
-
-import "@nomiclabs/hardhat-ethers";
-import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.19",

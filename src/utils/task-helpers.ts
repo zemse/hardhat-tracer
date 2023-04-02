@@ -1,10 +1,12 @@
-import { checkIfOpcodesAreValid } from "./check-opcodes";
+import { task } from "hardhat/config";
 import {
   ConfigurableTaskDefinition,
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
-import { task } from "hardhat/config";
+
 import { wrapHardhatProvider } from "../wrapper";
+
+import { checkIfOpcodesAreValid } from "./check-opcodes";
 
 export function registerTask(taskName: string) {
   return addCliParams(task(taskName, `Run hardhat: ${taskName}`)).setAction(
@@ -18,9 +20,9 @@ export function registerTask(taskName: string) {
   );
 }
 
-export function addCliParams(task: ConfigurableTaskDefinition) {
+export function addCliParams(_task: ConfigurableTaskDefinition) {
   return (
-    task
+    _task
       // verbosity flags
       .addFlag("v", "set verbosity to 1, prints calls for only failed txs")
       .addFlag(
@@ -78,10 +80,10 @@ export function applyCliArgsToTracer(
   } else if (args.vvv || args.trace) {
     hre.tracer.verbosity = 3;
     opcodesToActivate.push(...logOpcodes);
-  } else if (args.vv || args["fulltraceError"] || args["fullTraceError"]) {
+  } else if (args.vv || args.fulltraceError || args.fullTraceError) {
     hre.tracer.verbosity = 2;
     opcodesToActivate.push(...logOpcodes, ...storageOpcodes);
-  } else if (args.v || args["traceError"]) {
+  } else if (args.v || args.traceError) {
     opcodesToActivate.push(...logOpcodes);
     hre.tracer.verbosity = 1;
   }

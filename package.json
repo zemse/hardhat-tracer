@@ -41,7 +41,7 @@
     "@types/readable-stream": "^2.3.14",
     "chai": "^4.3.7",
     "hardhat": "^2.12.2",
-    "hardhat-deploy": "^0.11.20",
+    "hardhat-deploy": "^0.11.25",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
     "ts-node": "^10.7.0",
@@ -51,9 +51,14 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
+    "@nomicfoundation/ethereumjs-evm": "6.x",
+    "@nomicfoundation/ethereumjs-tx": "6.x",
+    "@nomicfoundation/ethereumjs-util": "6.x",
+    "@nomicfoundation/ethereumjs-vm": "6.x",
     "chai": "4.x",
     "chalk": "4.x",
     "ethers": "5.x",
+    "fs-extra": "x",
     "hardhat": "2.x"
   },
   "dependencies": {

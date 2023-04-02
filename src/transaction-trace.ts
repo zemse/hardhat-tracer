@@ -1,14 +1,16 @@
-import { CallItem, Item } from "./types";
 import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
-import { format } from "./opcodes";
-import { TracerDependencies } from "./types";
+
+import { CallItem, Item } from "./types";
 
 export class TransactionTrace {
-  hash?: string;
-  top?: CallItem;
-  parent?: CallItem;
+  public hash?: string;
+  public top?: CallItem;
+  public parent?: CallItem;
 
-  insertItem(item: Item<any>, options?: { increaseDepth: boolean }): void {
+  public insertItem(
+    item: Item<any>,
+    options?: { increaseDepth: boolean }
+  ): void {
     if (item.params === undefined) {
       item.params = {} as any;
     }
@@ -17,7 +19,9 @@ export class TransactionTrace {
       // if top and parent not set, then this is the first item, should be a call
       this.top = (item as unknown) as CallItem;
       this.parent = this.top;
-      if (!this.parent.children) this.parent.children = [];
+      if (!this.parent.children) {
+        this.parent.children = [];
+      }
     } else {
       // insert this item in the parent item's children array
       this.parent.children.push(item);
@@ -33,15 +37,16 @@ export class TransactionTrace {
     }
   }
 
-  returnCurrentCall(
+  public returnCurrentCall(
     returnData: string,
     executionGas: number,
     exception?: EvmError
   ) {
-    if (!this.parent)
+    if (!this.parent) {
       throw new Error(
         "[hardhat-tracer]: this.parent is undefined in returnCurrentCall"
       );
+    }
     this.parent.params.returnData = returnData;
     this.parent.params.gasUsed = executionGas;
     this.parent.params.success = !exception;

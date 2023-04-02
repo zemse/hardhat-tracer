@@ -1,6 +1,6 @@
-import { colorError, colorLabel } from "../utils/colors";
 import { formatObject } from "../format/object";
 import { Item } from "../types";
+import { colorError, colorLabel } from "../utils/colors";
 
 export interface EXCEPTION {
   type: string;

@@ -28,6 +28,8 @@
     ],
     "no-floating-promises": true,
     "prefer-conditional-expression": false,
-    "no-implicit-dependencies": true
+    "no-implicit-dependencies": true,
+    "no-var-requires": false,
+    "no-object-literal-type-assertion": false
   }
 }

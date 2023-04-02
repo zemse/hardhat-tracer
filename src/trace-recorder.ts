@@ -1,21 +1,23 @@
+import {
+  EVMResult,
+  InterpreterStep,
+  Message,
+} from "@nomicfoundation/ethereumjs-evm";
+import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { Address } from "@nomicfoundation/ethereumjs-util";
-import { AfterTxEvent } from "@nomicfoundation/ethereumjs-vm";
-import { AwaitedItem, Item } from "./types";
+import { AfterTxEvent, VM } from "@nomicfoundation/ethereumjs-vm";
+
+import { parse } from "./opcodes";
 import { CALL } from "./opcodes/call";
-import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
 import { CREATE } from "./opcodes/create";
 import { CREATE2 } from "./opcodes/create2";
 import { DELEGATECALL } from "./opcodes/delegatecall";
-import { EVMResult, Message } from "@nomicfoundation/ethereumjs-evm";
 import { EXCEPTION } from "./opcodes/exception";
-import { hexPrefix } from "./utils/hex";
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
-import { isItem } from "./utils/item";
-import { parse } from "./opcodes";
-import { TracerEnv } from "./types";
 import { TransactionTrace } from "./transaction-trace";
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
+import { AwaitedItem, Item, TracerEnv } from "./types";
+import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
+import { hexPrefix } from "./utils/hex";
+import { isItem } from "./utils/item";
 
 interface NewContractEvent {
   address: Address;
@@ -23,13 +25,13 @@ interface NewContractEvent {
 }
 
 export class TraceRecorder {
-  vm: VM;
-  previousTraces: TransactionTrace[] = [];
-  trace: TransactionTrace | undefined;
-  previousOpcode: string | undefined;
-  tracerEnv: TracerEnv;
-  awaitedItems: AwaitedItem<any>[];
-  addressStack: string[];
+  public vm: VM;
+  public previousTraces: TransactionTrace[] = [];
+  public trace: TransactionTrace | undefined;
+  public previousOpcode: string | undefined;
+  public tracerEnv: TracerEnv;
+  public awaitedItems: Array<AwaitedItem<any>>;
+  public addressStack: string[];
 
   constructor(vm: VM, tracerEnv: TracerEnv) {
     this.vm = vm;
@@ -48,7 +50,7 @@ export class TraceRecorder {
     vm.events.on("afterTx", this.handleAfterTx.bind(this));
   }
 
-  handleBeforeTx(
+  public handleBeforeTx(
     tx: TypedTransaction,
     resolve: ((result?: any) => void) | undefined
   ) {
@@ -58,7 +60,7 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  handleBeforeMessage(
+  public handleBeforeMessage(
     message: Message,
     resolve: ((result?: any) => void) | undefined
   ) {
@@ -98,7 +100,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CALL>;
-    } else if (message.to == undefined && message.salt == undefined) {
+    } else if (message.to === undefined && message.salt === undefined) {
       item = {
         opcode: "CREATE",
         params: {
@@ -109,7 +111,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CREATE>;
-    } else if (message.to == undefined && message.salt != undefined) {
+    } else if (message.to === undefined && message.salt !== undefined) {
       item = {
         opcode: "CREATE2",
         params: {
@@ -134,17 +136,13 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  handleNewContract(
+  public handleNewContract(
     contract: NewContractEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
     if (!this.trace || !this.trace.parent) {
       console.error("handleNewContract: trace.parent not present");
     } else {
-      if (["CREATE", "CREATE2"].includes(this.trace.parent.opcode ?? "")) {
-        this.trace.parent.params;
-      }
-
       switch (this.trace.parent.opcode) {
         case "CREATE":
           const createItem = (this.trace.parent as unknown) as Item<CREATE>;
@@ -171,7 +169,7 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  handleStep(
+  public handleStep(
     step: InterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
@@ -217,7 +215,7 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  handleAfterMessage(
+  public handleAfterMessage(
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
@@ -262,7 +260,7 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  handleAfterTx(
+  public handleAfterTx(
     _tx: AfterTxEvent,
     resolve: ((result?: any) => void) | undefined
   ) {

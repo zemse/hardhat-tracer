@@ -1,23 +1,25 @@
 import { BigNumber, BigNumberish } from "ethers";
-import { fetchContractDecimals, getBetterContractName } from "../utils";
-import { formatParam } from "./param";
-import { formatResult } from "./result";
-import { SEPARATOR } from "../constants";
-import { TracerDependencies } from "../types";
-import {
-  colorContract,
-  colorFunctionSuccess,
-  colorFunctioFail,
-  colorKey,
-  colorExtra,
-  colorValue,
-} from "../utils/colors";
 import {
   formatEther,
   Fragment,
   FunctionFragment,
   Result,
 } from "ethers/lib/utils";
+
+import { SEPARATOR } from "../constants";
+import { TracerDependencies } from "../types";
+import { fetchContractDecimals, getBetterContractName } from "../utils";
+import {
+  colorContract,
+  colorExtra,
+  colorFunctioFail,
+  colorFunctionSuccess,
+  colorKey,
+  colorValue,
+} from "../utils/colors";
+
+import { formatParam } from "./param";
+import { formatResult } from "./result";
 
 export async function formatCall(
   to: string,
@@ -114,7 +116,7 @@ export async function formatCall(
       ? ret
       : "";
 
-    let nameToPrint = contractName ?? "UnknownContract";
+    const nameToPrint = contractName ?? "UnknownContract";
 
     return `${
       dependencies.tracerEnv.showAddresses || nameToPrint === "UnknownContract"

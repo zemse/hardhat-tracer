@@ -22,8 +22,8 @@ yarn add hardhat@latest
   process.exit(1);
 }
 
+import "./chai";
 import "./extend";
 import "./tasks";
-import "./chai";
 export * from "./types";
 export * from "./wrapper";

@@ -1,6 +1,5 @@
 import { formatContract } from "../format/contract";
-import { TracerDependencies } from "../types";
-import { Item } from "../types";
+import { Item, TracerDependencies } from "../types";
 import { colorLabel } from "../utils";
 
 export interface CREATE2 {

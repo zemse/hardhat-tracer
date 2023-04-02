@@ -1,15 +1,16 @@
 import { BigNumber } from "ethers";
+import { getAddress } from "ethers/lib/utils";
+
+import { SEPARATOR } from "../constants";
+import { TracerDependencies } from "../types";
 import {
   colorIndexed,
   colorKey,
   colorNameTag,
   colorValue,
+  getFromNameTags,
   removeNumericFromEthersResult,
 } from "../utils";
-import { getAddress } from "ethers/lib/utils";
-import { getFromNameTags } from "../utils";
-import { SEPARATOR } from "../constants";
-import { TracerDependencies } from "../types";
 
 export function formatParam(
   value: any,

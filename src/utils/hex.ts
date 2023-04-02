@@ -1,5 +1,5 @@
-import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
 
 export function parseHex(str: string) {
   return !str.startsWith("0x") ? "0x" + str : str;
@@ -29,7 +29,7 @@ export function shallowCopyStack(stack: string[]): string[] {
   return [...stack];
 }
 
-export function shallowCopyStack2(stack: bigint[]): string[] {
+export function shallowCopyStack2(stack: Array<bigint>): string[] {
   return [...stack].map((x) => BigNumber.from(x).toHexString());
 }
 
@@ -38,6 +38,8 @@ export function shallowCopyStack2(stack: bigint[]): string[] {
  * @param str A hex string that may or may not have 0x prepended
  */
 export function hexPrefix(str: string): string {
-  if (!str.startsWith("0x")) str = "0x" + str;
+  if (!str.startsWith("0x")) {
+    str = "0x" + str;
+  }
   return str;
 }

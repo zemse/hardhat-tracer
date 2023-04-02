@@ -1,6 +1,7 @@
-import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+
 import { Item } from "../types";
+import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
 
 export interface SSTORE {
   key: string;

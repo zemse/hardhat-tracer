@@ -1,6 +1,4 @@
-import { Artifacts } from "hardhat/types";
 import { ethers } from "ethers";
-import { TracerCache } from "./cache";
 import {
   ErrorFragment,
   EventFragment,
@@ -10,6 +8,9 @@ import {
   Interface,
   Result,
 } from "ethers/lib/utils";
+import { Artifacts } from "hardhat/types";
+
+import { TracerCache } from "./cache";
 
 type Mapping<FragmentType> = Map<
   string,
@@ -17,27 +18,29 @@ type Mapping<FragmentType> = Map<
 >;
 
 export class Decoder {
-  cache: TracerCache;
+  public cache: TracerCache;
 
-  functionFragmentsBySelector: Mapping<FunctionFragment> = new Map();
-  errorFragmentsBySelector: Mapping<ErrorFragment> = new Map();
-  eventFragmentsByTopic0: Mapping<EventFragment> = new Map();
+  public functionFragmentsBySelector: Mapping<FunctionFragment> = new Map();
+  public errorFragmentsBySelector: Mapping<ErrorFragment> = new Map();
+  public eventFragmentsByTopic0: Mapping<EventFragment> = new Map();
 
-  ready: Promise<void>;
+  public ready: Promise<void>;
 
   constructor(artifacts: Artifacts, cache: TracerCache) {
     this.cache = cache;
     this.ready = this._updateArtifacts(artifacts);
   }
 
-  async updateArtifacts(artifacts: Artifacts) {
+  public async updateArtifacts(artifacts: Artifacts) {
     this.ready = this._updateArtifacts(artifacts);
   }
 
-  async _updateArtifacts(artifacts: Artifacts) {
+  public async _updateArtifacts(artifacts: Artifacts) {
     const names = await artifacts.getAllFullyQualifiedNames();
-    const everyArtifact = await Promise.all(names.map(name => artifacts.readArtifact(name)));
-    
+    const everyArtifact = await Promise.all(
+      names.map((name) => artifacts.readArtifact(name))
+    );
+
     for (let i = 0; i < names.length; i++) {
       const name = names[i];
       const artifact = everyArtifact[i];
@@ -47,17 +50,21 @@ export class Decoder {
       copyFragments(name, iface.errors, this.errorFragmentsBySelector);
       copyFragments(name, iface.events, this.eventFragmentsByTopic0);
     }
-    
+
     // common errors, these are in function format because Ethers.js does not accept them as errors
     const commonErrors = [
       "function Error(string reason)",
       "function Panic(uint256 code)",
     ];
-    const iface = new Interface(commonErrors);
-    copyFragments("", iface.functions, this.errorFragmentsBySelector);
+    const commonErrorsIface = new Interface(commonErrors);
+    copyFragments(
+      "",
+      commonErrorsIface.functions,
+      this.errorFragmentsBySelector
+    );
   }
 
-  async decode(
+  public async decode(
     inputData: string,
     returnData: string
   ): Promise<{
@@ -87,7 +94,7 @@ export class Decoder {
     );
   }
 
-  async decodeFunction(
+  public async decodeFunction(
     inputData: string,
     returnData: string
   ): Promise<{
@@ -107,7 +114,7 @@ export class Decoder {
     );
   }
 
-  async decodeError(
+  public async decodeError(
     revertData: string
   ): Promise<{
     fragment: Fragment;
@@ -126,7 +133,7 @@ export class Decoder {
     return { fragment, revertResult: inputResult, contractName };
   }
 
-  async decodeEvent(
+  public async decodeEvent(
     topics: string[],
     data: string
   ): Promise<{

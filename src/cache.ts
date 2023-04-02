@@ -3,17 +3,17 @@ import path from "path";
 
 // To locally cache contract name, decimals, and ABI to prevent async API calls
 export class TracerCache {
-  tokenDecimals: Map<string, number> = new Map();
-  contractNames: Map<string, string> = new Map();
-  fourByteDir: Map<string, string> = new Map();
+  public tokenDecimals: Map<string, number> = new Map();
+  public contractNames: Map<string, string> = new Map();
+  public fourByteDir: Map<string, string> = new Map();
 
-  cachePath: string | undefined;
+  public cachePath: string | undefined;
 
-  setCachePath(cachePath: string) {
+  public setCachePath(cachePath: string) {
     this.cachePath = cachePath;
   }
 
-  load() {
+  public load() {
     fs.ensureFileSync(this.getTracerCachePath());
     let json;
     try {
@@ -26,7 +26,7 @@ export class TracerCache {
     this.fourByteDir = new Map(json.fourByteDir ?? []);
   }
 
-  save() {
+  public save() {
     fs.ensureFileSync(this.getTracerCachePath());
 
     fs.writeJSONSync(
@@ -40,7 +40,7 @@ export class TracerCache {
     );
   }
 
-  getTracerCachePath() {
+  public getTracerCachePath() {
     if (!this.cachePath) {
       throw new Error("[hardhat-tracer]: cachePath not set");
     }

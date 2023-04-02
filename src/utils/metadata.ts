@@ -1,7 +1,9 @@
-import { compareBytecode } from "./compare-bytecode";
 import { ethers } from "ethers";
 import { Interface } from "ethers/lib/utils";
+
 import { TracerDependencies } from "../types";
+
+import { compareBytecode } from "./compare-bytecode";
 
 export function getFromNameTags(
   address: string,

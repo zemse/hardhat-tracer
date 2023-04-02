@@ -1,5 +1,6 @@
 import { TransactionTrace } from "../transaction-trace";
 import { TracerDependencies } from "../types";
+
 import { printConsole } from "./console";
 import { printJson } from "./json";
 

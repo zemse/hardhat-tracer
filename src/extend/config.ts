@@ -1,7 +1,8 @@
-import { DEFAULT_VERBOSITY } from "../constants";
 import { extendConfig } from "hardhat/config";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
+
 import { TracerCache } from "../cache";
+import { DEFAULT_VERBOSITY } from "../constants";
 import { TracerEnv, TracerEnvUser } from "../types";
 import { registerTask } from "../utils";
 
@@ -54,7 +55,7 @@ extendConfig(
         printNameTagTip: undefined,
         cache,
       },
-      lastTrace: function () {
+      lastTrace() {
         if (this.recorder) {
           return this.recorder.previousTraces[
             this.recorder.previousTraces.length - 1

@@ -1,6 +1,5 @@
 import { formatCall } from "../format/call";
-import { TracerDependencies } from "../types";
-import { Item } from "../types";
+import { Item, TracerDependencies } from "../types";
 import { colorLabel } from "../utils";
 
 export interface DELEGATECALL {

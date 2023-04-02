@@ -7,8 +7,9 @@ export async function printConsole(
   txTrace: TransactionTrace,
   dependencies: TracerDependencies
 ) {
-  if (!txTrace.top)
+  if (!txTrace.top) {
     throw new Error("[hardhat-tracer]: this.top is undefined in print");
+  }
   await printCall(dependencies, 0, txTrace.top);
 }
 

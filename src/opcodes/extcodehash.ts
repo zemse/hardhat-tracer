@@ -1,3 +1,5 @@
+import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+
 import { AwaitedItem, Item } from "../types";
 import {
   colorKey,
@@ -6,7 +8,6 @@ import {
   parseAddress,
   parseBytes32,
 } from "../utils";
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 export interface EXTCODEHASH {
   address: string;

@@ -1,13 +1,13 @@
 import { BackwardsCompatibilityProviderAdapter } from "hardhat/internal/core/providers/backwards-compatibility";
 import { ProviderWrapper } from "hardhat/internal/core/providers/wrapper";
-import { TracerDependencies } from "./types";
-
 import {
   EIP1193Provider,
   HardhatRuntimeEnvironment,
   RequestArguments,
 } from "hardhat/types";
+
 import { print } from "./print";
+import { TracerDependencies } from "./types";
 
 /**
  * Wrapped provider which extends requests
@@ -105,7 +105,9 @@ class TracerWrapper extends ProviderWrapper {
  */
 export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
   // do not wrap if already wrapped
-  if (isTracerAlreadyWrappedInHreProvider(hre)) return;
+  if (isTracerAlreadyWrappedInHreProvider(hre)) {
+    return;
+  }
 
   const tracerProvider = new TracerWrapper({
     artifacts: hre.artifacts,
