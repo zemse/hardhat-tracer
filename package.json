@@ -51,9 +51,9 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "@nomicfoundation/ethereumjs-evm": "6.x",
-    "@nomicfoundation/ethereumjs-tx": "6.x",
-    "@nomicfoundation/ethereumjs-util": "6.x",
+    "@nomicfoundation/ethereumjs-evm": "1.x",
+    "@nomicfoundation/ethereumjs-tx": "4.x",
+    "@nomicfoundation/ethereumjs-util": "8.x",
     "@nomicfoundation/ethereumjs-vm": "6.x",
     "chai": "4.x",
     "chalk": "4.x",
