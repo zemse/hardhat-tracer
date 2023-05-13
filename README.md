@@ -93,6 +93,13 @@ $ npx hardhat decode --data 0x3850c7bd --returndata 0x00000000000000000000000000
 IUniswapV3Pool(0x0000000000000000000000000000000000000000).slot0() => (sqrtPriceX96: 2781762795090269932261746, tick: -205151, observationIndex: 41540, observationCardinality: 65400, observationCardinalityNext: 65535, feeProtocol: 0, unlocked: true)
 ```
 
+For decoding logs
+
+```
+$ npx hardhat decodelog 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef 0xdCB90A71Db48D673A9A483c9F355EBaE93F66A86 0x0D0707963952f2fBA59dD06f2b425ace40b492Fe --data 0x00000000000000000000000000000000000000000000054b40b1f852bd800000
+Transfer(src: 0xdCB90A71Db48D673A9A483c9F355EBaE93F66A86, dst: 0x0D0707963952f2fBA59dD06f2b425ace40b492Fe, wad: 24999999999999997902848)
+```
+
 ### Address name tags
 
 You can set display names / name tags for unknown addresses by adding new entry to `hre.tracer.nameTags` object in your test cases, see following example:

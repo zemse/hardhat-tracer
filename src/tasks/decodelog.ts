@@ -1,15 +1,13 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { task } from "hardhat/config";
 
 import { formatLog } from "../format/log";
 import { addCliParams } from "../utils";
+import { hexZeroPad, isHexString } from "ethers/lib/utils";
 
 addCliParams(task("decodelog", "Decodes log data"))
-  .addParam("topic0", "topic of log to decode")
-  .addOptionalParam("topic1", "data if any")
-  .addOptionalParam("topic2", "data if any")
-  .addOptionalParam("topic3", "data if any")
   .addOptionalParam("data", "data if any")
+  .addVariadicPositionalParam("topics", "list of topics if any")
   .setAction(async (args, hre) => {
     const td = {
       artifacts: hre.artifacts,
@@ -18,20 +16,21 @@ addCliParams(task("decodelog", "Decodes log data"))
       nameTags: hre.tracer.nameTags,
     };
 
-
-    let topics = [args.topic0, args.topic1, args.topic2, args.topic3];
-    topics = topics.filter((topic) => topic !== undefined);
-
-    // see if the data is a call
-    const formattedlogPromise = formatLog(
+    // see if the data is a log
+    const formattedlog = await formatLog(
       {
         data: args.data ?? "0x",
-        topics: topics,
+        topics: args.topics.map(parseTopic),
       },
       ethers.constants.AddressZero,
       td
     );
 
-    const formattedCall = await formattedlogPromise;
-    console.log(formattedCall);
+    console.log(formattedlog);
   });
+
+// input can be a number string otherwise hex string
+function parseTopic(input: string) {
+  let hex = isHexString(input) ? input : BigNumber.from(input).toHexString();
+  return hexZeroPad(hex, 32);
+}
