@@ -1,9 +1,9 @@
 import { BigNumber, ethers } from "ethers";
+import { hexZeroPad, isHexString } from "ethers/lib/utils";
 import { task } from "hardhat/config";
 
 import { formatLog } from "../format/log";
 import { addCliParams } from "../utils";
-import { hexZeroPad, isHexString } from "ethers/lib/utils";
 
 addCliParams(task("decodelog", "Decodes log data"))
   .addOptionalParam("data", "data if any")
@@ -31,6 +31,6 @@ addCliParams(task("decodelog", "Decodes log data"))
 
 // input can be a number string otherwise hex string
 function parseTopic(input: string) {
-  let hex = isHexString(input) ? input : BigNumber.from(input).toHexString();
+  const hex = isHexString(input) ? input : BigNumber.from(input).toHexString();
   return hexZeroPad(hex, 32);
 }
