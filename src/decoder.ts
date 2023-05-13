@@ -11,6 +11,7 @@ import {
 import { Artifacts } from "hardhat/types";
 
 import { TracerCache } from "./cache";
+import { I4BytesEntry } from "./types";
 
 type Mapping<FragmentType> = Map<
   string,
@@ -288,18 +289,20 @@ async function decodeUsing4byteDirectory(
   if (cacheVal) {
     responseResults = cacheVal;
   } else {
-    const response = await fetchJson(
+    const response = await (fetchJson(
       "https://www.4byte.directory/api/v1/signatures/?hex_signature=" + selector
-    );
+    ) as Promise<{ results: I4BytesEntry[] }>);
     responseResults = response.results;
     cache.fourByteDir.set(selector, responseResults);
     cache.save();
   }
-  // console.log("response", response);
+
+  // sort the results to prefer the oldest entry
+  responseResults.sort((a, b) =>
+    new Date(a.created_at) < new Date(b.created_at) ? -1 : 1
+  );
 
   for (const result of responseResults) {
-    // console.log({ result });
-
     try {
       const iface = new Interface(["function " + result.text_signature]);
 

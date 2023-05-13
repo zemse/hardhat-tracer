@@ -1,11 +1,13 @@
 import fs from "fs-extra";
 import path from "path";
 
+import { I4BytesEntry } from "./types";
+
 // To locally cache contract name, decimals, and ABI to prevent async API calls
 export class TracerCache {
   public tokenDecimals: Map<string, number> = new Map();
   public contractNames: Map<string, string> = new Map();
-  public fourByteDir: Map<string, string> = new Map();
+  public fourByteDir: Map<string, I4BytesEntry[]> = new Map();
 
   public cachePath: string | undefined;
 

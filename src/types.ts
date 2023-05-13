@@ -131,6 +131,14 @@ export interface ChaiMessageCallOptions {
   from?: string;
 }
 
+export interface I4BytesEntry {
+  id: number; // 31780
+  created_at: string; // "2018-05-11T08:39:29.708250Z";
+  text_signature: string; // "many_msg_babbage(bytes1)";
+  hex_signature: string; // "0xa9059cbb";
+  bytes_signature: string; // "©\x05\x9C»";
+}
+
 declare global {
   export namespace Chai {
     interface Assertion {
