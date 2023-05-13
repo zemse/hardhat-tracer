@@ -45,7 +45,8 @@ export async function formatLog(
   const firstPart = `${colorContract(
     contractName ? contractName : "UnknownContract"
   )}${
-    dependencies.tracerEnv.showAddresses || !contractName
+    currentAddress !== undefined &&
+    (dependencies.tracerEnv.showAddresses || !contractName)
       ? `(${currentAddress})`
       : ""
   }`;

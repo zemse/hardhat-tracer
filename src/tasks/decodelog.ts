@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { hexZeroPad, isHexString } from "ethers/lib/utils";
 import { task } from "hardhat/config";
 
@@ -22,7 +22,7 @@ addCliParams(task("decodelog", "Decodes log data"))
         data: args.data ?? "0x",
         topics: args.topics.map(parseTopic),
       },
-      ethers.constants.AddressZero,
+      undefined,
       td
     );
 

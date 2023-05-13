@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { task } from "hardhat/config";
 
 import { formatCall } from "../format/call";
@@ -18,7 +17,7 @@ addCliParams(task("decode", "Decodes calldata or error data"))
 
     // see if the data is a call
     const formattedCallPromise = formatCall(
-      ethers.constants.AddressZero,
+      undefined,
       args.data,
       args.returndata ?? "0x",
       0,

@@ -22,7 +22,7 @@ import { formatParam } from "./param";
 import { formatResult } from "./result";
 
 export async function formatCall(
-  to: string,
+  to: string | undefined,
   input: string,
   ret: string,
   value: BigNumberish,
@@ -50,18 +50,21 @@ export async function formatCall(
   } catch {}
 
   // find a better contract name
-  const betterContractName = await getBetterContractName(to, dependencies);
-  if (betterContractName) {
-    contractName = betterContractName;
-  } else if (contractName) {
-    dependencies.tracerEnv.nameTags[to] = contractName;
+  if (to) {
+    const betterContractName = await getBetterContractName(to, dependencies);
+    if (betterContractName) {
+      contractName = betterContractName;
+    } else if (contractName) {
+      dependencies.tracerEnv.nameTags[to] = contractName;
+    }
   }
 
   // if ERC20 method found then fetch decimals
   if (
-    input.slice(0, 10) === "0x70a08231" || // balanceOf
+    to &&
+    (input.slice(0, 10) === "0x70a08231" || // balanceOf
     input.slice(0, 10) === "0xa9059cbb" || // transfer
-    input.slice(0, 10) === "0x23b872dd" // transferFrom
+      input.slice(0, 10) === "0x23b872dd") // transferFrom
   ) {
     // see if we already know the decimals
     const { cache } = dependencies.tracerEnv._internal;
@@ -119,7 +122,9 @@ export async function formatCall(
     const nameToPrint = contractName ?? "UnknownContract";
 
     return `${
-      dependencies.tracerEnv.showAddresses || nameToPrint === "UnknownContract"
+      to &&
+      (dependencies.tracerEnv.showAddresses ||
+        nameToPrint === "UnknownContract")
         ? `${colorContract(nameToPrint)}(${to})`
         : colorContract(nameToPrint)
     }.${colorFunction(fragment.name)}${
@@ -130,7 +135,7 @@ export async function formatCall(
   // TODO add flag to hide unrecognized stuff
   if (contractName) {
     return `${
-      dependencies.tracerEnv.showAddresses
+      to && dependencies.tracerEnv.showAddresses
         ? `${colorContract(contractName)}(${to})`
         : colorContract(contractName)
     }.<${colorFunction("UnknownFunction")}>${
