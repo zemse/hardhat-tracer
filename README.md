@@ -1,17 +1,19 @@
+<!-- omit from toc -->
 # hardhat-tracer 🕵️
 
 Allows you to see events, calls and storage operations when running your tests.
 
-- [hardhat-tracer 🕵️](#hardhat-tracer-️)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Test](#test)
-    - [Trace Tx](#trace-tx)
-    - [Trace Call](#trace-call)
-    - [Calldata decoder](#calldata-decoder)
-    - [Address name tags](#address-name-tags)
-    - [State overrides](#state-overrides)
-    - [Chai util](#chai-util)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Test](#test)
+  - [Trace Tx](#trace-tx)
+  - [Trace Call](#trace-call)
+  - [Calldata decoder](#calldata-decoder)
+  - [Address name tags](#address-name-tags)
+  - [State overrides](#state-overrides)
+  - [Chai util](#chai-util)
+  - [Programatically access trace info](#programatically-access-trace-info)
+  - [Register `--trace` option to custom tasks](#register---trace-option-to-custom-tasks)
 
 ## Installation
 
@@ -90,7 +92,7 @@ ERC20.approve(spender=0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45, amount=1157920
 
 $ npx hardhat decode --data 0x3850c7bd --returndata 0x000000000000000000000000000000000000000000024d0fa9cd4ba6ff769172fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffcdea1000000000000000000000000000000000000000000000000000000000000a244000000000000000000000000000000000000000000000000000000000000ff78000000000000000000000000000000000000000000000000000000000000ffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
-IUniswapV3Pool(0x0000000000000000000000000000000000000000).slot0() => (sqrtPriceX96: 2781762795090269932261746, tick: -205151, observationIndex: 41540, observationCardinality: 65400, observationCardinalityNext: 65535, feeProtocol: 0, unlocked: true)
+IUniswapV3Pool.slot0() => (sqrtPriceX96: 2781762795090269932261746, tick: -205151, observationIndex: 41540, observationCardinality: 65400, observationCardinalityNext: 65535, feeProtocol: 0, unlocked: true)
 ```
 
 For decoding logs
@@ -157,6 +159,22 @@ expect(hre.tracer.lastTrace()).to.have.messageCall(
     isSuccess: true,
   }
 );
+```
+
+### Programatically access trace info
+
+You can programatically access detail information about previous traces in your test cases.
+
+```ts
+import {CallItem} from 'hardhat-tracer'
+
+// can be a read call, estimate gas, write tx
+await contract.method()
+
+// traverse to the right location in the trace and extract the gasUsed
+const trace1 = hre.tracer.lastTrace()!;
+const callItem = trace1.top?.children?.[0].children?.[0] as CallItem;
+const gasUsed = callItem.params.gasUsed!;
 ```
 
 ### Register `--trace` option to custom tasks
