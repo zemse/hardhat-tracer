@@ -151,3 +151,21 @@ expect(hre.tracer.lastTrace()).to.have.messageCall(
   }
 );
 ```
+
+### Register `--trace` option to custom tasks
+
+```ts
+// hardhat config
+tracer: {
+  tasks: ["deploy", "mycooltask"],
+},
+```
+
+This allows to run
+
+```
+npx hardhat deploy --trace
+npx hardhat mycooltask --trace
+```
+
+Please note that hardhat-tracer will only be able to print trace for things that run on the EthereumJS VM inside Hardhat Network. So if your custom task is executing evm code somewhere else e.g. deploying on live network (instead of hardhat network), then this option would not be able to print trace.
