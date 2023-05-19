@@ -167,7 +167,8 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
     // @ts-ignore
     let vm = node._vm;
     if (
-      blockchain instanceof ForkBlockchain &&
+      typeof blockchain === "object" &&
+      typeof blockchain.getForkBlockNumber === "function" &&
       blockNumber <= blockchain.getForkBlockNumber()
     ) {
       assert(

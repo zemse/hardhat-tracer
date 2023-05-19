@@ -6,6 +6,9 @@ import { HardhatUserConfig } from "hardhat/types";
 
 import "../../../src/index";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const config: HardhatUserConfig = {
   solidity: "0.8.19",
   defaultNetwork: "hardhat",
@@ -16,10 +19,7 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       chainId: 1,
-      url: "https://eth-mainnet.alchemyapi.io/v2/AS_LAx2_WJh1iEAqxd1-AHQ-yb71CiCHF".replace(
-        "_",
-        ""
-      ),
+      url: "https://eth-mainnet.alchemyapi.io/v2/" + process.env.ALCHEMY,
     },
   },
   paths: {},
