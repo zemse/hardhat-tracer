@@ -4,6 +4,11 @@ import path from "path";
 
 import { useEnvironment } from "./helpers";
 
+import { config } from "dotenv";
+config();
+
+const ALCHEMY = process.env.ALCHEMY;
+
 describe("Hardhat Runtime Environment extension", function () {
   describe("Decode task", function () {
     useEnvironment("hardhat-project");
