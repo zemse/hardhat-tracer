@@ -242,10 +242,18 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
       // console.log(txHash.toString("hex"));
 
       if (txHash.equals(hashBuffer)) {
-        await vm.runTx({ tx: txWithCommon, block });
+        await vm.runTx({
+          tx: txWithCommon,
+          block,
+          skipHardForkValidation: true,
+        });
         return; // stop here and print last trace
       }
-      await vm.runTx({ tx: txWithCommon, block });
+      await vm.runTx({
+        tx: txWithCommon,
+        block,
+        skipHardForkValidation: true,
+      });
       currentProgress += Number(tx.gasLimit.toString());
       if (Date.now() - progressPrinted > 1000) {
         console.warn(
