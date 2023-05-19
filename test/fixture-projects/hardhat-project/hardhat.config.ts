@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
   },
   paths: {},
   tracer: {
-    // enabled: true,
+    enabled: true,
     enableAllOpcodes: true,
     showAddresses: true,
     gasCost: true,
@@ -44,7 +44,7 @@ const config: HardhatUserConfig = {
         // },
       },
     },
-    tasks: ["compile", "node", "deploy"],
+    tasks: ["deploy"],
   },
   namedAccounts: {
     deployer: 0,
