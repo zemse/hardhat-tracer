@@ -1,6 +1,6 @@
 {
   "name": "hardhat-tracer",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Hardhat Tracer plugin",
   "repository": "github:zemse/hardhat-tracer",
   "author": "Soham Zemse (https://github.com/zemse)",
