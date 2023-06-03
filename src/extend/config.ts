@@ -1,3 +1,4 @@
+import structuredClone from "@ungap/structured-clone";
 import { extendConfig } from "hardhat/config";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
@@ -17,8 +18,8 @@ declare module "hardhat/types/config" {
 }
 
 extendConfig(
-  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
-    // config.tracer = getTracerEnvFromUserInput(userConfig.tracer);
+  (config: HardhatConfig, _userConfig: Readonly<HardhatUserConfig>) => {
+    const userConfig = structuredClone(_userConfig);
 
     const opcodes = new Map<string, boolean>();
 

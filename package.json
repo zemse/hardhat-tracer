@@ -39,6 +39,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^16.0.0",
     "@types/readable-stream": "^2.3.14",
+    "@types/ungap__structured-clone": "^0.3.0",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "hardhat": "^2.12.2",
@@ -56,6 +57,7 @@
     "hardhat": "2.x"
   },
   "dependencies": {
+    "@ungap/structured-clone": "^1.2.0",
     "chalk": "^4.1.2",
     "ethers": "^5.6.1"
   }
