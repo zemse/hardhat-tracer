@@ -1,12 +1,11 @@
 // We load the plugin here.
 // tslint:disable:no-implicit-dependencies
 import "@nomiclabs/hardhat-ethers";
+import dotenv from "dotenv";
 import "hardhat-deploy";
 import { HardhatUserConfig } from "hardhat/types";
 
 import "../../../src/index";
-
-import dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {

@@ -1,10 +1,9 @@
 // tslint:disable-next-line no-implicit-dependencies
 import { assert } from "chai";
+import { config } from "dotenv";
 import path from "path";
 
 import { useEnvironment } from "./helpers";
-
-import { config } from "dotenv";
 config();
 
 const ALCHEMY = process.env.ALCHEMY;
