@@ -19,19 +19,19 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, _userConfig: Readonly<HardhatUserConfig>) => {
-    const userConfig = structuredClone(_userConfig);
+    const userConfigTracer = structuredClone(_userConfig.tracer || {});
 
     const opcodes = new Map<string, boolean>();
 
     // always active opcodes
     const opcodesToActivate = [];
-    if (userConfig.tracer?.opcodes) {
-      if (!Array.isArray(userConfig.tracer.opcodes)) {
+    if (userConfigTracer?.opcodes) {
+      if (!Array.isArray(userConfigTracer.opcodes)) {
         throw new Error(
           "[hardhat-tracer]: tracer.opcodes in hardhat user config should be array"
         );
       }
-      opcodesToActivate.push(...userConfig.tracer.opcodes);
+      opcodesToActivate.push(...userConfigTracer.opcodes);
     }
     for (const opcode of opcodesToActivate) {
       opcodes.set(opcode, true);
@@ -42,15 +42,15 @@ extendConfig(
     cache.load();
 
     config.tracer = {
-      enabled: userConfig.tracer?.enabled ?? false,
+      enabled: userConfigTracer?.enabled ?? false,
       ignoreNext: false,
       printNext: false,
-      verbosity: userConfig.tracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
-      showAddresses: userConfig.tracer?.showAddresses ?? true,
-      gasCost: userConfig.tracer?.gasCost ?? false,
-      enableAllOpcodes: userConfig.tracer?.enableAllOpcodes ?? false,
+      verbosity: userConfigTracer?.defaultVerbosity ?? DEFAULT_VERBOSITY,
+      showAddresses: userConfigTracer?.showAddresses ?? true,
+      gasCost: userConfigTracer?.gasCost ?? false,
+      enableAllOpcodes: userConfigTracer?.enableAllOpcodes ?? false,
       opcodes,
-      nameTags: userConfig.tracer?.nameTags ?? {},
+      nameTags: userConfigTracer?.nameTags ?? {},
       printMode: "console",
       _internal: {
         printNameTagTip: undefined,
@@ -63,17 +63,17 @@ extendConfig(
           ];
         }
       },
-      stateOverrides: userConfig.tracer?.stateOverrides,
+      stateOverrides: userConfigTracer?.stateOverrides,
     };
 
-    if (userConfig?.tracer?.tasks) {
-      if (!Array.isArray(userConfig?.tracer?.tasks)) {
+    if (userConfigTracer?.tasks) {
+      if (!Array.isArray(userConfigTracer?.tasks)) {
         throw new Error(
           "[hardhat-tracer]: tracer.tasks in hardhat user config should be array"
         );
       }
 
-      for (const taskName of userConfig?.tracer?.tasks) {
+      for (const taskName of userConfigTracer?.tasks) {
         if (typeof taskName !== "string") {
           throw new Error(
             "[hardhat-tracer]: tracer.tasks in hardhat user config should be array of strings"
