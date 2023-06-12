@@ -1,4 +1,3 @@
-import structuredClone from "@ungap/structured-clone";
 import { extendConfig } from "hardhat/config";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
@@ -19,7 +18,7 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, _userConfig: Readonly<HardhatUserConfig>) => {
-    const userConfigTracer = structuredClone(_userConfig.tracer || {});
+    const userConfigTracer = _userConfig.tracer || {};
 
     const opcodes = new Map<string, boolean>();
 
@@ -41,6 +40,7 @@ extendConfig(
     cache.setCachePath(config.paths.cache);
     cache.load();
 
+    // NOTE: config that will be mutable should be cloned, since userConfig is immutable
     config.tracer = {
       enabled: userConfigTracer?.enabled ?? false,
       ignoreNext: false,
@@ -50,7 +50,7 @@ extendConfig(
       gasCost: userConfigTracer?.gasCost ?? false,
       enableAllOpcodes: userConfigTracer?.enableAllOpcodes ?? false,
       opcodes,
-      nameTags: userConfigTracer?.nameTags ?? {},
+      nameTags: { ...(userConfigTracer?.nameTags ?? {}) }, // mutable
       printMode: "console",
       _internal: {
         printNameTagTip: undefined,
@@ -63,7 +63,7 @@ extendConfig(
           ];
         }
       },
-      stateOverrides: userConfigTracer?.stateOverrides,
+      stateOverrides: userConfigTracer?.stateOverrides, // immutable
     };
 
     if (userConfigTracer?.tasks) {
