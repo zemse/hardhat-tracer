@@ -76,7 +76,6 @@ export class TraceRecorder {
           "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
         );
       }
-      this.addressStack.push(message.caller?.toString()!);
       item = {
         opcode: "DELEGATECALL",
         params: {
@@ -87,8 +86,8 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<DELEGATECALL>;
+      this.addressStack.push(item.params.to);
     } else if (message.to) {
-      this.addressStack.push(message.caller?.toString()!);
       item = {
         opcode: message.isStatic ? "STATICCALL" : "CALL",
         params: {
@@ -100,6 +99,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CALL>;
+      this.addressStack.push(item.params.to);
     } else if (message.to === undefined && message.salt === undefined) {
       item = {
         opcode: "CREATE",

@@ -42,6 +42,9 @@ const config: HardhatUserConfig = {
         //   },
         // },
       },
+      "0xc611d00000000000000000000000001234567890": {
+        bytecode: "Child",
+      },
     },
     tasks: ["deploy"],
   },

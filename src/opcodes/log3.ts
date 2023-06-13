@@ -1,7 +1,13 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { hexZeroPad } from "ethers/lib/utils";
 
 import { Item } from "../types";
-import { hexPrefix, parseHex, parseNumber, shallowCopyStack2 } from "../utils";
+import {
+  hexPrefix,
+  parseBytes32,
+  parseNumber,
+  shallowCopyStack2,
+} from "../utils";
 
 import { LOG } from "./log";
 
@@ -23,9 +29,9 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG3> {
 
   const dataOffset = parseNumber(stack.pop()!);
   const dataSize = parseNumber(stack.pop()!);
-  const topic0 = parseHex(stack.pop()!);
-  const topic1 = parseHex(stack.pop()!);
-  const topic2 = parseHex(stack.pop()!);
+  const topic0 = parseBytes32(stack.pop()!);
+  const topic1 = parseBytes32(stack.pop()!);
+  const topic2 = parseBytes32(stack.pop()!);
 
   const data = hexPrefix(
     step.memory.slice(dataOffset, dataOffset + dataSize).toString("hex")

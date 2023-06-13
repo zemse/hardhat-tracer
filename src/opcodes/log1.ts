@@ -1,7 +1,12 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { Item } from "../types";
-import { hexPrefix, parseHex, parseNumber, shallowCopyStack2 } from "../utils";
+import {
+  hexPrefix,
+  parseBytes32,
+  parseNumber,
+  shallowCopyStack2,
+} from "../utils";
 
 import { LOG } from "./log";
 
@@ -23,7 +28,7 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG1> {
 
   const dataOffset = parseNumber(stack.pop()!);
   const dataSize = parseNumber(stack.pop()!);
-  const topic0 = parseHex(stack.pop()!);
+  const topic0 = parseBytes32(stack.pop()!);
 
   const data = hexPrefix(
     step.memory.slice(dataOffset, dataOffset + dataSize).toString("hex")

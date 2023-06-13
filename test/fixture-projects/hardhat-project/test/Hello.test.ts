@@ -106,6 +106,16 @@ describe("Hello", () => {
     await contract.firstCall();
   });
 
+  it("should emit an event under a delegate call", async () => {
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+    hre.tracer.printNext = true;
+    await contract.delegatedShoot();
+  });
+
   it("opcodes", async () => {
     const contract = await hre.ethers.getContractAt(
       "Hello",
