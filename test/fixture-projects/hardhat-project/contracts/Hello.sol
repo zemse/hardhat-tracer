@@ -144,6 +144,78 @@ contract Hello {
       }
     }
   }
+
+  function precompiles() public {
+    address(1).call(
+      abi.encode(
+        0x48289ed753a0fe1709d6edda79891a80a4dda959263b0894bcb3076796e42064,
+        28,
+        0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+        0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+      )
+    );
+    address(2).call(
+      abi.encode(
+        0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+        0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+      )
+    );
+    address(3).call(
+      abi.encode(
+        0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+        0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+      )
+    );
+    address(4).call(
+      abi.encode(
+        0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+        0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+      )
+    );
+    // address(5).call(
+    //   abi.encode(
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+    //   )
+    // );
+    // address(6).call(
+    //   abi.encode(
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+    //   )
+    // );
+    // address(7).call(
+    //   abi.encode(
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59
+    //     // 0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+    //   )
+    // );
+    // address(8).call(
+    //   abi.encode(
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+    //   )
+    // );
+    // address(9).call(
+    //   abi.encode(
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x3786f23f9e6dd675c566d80ff375be8f2f7acd30b39509752a6312fc344acd59,
+    //     0x296d7e5d79e3ccb66a5b53f12c135a4bb8d39f98ba02fa35adde4f13d2982e34
+    //   )
+    // );
+  }
 }
 
 contract Child {

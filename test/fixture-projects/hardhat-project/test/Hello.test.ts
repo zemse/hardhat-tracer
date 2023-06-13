@@ -125,4 +125,16 @@ describe("Hello", () => {
     hre.tracer.printNext = true;
     await contract.playWithOpcodes();
   });
+
+  it("precompiles", async () => {
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+    hre.tracer.printNext = true;
+    await contract.precompiles({
+      gasLimit: 10_000_000,
+    });
+  });
 });

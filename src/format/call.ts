@@ -1,13 +1,8 @@
 import { BigNumber, BigNumberish } from "ethers";
-import {
-  formatEther,
-  Fragment,
-  FunctionFragment,
-  Result,
-} from "ethers/lib/utils";
+import { formatEther, Fragment, FunctionFragment } from "ethers/lib/utils";
 
 import { SEPARATOR } from "../constants";
-import { TracerDependencies } from "../types";
+import { Obj, TracerDependencies } from "../types";
 import { fetchContractDecimals, getBetterContractName } from "../utils";
 import {
   colorContract,
@@ -20,6 +15,7 @@ import {
 
 import { formatParam } from "./param";
 import { formatResult } from "./result";
+import { formatPrecompile } from "./precompile";
 
 export async function formatCall(
   to: string | undefined,
@@ -33,55 +29,64 @@ export async function formatCall(
 ) {
   let contractName: string | undefined;
   let contractDecimals: number | undefined;
-  let inputResult: Result | undefined;
-  let returnResult: Result | undefined;
+  let strictlyHideAddress: boolean = false;
+  let functionName: string | undefined;
+  let inputResult: Obj<any> | undefined;
+  let returnResult: Obj<any> | undefined;
   let fragment: Fragment | undefined;
 
-  try {
-    ({
-      fragment,
-      contractName,
-      inputResult,
-      returnResult,
-    } = await dependencies.tracerEnv.decoder!.decodeFunction(input, ret));
+  let precompileResult = formatPrecompile(to, input, ret);
+  if (precompileResult) {
+    contractName = "Precompiles";
+    strictlyHideAddress = true;
+    ({ name: functionName, inputResult, returnResult } = precompileResult);
+  } else {
+    try {
+      ({
+        fragment,
+        contractName,
+        inputResult,
+        returnResult,
+      } = await dependencies.tracerEnv.decoder!.decodeFunction(input, ret));
 
-    // use just contract name
-    contractName = contractName.split(":")[1];
-  } catch {}
+      // use just contract name
+      contractName = contractName.split(":")[1];
+    } catch {}
 
-  // find a better contract name
-  if (to) {
-    const betterContractName = await getBetterContractName(to, dependencies);
-    if (betterContractName) {
-      contractName = betterContractName;
-    } else if (contractName) {
-      dependencies.tracerEnv.nameTags[to] = contractName;
-    }
-  }
-
-  // if ERC20 method found then fetch decimals
-  if (
-    to &&
-    (input.slice(0, 10) === "0x70a08231" || // balanceOf
-    input.slice(0, 10) === "0xa9059cbb" || // transfer
-      input.slice(0, 10) === "0x23b872dd") // transferFrom
-  ) {
-    // see if we already know the decimals
-    const { cache } = dependencies.tracerEnv._internal;
-    const decimals = cache.tokenDecimals.get(to);
-    if (decimals) {
-      // if we know decimals then use it
-      contractDecimals = decimals !== -1 ? decimals : undefined;
-    } else {
-      // otherwise fetch it
-      contractDecimals = await fetchContractDecimals(to, dependencies);
-      // and cache it
-      if (contractDecimals !== undefined) {
-        cache.tokenDecimals.set(to, contractDecimals);
-      } else {
-        cache.tokenDecimals.set(to, -1);
+    // find a better contract name
+    if (to) {
+      const betterContractName = await getBetterContractName(to, dependencies);
+      if (betterContractName) {
+        contractName = betterContractName;
+      } else if (contractName) {
+        dependencies.tracerEnv.nameTags[to] = contractName;
       }
-      cache.save();
+    }
+
+    // if ERC20 method found then fetch decimals
+    if (
+      to &&
+      (input.slice(0, 10) === "0x70a08231" || // balanceOf
+      input.slice(0, 10) === "0xa9059cbb" || // transfer
+        input.slice(0, 10) === "0x23b872dd") // transferFrom
+    ) {
+      // see if we already know the decimals
+      const { cache } = dependencies.tracerEnv._internal;
+      const decimals = cache.tokenDecimals.get(to);
+      if (decimals) {
+        // if we know decimals then use it
+        contractDecimals = decimals !== -1 ? decimals : undefined;
+      } else {
+        // otherwise fetch it
+        contractDecimals = await fetchContractDecimals(to, dependencies);
+        // and cache it
+        if (contractDecimals !== undefined) {
+          cache.tokenDecimals.set(to, contractDecimals);
+        } else {
+          cache.tokenDecimals.set(to, -1);
+        }
+        cache.save();
+      }
     }
   }
 
@@ -100,17 +105,18 @@ export async function formatCall(
 
   const colorFunction = success ? colorFunctionSuccess : colorFunctioFail;
 
-  if (inputResult && fragment) {
+  if (inputResult && (functionName || fragment)) {
+    // format known stuff
     const inputArgs = formatResult(
       inputResult,
-      fragment.inputs,
+      fragment?.inputs,
       { decimals: contractDecimals, shorten: false },
       dependencies
     );
     const outputArgs = returnResult
       ? formatResult(
           returnResult,
-          (fragment as FunctionFragment).outputs,
+          (fragment as FunctionFragment)?.outputs,
           { decimals: contractDecimals, shorten: true },
           dependencies
         )
@@ -123,16 +129,17 @@ export async function formatCall(
 
     return `${
       to &&
+      !strictlyHideAddress &&
       (dependencies.tracerEnv.showAddresses ||
         nameToPrint === "UnknownContract")
         ? `${colorContract(nameToPrint)}(${to})`
         : colorContract(nameToPrint)
-    }.${colorFunction(fragment.name)}${
+    }.${colorFunction(functionName ?? fragment?.name)}${
       extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
     }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
   }
 
-  // TODO add flag to hide unrecognized stuff
+  // format unknown stuff
   if (contractName) {
     return `${
       to && dependencies.tracerEnv.showAddresses

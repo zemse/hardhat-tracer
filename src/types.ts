@@ -139,6 +139,14 @@ export interface I4BytesEntry {
   bytes_signature: string; // "©\x05\x9C»";
 }
 
+export type Obj<V> = { [key: string]: V };
+
+export type PrecompleResult = {
+  name: string;
+  inputResult?: { [key: string]: any };
+  returnResult?: { [key: string]: any };
+};
+
 declare global {
   export namespace Chai {
     interface Assertion {

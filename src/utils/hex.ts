@@ -1,5 +1,5 @@
-import { BigNumber } from "ethers";
-import { arrayify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
+import { BigNumber, BigNumberish } from "ethers";
+import { arrayify, hexStripZeros, hexZeroPad, hexlify } from "ethers/lib/utils";
 
 export function parseHex(str: string) {
   return !str.startsWith("0x") ? "0x" + str : str;
@@ -42,4 +42,8 @@ export function hexPrefix(str: string): string {
     str = "0x" + str;
   }
   return str;
+}
+
+export function toAddr(val: BigNumberish) {
+  return hexZeroPad(hexlify(val), 20);
 }

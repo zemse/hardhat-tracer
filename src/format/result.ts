@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
-import { formatUnits, ParamType, Result } from "ethers/lib/utils";
+import { formatUnits, ParamType } from "ethers/lib/utils";
 
-import { TracerDependencies } from "../types";
+import { Obj, TracerDependencies } from "../types";
 import { colorKey } from "../utils/colors";
 
 import { formatParam } from "./param";
@@ -12,39 +12,35 @@ interface FormatOptions {
 }
 
 export function formatResult(
-  result: Result,
+  result: Obj<any>,
   params: ParamType[] | undefined,
   { decimals, shorten }: FormatOptions,
   dependencies: TracerDependencies
 ) {
   decimals = decimals ?? -1;
   shorten = shorten ?? false;
-  const stringifiedArgs: Array<[string, string]> = [];
-  // const params = isInput
-  //   ? fragment.inputs
-  //   : (fragment as FunctionFragment)?.outputs;
-  if (!params) {
-    return "";
-  }
-  for (let i = 0; i < params.length; i++) {
-    const param = params[i];
-    const name = param.name ?? `arg_${i}`;
-    let value;
-    if (decimals !== -1 && BigNumber.isBigNumber(result[i])) {
-      value = formatUnits(result[i], decimals);
-    } else {
-      value = formatParam(result[i], dependencies);
-    }
+  let stringifiedArgs: Array<[string, string]> = [];
 
-    stringifiedArgs.push([
-      name,
-      value,
-      // use decimals if available to format amount
-      // decimals !== -1 && BigNumber.isBigNumber(result[i])
-      //   ? formatUnits(result[i], decimals)
-      //   : formatParam(result[i], param.components, dependencies),
-    ]);
+  if (params) {
+    // use abi params to query the keys
+    for (let i = 0; i < params.length; i++) {
+      const param = params[i];
+      const name = param.name ?? `arg_${i}`;
+      let value;
+      if (decimals !== -1 && BigNumber.isBigNumber(result[i])) {
+        value = formatUnits(result[i], decimals);
+      } else {
+        value = formatParam(result[i], dependencies);
+      }
+      stringifiedArgs.push([name, value]);
+    }
+  } else {
+    // consider all the entries in the object
+    stringifiedArgs = Object.entries(result)
+      .filter(([key]) => isNaN(Number(key)))
+      .map(([key, value]) => [key, formatParam(value, dependencies)]);
   }
+
   return `${stringifiedArgs
     .map(
       (entry) =>
