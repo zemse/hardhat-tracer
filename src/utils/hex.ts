@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish } from "ethers";
-import { arrayify, hexStripZeros, hexZeroPad, hexlify } from "ethers/lib/utils";
+import { arrayify, hexlify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
 
 export function parseHex(str: string) {
   return !str.startsWith("0x") ? "0x" + str : str;

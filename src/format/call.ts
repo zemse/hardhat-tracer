@@ -14,8 +14,8 @@ import {
 } from "../utils/colors";
 
 import { formatParam } from "./param";
-import { formatResult } from "./result";
 import { formatPrecompile } from "./precompile";
+import { formatResult } from "./result";
 
 export async function formatCall(
   to: string | undefined,
@@ -35,7 +35,7 @@ export async function formatCall(
   let returnResult: Obj<any> | undefined;
   let fragment: Fragment | undefined;
 
-  let precompileResult = formatPrecompile(to, input, ret);
+  const precompileResult = formatPrecompile(to, input, ret);
   if (precompileResult) {
     contractName = "Precompiles";
     strictlyHideAddress = true;

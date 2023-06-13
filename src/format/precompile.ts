@@ -1,7 +1,8 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
-import { toAddr } from "../utils";
 import { BigNumber } from "ethers";
+import { defaultAbiCoder } from "ethers/lib/utils";
+
 import { Obj, PrecompleResult } from "../types";
+import { toAddr } from "../utils";
 
 export function formatPrecompile(
   address: string | undefined,
@@ -70,8 +71,10 @@ export function formatPrecompile(
           returnResult: tryDecode(["uint256 x", "uint256 y"], ret),
         };
       case toAddr(8):
-        let inputResult: Obj<any> = {};
-        if (input.startsWith("0x")) input = input.slice(2);
+        const inputResult: Obj<any> = {};
+        if (input.startsWith("0x")) {
+          input = input.slice(2);
+        }
 
         let i = 1;
         while (input.length >= 64) {
@@ -84,7 +87,7 @@ export function formatPrecompile(
         }
 
         if (input) {
-          inputResult["unprocessed"] = input;
+          inputResult.unprocessed = input;
         }
 
         return {
@@ -93,7 +96,9 @@ export function formatPrecompile(
           returnResult: tryDecode(["bool success"], ret),
         };
       case toAddr(9):
-        if (input.startsWith("0x")) input = input.slice(2);
+        if (input.startsWith("0x")) {
+          input = input.slice(2);
+        }
 
         return {
           name: "blake2f",
