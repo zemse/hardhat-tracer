@@ -58,7 +58,7 @@ export async function formatContract(
           "constructor"
         )}${extra.length !== 0 ? `{${extra.join(",")}}` : ""}(${inputArgs})${
           deployedAddress
-            ? ` => (${formatParam(deployedAddress, dependencies)})`
+            ? ` → (${formatParam(deployedAddress, dependencies)})`
             : ""
         }`;
       } catch {}

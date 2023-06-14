@@ -136,7 +136,7 @@ export async function formatCall(
         : colorContract(nameToPrint)
     }.${colorFunction(functionName ?? fragment?.name)}${
       extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
-    }(${inputArgs})${outputArgs ? ` => (${outputArgs})` : ""}`;
+    }(${inputArgs})${outputArgs ? ` → (${outputArgs})` : ""}`;
   }
 
   // format unknown stuff
