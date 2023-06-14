@@ -1,7 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { Item } from "../types";
-import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
+import { colorKey, colorLabel, colorValue, parseBytes32 } from "../utils";
 
 export interface SSTORE {
   key: string;
@@ -12,8 +12,8 @@ function parse(step: InterpreterStep): Item<SSTORE> {
   return {
     opcode: "SSTORE",
     params: {
-      key: hexPrefix(step.stack[step.stack.length - 1].toString(16)),
-      value: hexPrefix(step.stack[step.stack.length - 2].toString(16)),
+      key: parseBytes32(step.stack[step.stack.length - 1].toString(16)),
+      value: parseBytes32(step.stack[step.stack.length - 2].toString(16)),
     },
     format(): string {
       return format(this);

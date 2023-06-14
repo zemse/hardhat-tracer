@@ -1,7 +1,11 @@
 import { BigNumber, BigNumberish } from "ethers";
 import { arrayify, hexlify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
 
-export function parseHex(str: string) {
+/**
+ * Ensures 0x prefix to a hex string which may or may not
+ * @param str A hex string that may or may not have 0x prepended
+ */
+export function hexPrefix(str: string) {
   return !str.startsWith("0x") ? "0x" + str : str;
 }
 
@@ -10,19 +14,19 @@ export function parseNumber(str: string) {
 }
 
 export function parseUint(str: string) {
-  return BigNumber.from(parseHex(str));
+  return BigNumber.from(hexPrefix(str));
 }
 
 export function parseAddress(str: string) {
-  return hexZeroPad(hexStripZeros(parseHex(str)), 20);
+  return hexZeroPad(hexStripZeros(hexPrefix(str)), 20);
 }
 
 export function parseBytes32(str: string) {
-  return hexZeroPad(hexStripZeros(parseHex(str)), 32);
+  return hexZeroPad(hexStripZeros(hexPrefix(str)), 32);
 }
 
 export function parseMemory(strArr: string[]) {
-  return arrayify(parseHex(strArr.join("")));
+  return arrayify(hexPrefix(strArr.join("")));
 }
 
 export function shallowCopyStack(stack: string[]): string[] {
@@ -31,17 +35,6 @@ export function shallowCopyStack(stack: string[]): string[] {
 
 export function shallowCopyStack2(stack: Array<bigint>): string[] {
   return [...stack].map((x) => BigNumber.from(x).toHexString());
-}
-
-/**
- * Ensures 0x prefix to a hex string which may or may not
- * @param str A hex string that may or may not have 0x prepended
- */
-export function hexPrefix(str: string): string {
-  if (!str.startsWith("0x")) {
-    str = "0x" + str;
-  }
-  return str;
 }
 
 export function toAddr(val: BigNumberish) {

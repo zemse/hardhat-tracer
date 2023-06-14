@@ -1,7 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { AwaitedItem, Item } from "../types";
-import { colorKey, colorLabel, colorValue, hexPrefix } from "../utils";
+import { colorKey, colorLabel, colorValue, parseBytes32 } from "../utils";
 
 export interface SLOAD {
   key: string;
@@ -9,7 +9,7 @@ export interface SLOAD {
 }
 
 function parse(step: InterpreterStep): AwaitedItem<SLOAD> {
-  const key = hexPrefix(step.stack[step.stack.length - 1].toString(16));
+  const key = parseBytes32(step.stack[step.stack.length - 1].toString(16));
 
   const next = 1; // get stack just after this opcode
   return {
@@ -19,7 +19,7 @@ function parse(step: InterpreterStep): AwaitedItem<SLOAD> {
       opcode: "SLOAD",
       params: {
         key,
-        value: hexPrefix(
+        value: parseBytes32(
           stepNext.stack[stepNext.stack.length - 1].toString(16)
         ),
       },
