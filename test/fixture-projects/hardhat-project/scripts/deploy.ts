@@ -22,4 +22,6 @@ async function main() {
   }
 }
 
-main().catch(console.error);
+main()
+  .then(() => process.exit(0))
+  .catch(console.error);

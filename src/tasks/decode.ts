@@ -4,6 +4,9 @@ import { formatCall } from "../format/call";
 import { formatError } from "../format/error";
 import { addCliParams, removeColor } from "../utils";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:tasks:decode");
+
 addCliParams(task("decode", "Decodes calldata or error data"))
   .addParam("data", "Calldata or error data to decode")
   .addOptionalParam("returndata", "Return data if any")
@@ -15,7 +18,7 @@ addCliParams(task("decode", "Decodes calldata or error data"))
       nameTags: hre.tracer.nameTags,
     };
 
-    // see if the data is a call
+    debug("see if the data is a call");
     const formattedCallPromise = formatCall(
       undefined,
       args.data,
@@ -37,7 +40,7 @@ addCliParams(task("decode", "Decodes calldata or error data"))
     ) {
       console.log(formattedCall);
     } else {
-      // see the data is an error
+      debug("see the data is an error");
       const formattedError = await formattedErrorPromise;
       if (!removeColor(formattedError).includes("UnknownError(")) {
         console.log(formattedError);

@@ -6,6 +6,9 @@ import { DEFAULT_VERBOSITY } from "../constants";
 import { TracerEnv, TracerEnvUser } from "../types";
 import { registerTask } from "../utils";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:extend:config");
+
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {
     tracer?: TracerEnvUser;
@@ -18,6 +21,7 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, _userConfig: Readonly<HardhatUserConfig>) => {
+    debug("extending config...");
     const userConfigTracer = _userConfig.tracer || {};
 
     const opcodes = new Map<string, boolean>();
@@ -82,5 +86,6 @@ extendConfig(
         registerTask(taskName);
       }
     }
+    debug("config extended!");
   }
 );

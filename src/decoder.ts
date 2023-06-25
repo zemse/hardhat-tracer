@@ -13,6 +13,9 @@ import { Artifacts } from "hardhat/types";
 import { TracerCache } from "./cache";
 import { I4BytesEntry } from "./types";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:decoder");
+
 type Mapping<FragmentType> = Map<
   string,
   Array<{ contractName: string; fragment: FragmentType }>
@@ -28,6 +31,7 @@ export class Decoder {
   public ready: Promise<void>;
 
   constructor(artifacts: Artifacts, cache: TracerCache) {
+    debug("Decoder constructor");
     this.cache = cache;
     this.ready = this._updateArtifacts(artifacts);
   }
@@ -37,6 +41,7 @@ export class Decoder {
   }
 
   public async _updateArtifacts(artifacts: Artifacts) {
+    debug("_updateArtifacts called");
     const names = await artifacts.getAllFullyQualifiedNames();
     const everyArtifact = await Promise.all(
       names.map((name) => artifacts.readArtifact(name))
@@ -63,6 +68,8 @@ export class Decoder {
       commonErrorsIface.functions,
       this.errorFragmentsBySelector
     );
+
+    debug("_updateArtifacts finished");
   }
 
   public async decode(
@@ -77,6 +84,7 @@ export class Decoder {
     await this.ready;
 
     try {
+      debug("try decoding as a function");
       return decode(
         inputData,
         returnData,
@@ -84,8 +92,11 @@ export class Decoder {
         this.functionFragmentsBySelector,
         this.cache
       );
-    } catch {}
+    } catch (e) {
+      debug("decoding as a function errored %s", (e as any).message);
+    }
 
+    debug("decode as error");
     return decode(
       inputData,
       returnData,
@@ -261,6 +272,7 @@ async function decode(
   // currently only supports function calls
   if (type === "function") {
     try {
+      debug("decode using 4byte.directory");
       const { fragment, inputResult } = await decodeUsing4byteDirectory(
         selector,
         inputData,
@@ -268,7 +280,9 @@ async function decode(
         cache
       );
       return { fragment, inputResult };
-    } catch {}
+    } catch (e) {
+      debug("decoding using 4byte.directory errored %s", (e as any).message);
+    }
   }
 
   // we couldn't decode it after even using 4byte.directory, give up

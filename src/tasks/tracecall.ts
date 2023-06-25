@@ -6,6 +6,9 @@ import { print } from "../print";
 import { TraceRecorder } from "../trace-recorder";
 import { addCliParams, applyCliArgsToTracer } from "../utils";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:tasks:trace");
+
 addCliParams(task("tracecall", "Traces a call"))
   .addParam("to", "destination address")
   .addOptionalParam("data", "input call data")
@@ -57,6 +60,7 @@ addCliParams(task("tracecall", "Traces a call"))
       );
     }
 
+    debug("using rpc url %s", args.rpc);
     const provider = new ethers.providers.StaticJsonRpcProvider(args.rpc);
     if (args.blocknumber === undefined) {
       args.blocknumber = await provider.getBlockNumber();
@@ -73,6 +77,7 @@ addCliParams(task("tracecall", "Traces a call"))
     ]);
 
     try {
+      debug("making call");
       const result = await hre.ethers.provider.call({
         to: args.to,
         data: args.data,
@@ -87,6 +92,7 @@ addCliParams(task("tracecall", "Traces a call"))
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
+    debug("printing trace");
     await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
       artifacts: hre.artifacts,
       tracerEnv: hre.tracer,

@@ -19,6 +19,9 @@ import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
 import { hexPrefix } from "./utils/hex";
 import { isItem } from "./utils/item";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:trace-recorder");
+
 interface NewContractEvent {
   address: Address;
   code: Buffer;
@@ -54,6 +57,7 @@ export class TraceRecorder {
     tx: TypedTransaction,
     resolve: ((result?: any) => void) | undefined
   ) {
+    debug("handleBeforeTx");
     this.trace = new TransactionTrace();
     this.trace.hash = hexPrefix(tx.hash().toString("hex"));
 
@@ -64,6 +68,7 @@ export class TraceRecorder {
     message: Message,
     resolve: ((result?: any) => void) | undefined
   ) {
+    debug("handleBeforeMessage");
     if (!this.trace) {
       throw new Error(
         "[hardhat-tracer]: trace is undefined in handleBeforeMessage"
@@ -140,6 +145,7 @@ export class TraceRecorder {
     contract: NewContractEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
+    debug("handleNewContract %s", contract.address.toString());
     if (!this.trace || !this.trace.parent) {
       console.error("handleNewContract: trace.parent not present");
     } else {
@@ -173,6 +179,7 @@ export class TraceRecorder {
     step: InterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
+    // debug("handleStep %s", step.opcode.name);
     if (!this.trace) {
       throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
     }
@@ -203,8 +210,10 @@ export class TraceRecorder {
       );
       if (result) {
         if (isItem(result)) {
+          debug("parsed step %s", step.opcode.name);
           this.trace.insertItem(result);
         } else {
+          debug("parsed step awaited %s", step.opcode.name);
           this.awaitedItems.push(result);
         }
       }
@@ -219,6 +228,7 @@ export class TraceRecorder {
     evmResult: EVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
+    debug("handleAfterMessage");
     if (!this.trace) {
       throw new Error(
         "[hardhat-tracer]: trace is undefined in handleAfterMessage"
@@ -228,6 +238,7 @@ export class TraceRecorder {
     if (evmResult.execResult.selfdestruct) {
       const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
       for (const [address, beneficiary] of selfdestructs) {
+        debug("self destruct %s", address);
         this.trace.insertItem({
           opcode: "SELFDESTRUCT",
           params: {
@@ -241,6 +252,7 @@ export class TraceRecorder {
       evmResult?.execResult.exceptionError &&
       evmResult.execResult.exceptionError.error !== "revert"
     ) {
+      debug("exception %s", evmResult.execResult.exceptionError.error);
       this.trace.insertItem({
         opcode: "EXCEPTION",
         params: {
@@ -264,6 +276,7 @@ export class TraceRecorder {
     _tx: AfterTxEvent,
     resolve: ((result?: any) => void) | undefined
   ) {
+    debug("handleAfterTx");
     if (this.tracerEnv.enabled) {
       if (!this.trace) {
         throw new Error(
@@ -272,10 +285,12 @@ export class TraceRecorder {
       }
 
       // store the trace for later use (printing or outputting)
+      debug("record the trace");
       this.previousTraces.push(this.trace);
     }
 
     // clear the trace
+    debug("clear running trace data");
     this.trace = undefined;
     this.previousOpcode = undefined;
     this.awaitedItems = [];

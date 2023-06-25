@@ -19,6 +19,9 @@ import {
 } from "../utils";
 import { getNode } from "../utils/hardhat";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:tasks:trace");
+
 const originalCreate = VM.create;
 
 VM.create = async function (...args) {
@@ -51,12 +54,14 @@ addCliParams(task("trace", "Traces a transaction hash"))
       await hre.run("compile");
     }
 
+    debug("fetch tx from provider");
     const tx = await hre.network.provider.send("eth_getTransactionByHash", [
       args.hash,
     ]);
 
     // if tx is not on hardhat local, then use rpc
     if (tx == null) {
+      debug("tx not on provider");
       // try using url specified in network as rpc url
       if (args.network) {
         const userNetworks = hre.userConfig.networks;
@@ -93,6 +98,7 @@ addCliParams(task("trace", "Traces a transaction hash"))
           "[hardhat-tracer]: rpc url not provided, please either use --network <network-name> or --rpc <rpc-url>"
         );
       }
+      debug("fetch tx from rpc %s", args.rpc);
       const provider = new ethers.providers.StaticJsonRpcProvider(args.rpc);
       const txFromRpc = await provider.getTransaction(args.hash);
 
@@ -128,6 +134,7 @@ addCliParams(task("trace", "Traces a transaction hash"))
       // after the above hardhat reset, tx should be present on the local node
     }
 
+    debug("get VM");
     const node = await getNode(hre);
 
     // we cant use this resp because stack and memory is not there (takes up lot of memory if enabled)
@@ -136,12 +143,15 @@ addCliParams(task("trace", "Traces a transaction hash"))
     //   disableMemory: true,
     //   disableStack: true,
     // });
+
+    debug("trace transaction");
     await traceTransctionWithProgress(node, args.hash);
 
     // TODO try to do this properly
     // @ts-ignore
     const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
 
+    debug("printing trace");
     await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
       artifacts: hre.artifacts,
       tracerEnv: hre.tracer,
@@ -159,6 +169,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
     throw new Error(`Unable to find a block containing transaction ${hash}`);
   }
 
+  debug("running block in context");
   // @ts-ignore
   return node._runInBlockContext(block.header.number - 1n, async () => {
     const blockNumber = block.header.number;
@@ -240,8 +251,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
       }
 
       const txHash = txWithCommon.hash();
-      // console.log(txHash.toString("hex"));
-
+      debug("running tx %s", txHash.toString("hex"));
       if (txHash.equals(hashBuffer)) {
         await vm.runTx({
           tx: txWithCommon,

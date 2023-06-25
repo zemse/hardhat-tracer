@@ -7,6 +7,9 @@ import { TraceRecorder } from "../trace-recorder";
 import { TracerEnv } from "../types";
 import { applyStateOverrides, getVM } from "../utils";
 
+import createDebug from "debug";
+const debug = createDebug("hardhat-tracer:extend:hre");
+
 declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {
     tracer: TracerEnv;
@@ -14,6 +17,7 @@ declare module "hardhat/types/runtime" {
 }
 
 extendEnvironment((hre) => {
+  debug("extending environment...");
   // copy reference of config.tracer to tracer
   // TODO take this properly, env can contain things that config does not need to.
   hre.tracer = hre.config.tracer;
@@ -38,8 +42,13 @@ extendEnvironment((hre) => {
         } catch {}
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      debug(
+        "Could not get VM, hardhat tracer is disabled. Error: " + e.message
+      );
       // if for some reason we can't get the vm, disable hardhat-tracer
       hre.tracer.enabled = false;
     });
+
+  debug("environment extended!");
 });

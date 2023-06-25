@@ -14,6 +14,7 @@ Allows you to see events, calls and storage operations when running your tests.
   - [Chai util](#chai-util)
   - [Programatically access trace info](#programatically-access-trace-info)
   - [Register `--trace` option to custom tasks](#register---trace-option-to-custom-tasks)
+  - [Print debug logs](#print-debug-logs)
 
 ## Installation
 
@@ -194,3 +195,11 @@ npx hardhat mycooltask --trace
 ```
 
 Please note that hardhat-tracer will only be able to print trace for things that run on the EthereumJS VM inside Hardhat Network. So if your custom task is executing evm code somewhere else e.g. deploying on live network (instead of hardhat network), then this option would not be able to print trace.
+
+### Print debug logs
+
+Set the `DEBUG` env variable to `hardhat-tracer:*`. This will print debug logs related to internal logic in hardhat-tracer for debugging purposes.
+
+```sh
+DEBUG=hardhat-tracer:* npx hardhat test --trace
+```
