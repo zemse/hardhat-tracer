@@ -21,7 +21,19 @@ export async function getNode(
   // Search by looking for the internal "_wrapped" variable. Base provider doesn't have this
   // property (at least for now!).
   let provider: any = hre.network.provider;
-  while (provider._wrapped !== undefined) {
+  while (true) {
+    try {
+      // throws error when we reach the og provider
+      // HardhatError: HH21: You tried to access an uninitialized provider. To
+      // initialize the provider, make sure you first call `.init()` or any
+      // method that hits a node like request, send or sendAsync.
+      if (provider._wrapped === undefined) {
+        break;
+      }
+    } catch {
+      break;
+    }
+
     provider = provider._wrapped;
 
     // Just throw if we ever end up in (what seems to be) an infinite loop.

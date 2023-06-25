@@ -133,7 +133,15 @@ export function isTracerAlreadyWrappedInHreProvider(
     }
 
     // move down the chain
-    provider = provider._wrapped;
+    try {
+      provider = provider._wrapped;
+    } catch {
+      // throws error when we reach the og provider
+      // HardhatError: HH21: You tried to access an uninitialized provider. To
+      // initialize the provider, make sure you first call `.init()` or any
+      // method that hits a node like request, send or sendAsync.
+      return false;
+    }
 
     // Just throw if we ever end up in (what seems to be) an infinite loop.
     currentLoopIterations += 1;

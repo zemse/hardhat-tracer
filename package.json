@@ -41,7 +41,7 @@
     "@types/readable-stream": "^2.3.14",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
-    "hardhat": "^2.12.2",
+    "hardhat": "^2.16.0",
     "hardhat-deploy": "^0.11.25",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
@@ -53,10 +53,13 @@
   },
   "peerDependencies": {
     "chai": "4.x",
-    "hardhat": "2.x"
+    "hardhat": ">=2.16 <3.x"
   },
   "dependencies": {
     "chalk": "^4.1.2",
     "ethers": "^5.6.1"
+  },
+  "resolutions": {
+    "safe-buffer": "^5.2.1"
   }
 }
