@@ -1,10 +1,9 @@
+import createDebug from "debug";
 import { task } from "hardhat/config";
 
 import { formatCall } from "../format/call";
 import { formatError } from "../format/error";
 import { addCliParams, removeColor } from "../utils";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:tasks:decode");
 
 addCliParams(task("decode", "Decodes calldata or error data"))

@@ -1,3 +1,4 @@
+import createDebug from "debug";
 import { extendConfig } from "hardhat/config";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
@@ -5,8 +6,6 @@ import { TracerCache } from "../cache";
 import { DEFAULT_VERBOSITY } from "../constants";
 import { TracerEnv, TracerEnvUser } from "../types";
 import { registerTask } from "../utils";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:extend:config");
 
 declare module "hardhat/types/config" {

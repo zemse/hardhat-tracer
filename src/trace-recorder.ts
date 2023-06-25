@@ -6,6 +6,7 @@ import {
 import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { Address } from "@nomicfoundation/ethereumjs-util";
 import { AfterTxEvent, VM } from "@nomicfoundation/ethereumjs-vm";
+import createDebug from "debug";
 
 import { parse } from "./opcodes";
 import { CALL } from "./opcodes/call";
@@ -18,8 +19,6 @@ import { AwaitedItem, Item, TracerEnv } from "./types";
 import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
 import { hexPrefix } from "./utils/hex";
 import { isItem } from "./utils/item";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:trace-recorder");
 
 interface NewContractEvent {

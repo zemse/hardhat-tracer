@@ -1,3 +1,4 @@
+import createDebug from "debug";
 import { extendEnvironment } from "hardhat/config";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
@@ -6,8 +7,6 @@ import { Decoder } from "../decoder";
 import { TraceRecorder } from "../trace-recorder";
 import { TracerEnv } from "../types";
 import { applyStateOverrides, getVM } from "../utils";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:extend:hre");
 
 declare module "hardhat/types/runtime" {

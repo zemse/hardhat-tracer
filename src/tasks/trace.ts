@@ -1,6 +1,7 @@
 import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { assert } from "console";
+import createDebug from "debug";
 import { ethers } from "ethers";
 import { task } from "hardhat/config";
 import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
@@ -18,8 +19,6 @@ import {
   applyStateOverrides,
 } from "../utils";
 import { getNode } from "../utils/hardhat";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:tasks:trace");
 
 const originalCreate = VM.create;

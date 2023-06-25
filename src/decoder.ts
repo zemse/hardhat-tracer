@@ -1,3 +1,4 @@
+import createDebug from "debug";
 import { ethers } from "ethers";
 import {
   ErrorFragment,
@@ -12,8 +13,6 @@ import { Artifacts } from "hardhat/types";
 
 import { TracerCache } from "./cache";
 import { I4BytesEntry } from "./types";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:decoder");
 
 type Mapping<FragmentType> = Map<

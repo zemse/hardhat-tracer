@@ -1,3 +1,4 @@
+import createDebug from "debug";
 import { ethers } from "ethers";
 import { task } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
@@ -5,8 +6,6 @@ import { HttpNetworkUserConfig } from "hardhat/types";
 import { print } from "../print";
 import { TraceRecorder } from "../trace-recorder";
 import { addCliParams, applyCliArgsToTracer } from "../utils";
-
-import createDebug from "debug";
 const debug = createDebug("hardhat-tracer:tasks:trace");
 
 addCliParams(task("tracecall", "Traces a call"))
