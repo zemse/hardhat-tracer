@@ -52,6 +52,7 @@ extendConfig(
       showAddresses: userConfigTracer?.showAddresses ?? true,
       gasCost: userConfigTracer?.gasCost ?? false,
       enableAllOpcodes: userConfigTracer?.enableAllOpcodes ?? false,
+      use4bytesDirectory: userConfigTracer?.use4bytesDirectory ?? true,
       opcodes,
       nameTags: { ...(userConfigTracer?.nameTags ?? {}) }, // mutable
       printMode: "console",

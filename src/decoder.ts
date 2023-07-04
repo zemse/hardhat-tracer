@@ -21,17 +21,18 @@ type Mapping<FragmentType> = Map<
 >;
 
 export class Decoder {
-  public cache: TracerCache;
-
   public functionFragmentsBySelector: Mapping<FunctionFragment> = new Map();
   public errorFragmentsBySelector: Mapping<ErrorFragment> = new Map();
   public eventFragmentsByTopic0: Mapping<EventFragment> = new Map();
 
   public ready: Promise<void>;
 
-  constructor(artifacts: Artifacts, cache: TracerCache) {
+  constructor(
+    artifacts: Artifacts,
+    public cache: TracerCache,
+    public use4bytesDirectory: boolean
+  ) {
     debug("Decoder constructor");
-    this.cache = cache;
     this.ready = this._updateArtifacts(artifacts);
   }
 
@@ -89,7 +90,8 @@ export class Decoder {
         returnData,
         "function",
         this.functionFragmentsBySelector,
-        this.cache
+        this.cache,
+        this.use4bytesDirectory
       );
     } catch (e) {
       debug("decoding as a function errored %s", (e as any).message);
@@ -101,7 +103,8 @@ export class Decoder {
       returnData,
       "error",
       this.errorFragmentsBySelector,
-      this.cache
+      this.cache,
+      this.use4bytesDirectory
     );
   }
 
@@ -121,7 +124,8 @@ export class Decoder {
       returnData,
       "function",
       this.functionFragmentsBySelector,
-      this.cache
+      this.cache,
+      this.use4bytesDirectory
     );
   }
 
@@ -139,7 +143,8 @@ export class Decoder {
       "0x",
       "error",
       this.errorFragmentsBySelector,
-      this.cache
+      this.cache,
+      this.use4bytesDirectory
     );
     return { fragment, revertResult: inputResult, contractName };
   }
@@ -204,7 +209,8 @@ async function decode(
   returnData: string,
   type: "function",
   mapping: Mapping<FunctionFragment>,
-  cache: TracerCache
+  cache: TracerCache,
+  use4bytesDirectory: boolean
 ): Promise<{
   fragment: Fragment;
   inputResult: Result;
@@ -217,7 +223,8 @@ async function decode(
   returnData: string,
   type: "error",
   mapping: Mapping<ErrorFragment>,
-  cache: TracerCache
+  cache: TracerCache,
+  use4bytesDirectory: boolean
 ): Promise<{
   fragment: Fragment;
   inputResult: Result;
@@ -230,7 +237,8 @@ async function decode(
   returnData: string,
   type: string,
   mapping: Mapping<Fragment>,
-  cache: TracerCache
+  cache: TracerCache,
+  use4bytesDirectory: boolean
 ) {
   const selector = inputData.slice(0, 10);
   // console.log("selector", selector);
@@ -269,7 +277,7 @@ async function decode(
 
   // we couldn't decode it using local ABI, try 4byte.directory
   // currently only supports function calls
-  if (type === "function") {
+  if (use4bytesDirectory && type === "function") {
     try {
       debug("decode using 4byte.directory");
       const { fragment, inputResult } = await decodeUsing4byteDirectory(

@@ -15,15 +15,16 @@ export interface NameTags {
 }
 
 export interface TracerEnvUser {
-  enabled?: boolean;
-  defaultVerbosity?: number;
-  showAddresses?: boolean;
-  gasCost?: boolean;
-  enableAllOpcodes?: boolean;
-  opcodes?: string[];
-  nameTags?: NameTags;
-  stateOverrides?: StateOverrides;
-  tasks?: string[];
+  enabled?: boolean; // whether to enable tracer always, default: false
+  defaultVerbosity?: number; // default minimum verbosity level, default: 0
+  showAddresses?: boolean; // whether to show addresses, default: true
+  gasCost?: boolean; // print gas cost for calls, default: false
+  enableAllOpcodes?: boolean; // print all opcodes, default: false
+  use4bytesDirectory?: boolean; // consult 4byte.directory for ABIs, default: true
+  opcodes?: string[]; // list of extra opcodes to print, default: [CALLs, SLOAD, SSTORE, LOG*]
+  nameTags?: NameTags; // map of addresses to name strings, default: {}
+  stateOverrides?: StateOverrides; // map of addresses to their state overrides, default: {}
+  tasks?: string[]; // list of extra tasks to enable tracer on, default: []
 }
 
 export interface TracerEnv {
@@ -34,6 +35,7 @@ export interface TracerEnv {
   showAddresses: boolean;
   gasCost: boolean;
   enableAllOpcodes: boolean;
+  use4bytesDirectory: boolean;
   opcodes: Map<string, boolean>; // string[]; // TODO have a map of opcode to boolean
   nameTags: NameTags;
   printMode: PrintMode;

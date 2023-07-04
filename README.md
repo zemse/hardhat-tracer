@@ -15,6 +15,7 @@ Allows you to see events, calls and storage operations when running your tests.
   - [Programatically access trace info](#programatically-access-trace-info)
   - [Register `--trace` option to custom tasks](#register---trace-option-to-custom-tasks)
   - [Print debug logs](#print-debug-logs)
+  - [Config parameters](#config-parameters)
 
 ## Installation
 
@@ -203,3 +204,7 @@ Set the `DEBUG` env variable to `hardhat-tracer:*`. This will print debug logs r
 ```sh
 DEBUG=hardhat-tracer:* npx hardhat test --trace
 ```
+
+### Config parameters
+
+List of supported configs is available in [TracerEnvUser](./src/types.ts).
