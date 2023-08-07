@@ -40,7 +40,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  describe("Test task", function () {
+  describe.only("Test task", function () {
     useEnvironment("hardhat-project");
 
     // before(async function () {
@@ -51,7 +51,7 @@ describe("Hardhat Runtime Environment extension", function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         traceError: true,
-        // opcodes: "SSTORE,SLOAD",
+        opcodes: "MSTORE",
       });
     });
   });

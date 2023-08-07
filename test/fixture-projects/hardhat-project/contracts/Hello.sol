@@ -41,6 +41,10 @@ contract Hello {
   }
 
   function hi2(Info[] memory) public {
+    assembly {
+      mstore(0, 0)
+      mstore8(0, 1)
+    }
     Child c = new Child(address(0));
     address(c).delegatecall(abi.encodeWithSignature("hi()"));
     Lib.add(1, 2);
