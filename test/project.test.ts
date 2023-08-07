@@ -51,7 +51,7 @@ describe("Hardhat Runtime Environment extension", function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         traceError: true,
-        opcodes: "MSTORE",
+        opcodes: "MSTORE,MLOAD,MSIZE",
       });
     });
   });

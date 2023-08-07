@@ -15,6 +15,8 @@ import log1 from "./log1";
 import log2 from "./log2";
 import log3 from "./log3";
 import log4 from "./log4";
+import msize from "./msize";
+import mload from "./mload";
 import mstore from "./mstore";
 import mstore8 from "./mstore8";
 import revert from "./revert";
@@ -42,6 +44,10 @@ export function parse(
       return log3.parse(step, currentAddress);
     case "LOG4":
       return log4.parse(step, currentAddress);
+    case "MSIZE":
+      return msize.parse();
+    case "MLOAD":
+      return mload.parse(step);
     case "MSTORE":
       return mstore.parse(step);
     case "MSTORE8":
@@ -82,6 +88,10 @@ export async function format(
     case "LOG3":
     case "LOG4":
       return log.format(item, dependencies);
+    case "MSIZE":
+      return msize.format(item);
+    case "MLOAD":
+      return mload.format(item);
     case "MSTORE":
       return mstore.format(item);
     case "MSTORE8":
