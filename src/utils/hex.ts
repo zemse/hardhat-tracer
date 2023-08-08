@@ -25,14 +25,6 @@ export function parseBytes32(str: string) {
   return hexZeroPad(hexStripZeros(hexPrefix(str)), 32);
 }
 
-export function parseHex(str: string, bytes?: number) {
-  let val = hexStripZeros(hexPrefix(str));
-  if (bytes && val.length - 2 < bytes * 2) {
-    val = hexZeroPad(val, bytes);
-  }
-  return val;
-}
-
 export function parseMemory(strArr: string[]) {
   return arrayify(hexPrefix(strArr.join("")));
 }

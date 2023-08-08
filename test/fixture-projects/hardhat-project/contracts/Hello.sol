@@ -110,10 +110,15 @@ contract Hello {
   }
 
   function firstCall() public returns (uint256) {
+    assembly {
+      let val := sload(1)
+      sstore(0, add(val, 1))
+    }
     (, bytes memory ret) = address(this).staticcall(
       abi.encodeCall(this.secondStaticCall, ())
     );
     assembly {
+      sstore(0, 1)
       return(add(32, ret), mload(ret))
     }
   }

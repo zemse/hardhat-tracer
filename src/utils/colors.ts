@@ -14,6 +14,8 @@ export const colorValue = chalk.whiteBright;
 export const colorExtra = chalk.gray;
 export const colorSload = chalk.blueBright;
 export const colorSstore = chalk.redBright;
+export const colorMload = chalk.blueBright;
+export const colorMstore = chalk.redBright;
 export const colorNameTag = chalk.italic;
 export const colorIndexed = chalk.italic;
 

@@ -1,13 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { AwaitedItem, Item } from "../types";
-import {
-  colorKey,
-  colorLabel,
-  colorValue,
-  parseBytes32,
-  parseHex,
-} from "../utils";
+import { colorLabel, colorMload, colorValue, parseBytes32 } from "../utils";
 
 export interface MLOAD {
   offset: string;
@@ -15,7 +9,7 @@ export interface MLOAD {
 }
 
 function parse(step: InterpreterStep): AwaitedItem<MLOAD> {
-  const offset = parseHex(step.stack[step.stack.length - 1].toString(16), 4);
+  const offset = parseBytes32(step.stack[step.stack.length - 1].toString(16));
 
   const next = 1; // get stack just after this opcode
   return {
@@ -37,7 +31,7 @@ function parse(step: InterpreterStep): AwaitedItem<MLOAD> {
 }
 
 function format(item: Item<MLOAD>): string {
-  return `${colorLabel("[MLOAD]")}  ${colorKey(
+  return `${colorLabel("[MLOAD]")}  ${colorMload(
     item.params.offset
   )} → ${colorValue(item.params.value)}`;
 }

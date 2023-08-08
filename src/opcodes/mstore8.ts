@@ -2,11 +2,10 @@ import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { Item } from "../types";
 import {
-  colorKey,
   colorLabel,
+  colorMstore,
   colorValue,
   parseBytes32,
-  parseHex,
   shallowCopyStack2,
 } from "../utils";
 
@@ -21,8 +20,8 @@ function parse(step: InterpreterStep): Item<MSTORE8> {
     throw new Error("[hardhat-tracer]: Faulty MSTORE");
   }
 
-  const offset = parseHex(stack.pop()!, 4);
-  const value = parseHex(stack.pop()!, 1);
+  const offset = parseBytes32(stack.pop()!);
+  const value = parseBytes32(stack.pop()!);
 
   return {
     opcode: "MSTORE8",
@@ -34,7 +33,7 @@ function parse(step: InterpreterStep): Item<MSTORE8> {
 }
 
 function format(item: Item<MSTORE8>): string {
-  return `${colorLabel("[MSTORE8]")} ${colorKey(
+  return `${colorLabel("[MSTORE8]")} ${colorMstore(
     item.params.offset
   )} ← ${colorValue(item.params.value)}`;
 }

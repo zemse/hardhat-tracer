@@ -1,13 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { AwaitedItem, Item } from "../types";
-import {
-  colorKey,
-  colorLabel,
-  colorValue,
-  parseBytes32,
-  parseHex,
-} from "../utils";
+import { colorLabel, colorValue, parseBytes32 } from "../utils";
 
 export interface MSIZE {
   size: string;
@@ -21,9 +15,8 @@ function parse(): AwaitedItem<MSIZE> {
     parse: (stepNext: InterpreterStep) => ({
       opcode: "MSIZE",
       params: {
-        size: parseHex(
-          stepNext.stack[stepNext.stack.length - 1].toString(16),
-          4
+        size: parseBytes32(
+          stepNext.stack[stepNext.stack.length - 1].toString(16)
         ),
       },
       format(): string {

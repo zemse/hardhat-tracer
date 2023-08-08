@@ -1,7 +1,7 @@
 import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
 
 import { Item } from "../types";
-import { colorKey, colorLabel, colorValue, parseBytes32 } from "../utils";
+import { colorLabel, colorSstore, colorValue, parseBytes32 } from "../utils";
 
 export interface SSTORE {
   key: string;
@@ -22,9 +22,9 @@ function parse(step: InterpreterStep): Item<SSTORE> {
 }
 
 function format(item: Item<SSTORE>): string {
-  return `${colorLabel("[SSTORE]")} ${colorKey(item.params.key)} ← ${colorValue(
-    item.params.value
-  )}`;
+  return `${colorLabel("[SSTORE]")} ${colorSstore(
+    item.params.key
+  )} ← ${colorValue(item.params.value)}`;
 }
 
 export default { parse, format };
