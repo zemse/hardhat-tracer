@@ -23,6 +23,7 @@ import revert from "./revert";
 import selfdestruct from "./selfdestruct";
 import sload from "./sload";
 import sstore from "./sstore";
+import sha3 from "./sha3";
 import staticcall from "./staticcall";
 
 export function parse(
@@ -56,6 +57,8 @@ export function parse(
       return sload.parse(step);
     case "SSTORE":
       return sstore.parse(step);
+    case "SHA3":
+      return sha3.parse(step);
     case "REVERT":
       return revert.parse(step);
     default:
@@ -100,6 +103,8 @@ export async function format(
       return sload.format(item);
     case "SSTORE":
       return sstore.format(item);
+    case "SHA3":
+      return sha3.format(item);
     case "REVERT":
       return revert.format(item, dependencies);
     case "SELFDESTRUCT":
