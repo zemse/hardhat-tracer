@@ -22,6 +22,8 @@ function parse(step: InterpreterStep): AwaitedItem<EXTCODESIZE> {
         size: Number(stepNext.stack[step.stack.length - 1].toString()),
       },
       format(): string {
+        let val = this.children?.at(3);
+        val?.format?.();
         return format(this);
       },
     }),
