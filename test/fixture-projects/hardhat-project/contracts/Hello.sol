@@ -15,6 +15,8 @@ contract Hello {
 
   uint256 heyy = 3;
 
+  mapping(address => uint256) hello_world;
+
   struct Person {
     string name;
     uint256 age;
@@ -144,6 +146,7 @@ contract Hello {
 
   function playWithOpcodes() public {
     address someAddr = address(this);
+    hello_world[someAddr] = 420;
     assembly {
       let size := extcodesize(someAddr)
       let h := extcodehash(someAddr)
