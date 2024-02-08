@@ -7,6 +7,7 @@ import { Decoder } from "../decoder";
 import { TraceRecorder } from "../trace-recorder";
 import { TracerEnv } from "../types";
 import { applyStateOverrides, getVM } from "../utils";
+import { HardhatRuntimeEnvironment } from "hardhat/types/runtime";
 const debug = createDebug("hardhat-tracer:extend:hre");
 
 declare module "hardhat/types/runtime" {
@@ -31,27 +32,32 @@ extendEnvironment((hre) => {
   // @ts-ignore
   global.hreArtifacts = hre.artifacts;
 
-  // wait for VM to be initialized
-  getVM(hre)
-    .then(async (vm) => {
-      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
-      if (hre.tracer.stateOverrides) {
-        try {
-          await applyStateOverrides(
-            hre.tracer.stateOverrides,
-            vm,
-            hre.artifacts
-          );
-        } catch {}
-      }
-    })
-    .catch((e) => {
-      debug(
-        "Could not get VM, hardhat tracer is disabled. Error: " + e.message
-      );
-      // if for some reason we can't get the vm, disable hardhat-tracer
-      hre.tracer.enabled = false;
-    });
+  addRecorder(hre);
 
   debug("environment extended!");
 });
+
+
+export async function addRecorder(hre: HardhatRuntimeEnvironment) {
+  // wait for VM to be initialized
+  try {
+    const vm = await getVM(hre);
+  
+    hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+    if (hre.tracer.stateOverrides) {
+      try {
+        await applyStateOverrides(
+          hre.tracer.stateOverrides,
+          vm,
+          hre.artifacts
+        );
+      } catch {}
+    }
+  } catch (e: any) {
+    debug(
+      "Could not get VM, hardhat tracer is disabled. Error: " + e.message
+    );
+    // if for some reason we can't get the vm, disable hardhat-tracer
+    hre.tracer.enabled = false;
+  }
+}
