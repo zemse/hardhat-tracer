@@ -104,22 +104,26 @@ class TracerWrapper extends ProviderWrapper {
  * @param hre: HardhatRuntimeEnvironment - required to get access to contract artifacts and tracer env
  */
 export function wrapHardhatProvider(hre: HardhatRuntimeEnvironment) {
-  wrapProvider(hre, new TracerWrapper({
-    artifacts: hre.artifacts,
-    tracerEnv: hre.tracer,
-    provider: hre.network.provider,
-  }));
+  wrapProvider(
+    hre,
+    new TracerWrapper({
+      artifacts: hre.artifacts,
+      tracerEnv: hre.tracer,
+      provider: hre.network.provider,
+    })
+  );
 }
 
-export function wrapProvider(hre: HardhatRuntimeEnvironment, wrapper: ProviderWrapper) {
+export function wrapProvider(
+  hre: HardhatRuntimeEnvironment,
+  wrapper: ProviderWrapper
+) {
   // do not wrap if already wrapped
   if (isTracerAlreadyWrappedInHreProvider(hre)) {
     return;
   }
 
-  const compatibleProvider = new BackwardsCompatibilityProviderAdapter(
-    wrapper
-  );
+  const compatibleProvider = new BackwardsCompatibilityProviderAdapter(wrapper);
   hre.network.provider = compatibleProvider;
 }
 

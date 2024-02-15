@@ -21,7 +21,11 @@ export function createTracerTask(taskName: string) {
   return addCliParams(task(taskName, `Run hardhat: ${taskName}`));
 }
 
-export async function runTask(args: any, hre: HardhatRuntimeEnvironment, runSuper: any) {
+export async function runTask(
+  args: any,
+  hre: HardhatRuntimeEnvironment,
+  runSuper: any
+) {
   applyCliArgsToTracer(args, hre);
   return runSuper(args);
 }

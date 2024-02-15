@@ -1,9 +1,9 @@
 // tslint:disable-next-line no-implicit-dependencies
 import { assert, expect } from "chai";
 import { config } from "dotenv";
+import { TASK_NODE_GET_PROVIDER } from "hardhat/builtin-tasks/task-names";
 
 import { useEnvironment } from "./helpers";
-import { TASK_NODE_GET_PROVIDER } from "hardhat/builtin-tasks/task-names";
 config();
 
 const ALCHEMY = process.env.ALCHEMY;
@@ -148,7 +148,7 @@ describe("Hardhat Runtime Environment extension", function () {
     it("works", async function () {
       await this.hre.run("compile");
 
-      let provider = await this.hre.run(TASK_NODE_GET_PROVIDER, {
+      const provider = await this.hre.run(TASK_NODE_GET_PROVIDER, {
         "no-deploy": true,
         silent: true,
       });
