@@ -179,6 +179,8 @@ const callItem = trace1.top?.children?.[0].children?.[0] as CallItem;
 const gasUsed = callItem.params.gasUsed!;
 ```
 
+If you are running `npx hardhat node --trace`, then you can also access last trace using the rpc call `tracer_lastTrace`.
+
 ### Register `--trace` option to custom tasks
 
 ```ts
