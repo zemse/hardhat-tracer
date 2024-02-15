@@ -56,7 +56,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  describe("Trace task", function () {
+  (process.env.CI ? describe.skip : describe)("Trace task", function () {
     useEnvironment("hardhat-project");
 
     before(async function () {
@@ -88,7 +88,7 @@ describe("Hardhat Runtime Environment extension", function () {
       });
     });
 
-    it.skip("arbitrum", async function () {
+    it("arbitrum", async function () {
       await this.hre.run("trace", {
         hash:
           "0x582c18de13bb3c5068f6f8bd0e60f86be8e224ad351a0c3414e7c94aa975841f",
@@ -97,7 +97,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  describe("Trace call", function () {
+  (process.env.CI ? describe.skip : describe)("Trace call", function () {
     useEnvironment("hardhat-project");
 
     before(async function () {

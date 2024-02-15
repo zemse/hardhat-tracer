@@ -21,9 +21,9 @@ import mstore from "./mstore";
 import mstore8 from "./mstore8";
 import revert from "./revert";
 import selfdestruct from "./selfdestruct";
+import sha3 from "./sha3";
 import sload from "./sload";
 import sstore from "./sstore";
-import sha3 from "./sha3";
 import staticcall from "./staticcall";
 
 export function parse(
