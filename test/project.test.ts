@@ -1,7 +1,7 @@
 // tslint:disable-next-line no-implicit-dependencies
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import { config } from "dotenv";
-import path from "path";
+import { TASK_NODE_GET_PROVIDER } from "hardhat/builtin-tasks/task-names";
 
 import { useEnvironment } from "./helpers";
 config();
@@ -139,6 +139,30 @@ describe("Hardhat Runtime Environment extension", function () {
           "0xce4c18de00000000000000000000000000000000000000000000000000000000a913a04f",
         rpc: "https://arb-mainnet.g.alchemy.com/v2/" + ALCHEMY,
       });
+    });
+  });
+
+  describe("RPC call tracer_lastTrace", function () {
+    useEnvironment("hardhat-project");
+
+    it("works", async function () {
+      await this.hre.run("compile");
+
+      const provider = await this.hre.run(TASK_NODE_GET_PROVIDER, {
+        "no-deploy": true,
+        silent: true,
+      });
+
+      await this.hre.run("test");
+
+      const lastTraceRpc = await provider.send("tracer_lastTrace");
+      const lastTraceApi = await this.hre.tracer.lastTrace();
+
+      // patch for deep equal
+      lastTraceRpc.parent = undefined;
+      lastTraceRpc.top.params.exception = undefined;
+
+      expect(lastTraceRpc).to.deep.equal(lastTraceApi);
     });
   });
 

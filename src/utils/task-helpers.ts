@@ -9,15 +9,25 @@ import { wrapHardhatProvider } from "../wrapper";
 import { checkIfOpcodesAreValid } from "./check-opcodes";
 
 export function registerTask(taskName: string) {
-  return addCliParams(task(taskName, `Run hardhat: ${taskName}`)).setAction(
-    async (args, hre, runSuper) => {
-      applyCliArgsToTracer(args, hre);
-
+  return createTracerTask(taskName).setAction(
+    (args: any, hre: HardhatRuntimeEnvironment, runSuper: any) => {
       wrapHardhatProvider(hre);
-
-      return runSuper(args);
+      return runTask(args, hre, runSuper);
     }
   );
+}
+
+export function createTracerTask(taskName: string) {
+  return addCliParams(task(taskName, `Run hardhat: ${taskName}`));
+}
+
+export async function runTask(
+  args: any,
+  hre: HardhatRuntimeEnvironment,
+  runSuper: any
+) {
+  applyCliArgsToTracer(args, hre);
+  return runSuper(args);
 }
 
 export function addCliParams(_task: ConfigurableTaskDefinition) {
