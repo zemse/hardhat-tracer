@@ -208,7 +208,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
     // to avoid having to distinguish between empty and non-existing accounts.
     // We *could* do it during the non-forked mode, but for simplicity we just
     // don't support it at all.
-    const isPreSpuriousDragon = !vm._common.gteHardfork("spuriousDragon");
+    const isPreSpuriousDragon = !vm.common.gteHardfork("spuriousDragon");
     if (isPreSpuriousDragon) {
       throw new Error(
         "Tracing is not supported for transactions using hardforks older than Spurious Dragon. "
@@ -220,7 +220,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
     let progressPrinted = Date.now();
     for (const tx of block.transactions) {
       totalProgress += Number(tx.gasLimit.toString());
-      if (tx.hash().equals(hashBuffer)) {
+      if (Buffer.from(tx.hash()).equals(hashBuffer)) {
         break;
       }
     }
@@ -230,18 +230,18 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
       const sender = tx.getSenderAddress();
       if (tx.type === 0) {
         txWithCommon = new FakeSenderTransaction(sender, tx, {
-          common: vm._common,
+          common: vm.common,
         });
       } else if (tx.type === 1) {
         txWithCommon = new FakeSenderAccessListEIP2930Transaction(sender, tx, {
-          common: vm._common,
+          common: vm.common,
         });
       } else if (tx.type === 2) {
         txWithCommon = new FakeSenderEIP1559Transaction(
           sender,
           { ...tx, gasPrice: undefined },
           {
-            common: vm._common,
+            common: vm.common,
           }
         );
       } else {
@@ -249,7 +249,7 @@ async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
         continue;
       }
 
-      const txHash = txWithCommon.hash();
+      const txHash = Buffer.from(txWithCommon.hash());
       debug("running tx %s", txHash.toString("hex"));
       if (txHash.equals(hashBuffer)) {
         await vm.runTx({

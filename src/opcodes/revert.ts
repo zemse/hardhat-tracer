@@ -12,7 +12,7 @@ function parse(step: InterpreterStep): Item<REVERT> {
   const offset = Number(step.stack[step.stack.length - 1].toString());
   const length = Number(step.stack[step.stack.length - 2].toString());
   const data = hexPrefix(
-    step.memory.slice(offset, offset + length).toString("hex")
+    Buffer.from(step.memory.slice(offset, offset + length)).toString("hex")
   );
 
   return {

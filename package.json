@@ -41,7 +41,7 @@
     "@types/readable-stream": "^2.3.14",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
-    "hardhat": "^2.18.3",
+    "hardhat": "^2.19.4",
     "hardhat-deploy": "^0.11.25",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",
@@ -62,5 +62,6 @@
   },
   "resolutions": {
     "safe-buffer": "^5.2.1"
-  }
+  },
+  "packageManager": "yarn@1.22.1"
 }

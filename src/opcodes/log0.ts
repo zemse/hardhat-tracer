@@ -25,7 +25,9 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG0> {
   const dataSize = parseNumber(stack.pop()!);
 
   const data = hexPrefix(
-    step.memory.slice(dataOffset, dataOffset + dataSize).toString("hex")
+    Buffer.from(step.memory.slice(dataOffset, dataOffset + dataSize)).toString(
+      "hex"
+    )
   );
 
   return {

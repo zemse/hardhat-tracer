@@ -19,7 +19,9 @@ export interface SHA3 {
 function parse(step: InterpreterStep): AwaitedItem<SHA3> {
   const offset = parseNumber(step.stack[step.stack.length - 1].toString(16));
   const size = parseNumber(step.stack[step.stack.length - 2].toString(16));
-  const data = step.memory.slice(offset, offset + size).toString("hex");
+  const data = Buffer.from(step.memory.slice(offset, offset + size)).toString(
+    "hex"
+  );
 
   const next = 1; // get stack just after this opcode
   return {

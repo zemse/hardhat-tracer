@@ -23,7 +23,7 @@ const debug = createDebug("hardhat-tracer:trace-recorder");
 
 interface NewContractEvent {
   address: Address;
-  code: Buffer;
+  code: Uint8Array;
 }
 
 export class TraceRecorder {
@@ -58,7 +58,7 @@ export class TraceRecorder {
   ) {
     debug("handleBeforeTx");
     this.trace = new TransactionTrace();
-    this.trace.hash = hexPrefix(tx.hash().toString("hex"));
+    this.trace.hash = hexPrefix(Buffer.from(tx.hash()).toString("hex"));
 
     resolve?.();
   }
@@ -85,7 +85,7 @@ export class TraceRecorder {
         params: {
           from: hexPrefix(message.caller.toString()),
           to: hexPrefix((message._codeAddress ?? message.to).toString()),
-          inputData: hexPrefix(message.data.toString("hex")),
+          inputData: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
         },
         children: [],
@@ -97,7 +97,7 @@ export class TraceRecorder {
         params: {
           from: hexPrefix(message.caller.toString()),
           to: hexPrefix(message.to.toString()),
-          inputData: hexPrefix(message.data.toString("hex")),
+          inputData: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString(16)),
         },
@@ -109,7 +109,7 @@ export class TraceRecorder {
         opcode: "CREATE",
         params: {
           from: hexPrefix(message.caller.toString()),
-          initCode: hexPrefix(message.data.toString("hex")),
+          initCode: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString(16)),
         },
@@ -120,10 +120,10 @@ export class TraceRecorder {
         opcode: "CREATE2",
         params: {
           from: hexPrefix(message.caller.toString()),
-          initCode: hexPrefix(message.data.toString("hex")),
+          initCode: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString(16)),
-          salt: hexPrefix(message.salt.toString("hex")),
+          salt: hexPrefix(Buffer.from(message.salt).toString("hex")),
         },
         children: [],
       } as Item<CREATE2>;
@@ -142,7 +142,7 @@ export class TraceRecorder {
 
   public handleNewContract(
     contract: NewContractEvent,
-    resolve: ((result?: any) => void) | undefined
+    resolve?: ((result?: any) => void) | undefined
   ) {
     debug("handleNewContract %s", contract.address.toString());
     if (!this.trace || !this.trace.parent) {
@@ -262,7 +262,7 @@ export class TraceRecorder {
     }
 
     this.trace.returnCurrentCall(
-      "0x" + evmResult.execResult.returnValue.toString("hex"),
+      "0x" + Buffer.from(evmResult.execResult.returnValue).toString("hex"),
       Number(evmResult?.execResult.executionGasUsed),
       evmResult?.execResult.exceptionError
     );

@@ -1,13 +1,13 @@
 import {
   getOpcodesForHF,
   Opcode,
-} from "@nomicfoundation/ethereumjs-evm/dist/opcodes";
+} from "@nomicfoundation/ethereumjs-evm/dist/cjs/opcodes";
 import { VM } from "@nomicfoundation/ethereumjs-vm";
 
 export function checkIfOpcodesAreValid(opcodes: Map<string, boolean>, vm: VM) {
   // fetch the opcodes which work on this VM
   const activeOpcodesMap = new Map<string, boolean>();
-  for (const opcode of getOpcodesForHF(vm._common).opcodes.values()) {
+  for (const opcode of getOpcodesForHF(vm.common).opcodes.values()) {
     activeOpcodesMap.set(opcode.fullName, true);
   }
 

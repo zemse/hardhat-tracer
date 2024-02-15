@@ -110,6 +110,10 @@ export async function applyStateOverrides(
     // for balance and nonce
     if (overrides.balance !== undefined || overrides.nonce !== undefined) {
       const account = await vm.stateManager.getAccount(address);
+      if (account === undefined) {
+        throw new Error("account is undefined");
+      }
+
       if (overrides.nonce !== undefined) {
         account.nonce = BigNumber.from(overrides.nonce).toBigInt();
       }

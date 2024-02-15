@@ -40,7 +40,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  describe.only("Test task", function () {
+  describe("Test task", function () {
     useEnvironment("hardhat-project");
 
     // before(async function () {
