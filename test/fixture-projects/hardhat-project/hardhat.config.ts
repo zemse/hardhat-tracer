@@ -13,8 +13,12 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
 
   networks: {
+    hardhat: {
+      saveDeployments: false,
+    },
     localhost: {
       url: "http://localhost:8545",
+      saveDeployments: false,
     },
     mainnet: {
       chainId: 1,

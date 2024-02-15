@@ -88,10 +88,18 @@ describe("Hello", () => {
     );
 
     expect(hre.tracer.lastTrace()).to.have.messageCall(
-      await contract.populateTransaction.getData(),
+      await contract.populateTransaction.hit(
+        {
+          name: "hello",
+          age: 23,
+          props: { id: 12, name: "yello", age: 99 },
+        },
+        1234,
+        { value: parseEther("1") }
+      ),
       {
-        returnData: ethers.utils.defaultAbiCoder.encode(["uint"], ["1234"]),
-        from: contract.address,
+        // returnData: ethers.utils.defaultAbiCoder.encode(["uint"], ["1234"]),
+        from: await contract.signer.getAddress(),
       }
     );
   });

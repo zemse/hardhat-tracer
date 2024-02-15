@@ -54,7 +54,7 @@ contract Hello {
     revert("hello");
   }
 
-  function hit(Person memory person, uint256 time) external payable {
+  function hit(Person memory person, uint256 time) external payable returns (uint) {
     Child c = new Child(address(0));
     emit WhatsUp(c.hi());
     this.dm();
@@ -64,6 +64,7 @@ contract Hello {
     );
     emit WhatsUp(c.hi());
     // selfdestruct(payable(0));
+    return time;
   }
 
   function crash() external {
