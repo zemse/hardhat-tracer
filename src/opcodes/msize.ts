@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { AwaitedItem, Item } from "../types";
 import { colorLabel, colorValue, parseBytes32 } from "../utils";
@@ -12,7 +12,7 @@ function parse(): AwaitedItem<MSIZE> {
   return {
     isAwaitedItem: true,
     next,
-    parse: (stepNext: InterpreterStep) => ({
+    parse: (stepNext: MinimalInterpreterStep) => ({
       opcode: "MSIZE",
       params: {
         size: parseBytes32(

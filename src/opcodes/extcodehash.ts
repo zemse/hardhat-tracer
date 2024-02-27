@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { AwaitedItem, Item } from "../types";
 import {
@@ -14,14 +14,14 @@ export interface EXTCODEHASH {
   hash: string;
 }
 
-function parse(step: InterpreterStep): AwaitedItem<EXTCODEHASH> {
+function parse(step: MinimalInterpreterStep): AwaitedItem<EXTCODEHASH> {
   const address = parseAddress(step.stack[step.stack.length - 1].toString(16));
 
   const next = 1; // get stack just after this opcode
   return {
     isAwaitedItem: true,
     next,
-    parse: (stepNext: InterpreterStep) => ({
+    parse: (stepNext: MinimalInterpreterStep) => ({
       opcode: "EXTCODEHASH",
       params: {
         address,

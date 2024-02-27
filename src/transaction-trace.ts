@@ -1,4 +1,4 @@
-import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
+// import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
 
 import { CallItem, Item } from "./types";
 
@@ -40,7 +40,7 @@ export class TransactionTrace {
   public returnCurrentCall(
     returnData: string,
     executionGas: number,
-    exception?: EvmError
+    exception?: any // EvmError
   ) {
     if (!this.parent) {
       throw new Error(

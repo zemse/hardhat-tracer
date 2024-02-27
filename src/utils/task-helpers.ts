@@ -30,7 +30,9 @@ export async function runTask(
   return runSuper(args);
 }
 
-export function addCliParams(_task: ConfigurableTaskDefinition) {
+export function addCliParams(
+  _task: ConfigurableTaskDefinition
+): ConfigurableTaskDefinition {
   return (
     _task
       // verbosity flags

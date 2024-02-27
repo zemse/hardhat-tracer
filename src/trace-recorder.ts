@@ -1,11 +1,12 @@
-import {
-  EVMResult,
-  InterpreterStep,
-  Message,
-} from "@nomicfoundation/ethereumjs-evm";
+// import {
+//   EVMResult,
+//   InterpreterStep,
+//   Message,
+// } from "@nomicfoundation/ethereumjs-evm";
 import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
 import { Address } from "@nomicfoundation/ethereumjs-util";
-import { AfterTxEvent, VM } from "@nomicfoundation/ethereumjs-vm";
+// import { AfterTxEvent, VM } from "@nomicfoundation/ethereumjs-vm";
+import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 import createDebug from "debug";
 
 import { parse } from "./opcodes";
@@ -19,6 +20,11 @@ import { AwaitedItem, Item, TracerEnv } from "./types";
 import { checkIfOpcodesAreValid } from "./utils/check-opcodes";
 import { hexPrefix } from "./utils/hex";
 import { isItem } from "./utils/item";
+import {
+  MinimalEVMResult,
+  MinimalInterpreterStep,
+  MinimalMessage,
+} from "hardhat/internal/hardhat-network/provider/vm/types";
 const debug = createDebug("hardhat-tracer:trace-recorder");
 
 interface NewContractEvent {
@@ -27,7 +33,7 @@ interface NewContractEvent {
 }
 
 export class TraceRecorder {
-  public vm: VM;
+  public vm: MinimalEthereumJsVm;
   public previousTraces: TransactionTrace[] = [];
   public trace: TransactionTrace | undefined;
   public previousOpcode: string | undefined;
@@ -35,7 +41,7 @@ export class TraceRecorder {
   public awaitedItems: Array<AwaitedItem<any>>;
   public addressStack: string[];
 
-  constructor(vm: VM, tracerEnv: TracerEnv) {
+  constructor(vm: MinimalEthereumJsVm, tracerEnv: TracerEnv) {
     this.vm = vm;
     this.tracerEnv = tracerEnv;
 
@@ -44,27 +50,27 @@ export class TraceRecorder {
     this.awaitedItems = [];
     this.addressStack = [];
 
-    vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
+    // vm.evm.events.on("beforeTx", this.handleBeforeTx.bind(this));
     vm.evm.events?.on("beforeMessage", this.handleBeforeMessage.bind(this));
-    vm.evm.events?.on("newContract", this.handleNewContract.bind(this));
+    // vm.evm.events?.on("newContract", this.handleNewContract.bind(this));
     vm.evm.events?.on("step", this.handleStep.bind(this));
     vm.evm.events?.on("afterMessage", this.handleAfterMessage.bind(this));
-    vm.events.on("afterTx", this.handleAfterTx.bind(this));
+    // vm.events.on("afterTx", this.handleAfterTx.bind(this));
   }
 
   public handleBeforeTx(
-    tx: TypedTransaction,
-    resolve: ((result?: any) => void) | undefined
+    // tx: any, // TypedTransaction,
+    resolve?: ((result?: any) => void) | undefined
   ) {
     debug("handleBeforeTx");
     this.trace = new TransactionTrace();
-    this.trace.hash = hexPrefix(Buffer.from(tx.hash()).toString("hex"));
+    // this.trace.hash = hexPrefix(Buffer.from(tx.hash()).toString("hex"));
 
     resolve?.();
   }
 
   public handleBeforeMessage(
-    message: Message,
+    message: MinimalMessage,
     resolve: ((result?: any) => void) | undefined
   ) {
     debug("handleBeforeMessage");
@@ -73,8 +79,16 @@ export class TraceRecorder {
         "[hardhat-tracer]: trace is undefined in handleBeforeMessage"
       );
     }
+    const isDelegateCall =
+      !!message.to &&
+      !!message.codeAddress &&
+      message.to != message.codeAddress;
+
+    const isStaticCall = false; // TODO
+    const salt = undefined; // TODO
+
     let item: Item<any>;
-    if (message.delegatecall) {
+    if (isDelegateCall) {
       if (message.to === undefined) {
         throw new Error(
           "[hardhat-tracer]: message.to is undefined in handleBeforeMessage"
@@ -84,7 +98,7 @@ export class TraceRecorder {
         opcode: "DELEGATECALL",
         params: {
           from: hexPrefix(message.caller.toString()),
-          to: hexPrefix((message._codeAddress ?? message.to).toString()),
+          to: hexPrefix((message.codeAddress ?? message.to).toString()),
           inputData: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
         },
@@ -93,7 +107,7 @@ export class TraceRecorder {
       this.addressStack.push(item.params.to);
     } else if (message.to) {
       item = {
-        opcode: message.isStatic ? "STATICCALL" : "CALL",
+        opcode: isStaticCall ? "STATICCALL" : "CALL",
         params: {
           from: hexPrefix(message.caller.toString()),
           to: hexPrefix(message.to.toString()),
@@ -104,7 +118,7 @@ export class TraceRecorder {
         children: [],
       } as Item<CALL>;
       this.addressStack.push(item.params.to);
-    } else if (message.to === undefined && message.salt === undefined) {
+    } else if (message.to === undefined && salt === undefined) {
       item = {
         opcode: "CREATE",
         params: {
@@ -115,7 +129,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CREATE>;
-    } else if (message.to === undefined && message.salt !== undefined) {
+    } else if (message.to === undefined && salt !== undefined) {
       item = {
         opcode: "CREATE2",
         params: {
@@ -123,7 +137,7 @@ export class TraceRecorder {
           initCode: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
           value: hexPrefix(message.value.toString(16)),
-          salt: hexPrefix(Buffer.from(message.salt).toString("hex")),
+          salt: hexPrefix(Buffer.from(salt).toString("hex")),
         },
         children: [],
       } as Item<CREATE2>;
@@ -175,7 +189,7 @@ export class TraceRecorder {
   }
 
   public handleStep(
-    step: InterpreterStep,
+    step: MinimalInterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
     // debug("handleStep %s", step.opcode.name);
@@ -224,7 +238,7 @@ export class TraceRecorder {
   }
 
   public handleAfterMessage(
-    evmResult: EVMResult,
+    evmResult: MinimalEVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
     debug("handleAfterMessage");
@@ -234,46 +248,47 @@ export class TraceRecorder {
       );
     }
 
-    if (evmResult.execResult.selfdestruct) {
-      const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
-      for (const [address, beneficiary] of selfdestructs) {
-        debug("self destruct %s", address);
-        this.trace.insertItem({
-          opcode: "SELFDESTRUCT",
-          params: {
-            beneficiary: hexPrefix(beneficiary.toString("hex")),
-          },
-        });
-      }
-    }
+    // TODO add support
+    // if (evmResult.execResult.selfdestruct) {
+    //   const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
+    //   for (const [address, beneficiary] of selfdestructs) {
+    //     debug("self destruct %s", address);
+    //     this.trace.insertItem({
+    //       opcode: "SELFDESTRUCT",
+    //       params: {
+    //         beneficiary: hexPrefix(beneficiary.toString("hex")),
+    //       },
+    //     });
+    //   }
+    // }
 
-    if (
-      evmResult?.execResult.exceptionError &&
-      evmResult.execResult.exceptionError.error !== "revert"
-    ) {
-      debug("exception %s", evmResult.execResult.exceptionError.error);
-      this.trace.insertItem({
-        opcode: "EXCEPTION",
-        params: {
-          error: evmResult.execResult.exceptionError.error,
-          type: evmResult.execResult.exceptionError.errorType,
-        },
-      } as Item<EXCEPTION>);
-    }
+    // if (
+    //   evmResult?.execResult.exceptionError &&
+    //   evmResult.execResult.exceptionError.error !== "revert"
+    // ) {
+    //   debug("exception %s", evmResult.execResult.exceptionError.error);
+    //   this.trace.insertItem({
+    //     opcode: "EXCEPTION",
+    //     params: {
+    //       error: evmResult.execResult.exceptionError.error,
+    //       type: evmResult.execResult.exceptionError.errorType,
+    //     },
+    //   } as Item<EXCEPTION>);
+    // }
 
-    this.trace.returnCurrentCall(
-      "0x" + Buffer.from(evmResult.execResult.returnValue).toString("hex"),
-      Number(evmResult?.execResult.executionGasUsed),
-      evmResult?.execResult.exceptionError
-    );
+    // this.trace.returnCurrentCall(
+    //   "0x" + Buffer.from(evmResult.execResult.returnValue).toString("hex"),
+    //   Number(evmResult?.execResult.executionGasUsed),
+    //   evmResult?.execResult.exceptionError
+    // );
     this.addressStack.pop();
 
     resolve?.();
   }
 
   public handleAfterTx(
-    _tx: AfterTxEvent,
-    resolve: ((result?: any) => void) | undefined
+    // _tx: any, // AfterTxEvent,
+    resolve?: ((result?: any) => void) | undefined
   ) {
     debug("handleAfterTx");
     if (this.tracerEnv.enabled) {

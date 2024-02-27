@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { AwaitedItem, Item } from "../types";
 import { colorLabel, colorSload, colorValue, parseBytes32 } from "../utils";
@@ -8,14 +8,14 @@ export interface SLOAD {
   value: string;
 }
 
-function parse(step: InterpreterStep): AwaitedItem<SLOAD> {
+function parse(step: MinimalInterpreterStep): AwaitedItem<SLOAD> {
   const key = parseBytes32(step.stack[step.stack.length - 1].toString(16));
 
   const next = 1; // get stack just after this opcode
   return {
     isAwaitedItem: true,
     next,
-    parse: (stepNext: InterpreterStep) => ({
+    parse: (stepNext: MinimalInterpreterStep) => ({
       opcode: "SLOAD",
       params: {
         key,

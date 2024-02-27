@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { Item } from "../types";
 import { colorLabel, colorSstore, colorValue, parseBytes32 } from "../utils";
@@ -8,7 +8,7 @@ export interface SSTORE {
   value: string;
 }
 
-function parse(step: InterpreterStep): Item<SSTORE> {
+function parse(step: MinimalInterpreterStep): Item<SSTORE> {
   return {
     opcode: "SSTORE",
     params: {

@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { Item } from "../types";
 import {
@@ -14,7 +14,10 @@ export interface LOG1 extends LOG {
   topics: [string];
 }
 
-function parse(step: InterpreterStep, currentAddress?: string): Item<LOG1> {
+function parse(
+  step: MinimalInterpreterStep,
+  currentAddress?: string
+): Item<LOG1> {
   if (!currentAddress) {
     throw new Error(
       "[hardhat-tracer]: currentAddress is required for log to be recorded"
@@ -30,11 +33,12 @@ function parse(step: InterpreterStep, currentAddress?: string): Item<LOG1> {
   const dataSize = parseNumber(stack.pop()!);
   const topic0 = parseBytes32(stack.pop()!);
 
-  const data = hexPrefix(
-    Buffer.from(step.memory.slice(dataOffset, dataOffset + dataSize)).toString(
-      "hex"
-    )
-  );
+  // const data = hexPrefix(
+  //   Buffer.from(step.memory.slice(dataOffset, dataOffset + dataSize)).toString(
+  //     "hex"
+  //   )
+  // );
+  const data = "0x"; // TODO fix this once memory support is added
 
   return {
     opcode: "LOG1",

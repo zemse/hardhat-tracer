@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { Item } from "../types";
 import {
@@ -14,7 +14,7 @@ export interface MSTORE {
   value: string;
 }
 
-function parse(step: InterpreterStep): Item<MSTORE> {
+function parse(step: MinimalInterpreterStep): Item<MSTORE> {
   const stack = shallowCopyStack2(step.stack);
   if (stack.length < 2) {
     throw new Error("[hardhat-tracer]: Faulty MSTORE");

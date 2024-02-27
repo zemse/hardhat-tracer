@@ -1,4 +1,4 @@
-import { InterpreterStep } from "@nomicfoundation/ethereumjs-evm";
+import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { AwaitedItem, Item, TracerDependencies } from "../types";
 
@@ -27,7 +27,7 @@ import sstore from "./sstore";
 import staticcall from "./staticcall";
 
 export function parse(
-  step: InterpreterStep,
+  step: MinimalInterpreterStep,
   currentAddress: string
 ): Item<any> | AwaitedItem<any> | undefined {
   switch (step.opcode.name) {

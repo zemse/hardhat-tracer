@@ -1,5 +1,5 @@
 import { Address } from "@nomicfoundation/ethereumjs-util";
-import { VM } from "@nomicfoundation/ethereumjs-vm";
+import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 import { BigNumber, ethers } from "ethers";
 import { hexZeroPad } from "ethers/lib/utils";
 import { Artifacts } from "hardhat/types";
@@ -10,7 +10,7 @@ async function setBytecode(
   contractInfo: ContractInfo,
   artifacts: Artifacts,
   addressThis: string,
-  vm: VM
+  vm: MinimalEthereumJsVm
 ) {
   if (typeof contractInfo === "string") {
     if (ethers.utils.isHexString(contractInfo)) {
@@ -96,7 +96,7 @@ async function setBytecode(
 
 export async function applyStateOverrides(
   stateOverrides: StateOverrides,
-  vm: VM,
+  vm: MinimalEthereumJsVm,
   artifacts: Artifacts
 ) {
   for (const [_address, overrides] of Object.entries(stateOverrides)) {
@@ -107,21 +107,21 @@ export async function applyStateOverrides(
     }
 
     const address = Address.fromString(_address);
-    // for balance and nonce
-    if (overrides.balance !== undefined || overrides.nonce !== undefined) {
-      const account = await vm.stateManager.getAccount(address);
-      if (account === undefined) {
-        throw new Error("account is undefined");
-      }
+    // TODO for balance and nonce
+    // if (overrides.balance !== undefined || overrides.nonce !== undefined) {
+    //   const account = await vm.stateManager.getAccount(address);
+    //   if (account === undefined) {
+    //     throw new Error("account is undefined");
+    //   }
 
-      if (overrides.nonce !== undefined) {
-        account.nonce = BigNumber.from(overrides.nonce).toBigInt();
-      }
-      if (overrides.balance) {
-        account.balance = BigNumber.from(overrides.balance).toBigInt();
-      }
-      await vm.stateManager.putAccount(address, account);
-    }
+    //   if (overrides.nonce !== undefined) {
+    //     account.nonce = BigNumber.from(overrides.nonce).toBigInt();
+    //   }
+    //   if (overrides.balance) {
+    //     account.balance = BigNumber.from(overrides.balance).toBigInt();
+    //   }
+    //   await vm.stateManager.putAccount(address, account);
+    // }
 
     // for bytecode
     if (overrides.bytecode) {
