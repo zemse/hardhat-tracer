@@ -64,7 +64,7 @@ class TracerWrapper extends ProviderWrapper {
 
     switch (this.dependencies.tracerEnv.verbosity) {
       case 0:
-        shouldPrint = false;
+        shouldPrint = !!this.dependencies.tracerEnv.printNext;
         break;
       case 1:
       case 2:
