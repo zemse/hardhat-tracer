@@ -25,11 +25,10 @@ Allows you to see events, calls and storage operations when running your tests.
 npm i hardhat-tracer
 ```
 
-**Step 2:** Add to your `hardhat.config.js` file
-
-```
-require("hardhat-tracer");
-```
+**Step 2:** Add to your `hardhat.config` file
+| hardhat.config.js             | hardhat.config.ts         |
+|  :---                         |        :---:              |
+|``require("hardhat-tracer"); ``|``import "hardhat-tracer"``|     
 
 ## Usage
 
