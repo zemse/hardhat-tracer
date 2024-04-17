@@ -24,6 +24,9 @@ const debug = createDebug("hardhat-tracer:tasks:trace");
 const originalCreate = VM.create;
 
 VM.create = async function (...args) {
+  // @ts-ignore
+  global._vmCreateCalled = true;
+
   const vm = await originalCreate.bind(VM)(...args);
 
   // @ts-ignore

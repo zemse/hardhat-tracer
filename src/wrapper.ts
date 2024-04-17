@@ -88,6 +88,18 @@ class TracerWrapper extends ProviderWrapper {
         if (lastTrace) {
           this.dependencies.tracerEnv.printNext = false;
           await print(lastTrace, this.dependencies);
+        } else {
+          // @ts-ignore
+          const _vmCreateCalled = global._vmCreateCalled;
+          if (_vmCreateCalled) {
+            console.error(
+              "[hardhat-tracer]: VM hijack was successful yet last trace is not present. Please report this by creating an issue on https://github.com/zemse/hardhat-tracer"
+            );
+          } else {
+            console.error(
+              "[hardhat-tracer]: VM hijack was not successful. Please clear your package lock and node_modules and reinstall. Otherwise create an issue on https://github.com/zemse/hardhat-tracer"
+            );
+          }
         }
       }
     }
