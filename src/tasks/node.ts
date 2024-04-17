@@ -10,13 +10,18 @@ import {
 import { addRecorder } from "../extend/hre";
 import { ProviderLike } from "../types";
 import { createTracerTask, runTask } from "../utils";
-import { wrapProvider } from "../wrapper";
+import { wrapHardhatProvider, wrapProvider } from "../wrapper";
 
 createTracerTask("node").setAction(runTask);
 
 subtask(TASK_NODE_GET_PROVIDER).setAction(async (args, hre, runSuper) => {
+  // wraps fresh provider and assigns it to hre.network.provider
   const provider = await runSuper(args);
   wrapProvider(hre, new RpcWrapper(hre, provider));
+
+  // wraps hre.network.provider using TracerWrapper
+  wrapHardhatProvider(hre);
+
   addRecorder(hre).catch(console.error);
   return hre.network.provider;
 });
