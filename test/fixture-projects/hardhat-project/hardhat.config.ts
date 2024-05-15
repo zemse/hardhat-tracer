@@ -24,6 +24,9 @@ const config: HardhatUserConfig = {
       chainId: 1,
       url: "https://eth-mainnet.alchemyapi.io/v2/" + process.env.ALCHEMY,
     },
+    arbitrum: {
+      url: "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY,
+    },
   },
   paths: {},
   tracer: {
@@ -47,7 +50,7 @@ const config: HardhatUserConfig = {
         //   },
         // },
       },
-      "0xc611d00000000000000000000000001234567890": {
+      "0xC611D00000000000000000000000000000000000": {
         bytecode: "Child",
       },
     },

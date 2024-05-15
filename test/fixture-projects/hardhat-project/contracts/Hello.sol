@@ -81,6 +81,13 @@ contract Hello {
     c.kick();
   }
 
+  function iamview() external view returns (uint256 v) {
+    assembly {
+      v := sload(1) 
+    }
+     this.dm();
+  }
+
   function dm() external view returns (string memory) {
     this.getData();
     return this.dm2("Heya!", msg.sender);
@@ -132,7 +139,7 @@ contract Hello {
   }
 
   function delegatedShoot() public {
-    address(0xC611D00000000000000000000000001234567890).delegatecall(
+    address(0xC611D00000000000000000000000000000000000).delegatecall(
       abi.encodeCall(Child.shoot, ())
     );
   }

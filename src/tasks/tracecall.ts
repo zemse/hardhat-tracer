@@ -4,8 +4,8 @@ import { task } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 
 import { print } from "../print";
-import { TraceRecorder } from "../trace-recorder";
-import { addCliParams, applyCliArgsToTracer } from "../utils";
+import { addCliParams, applyCliArgsToTracer, colorError } from "../utils";
+import { addRecorder } from "../extend/hre";
 const debug = createDebug("hardhat-tracer:tasks:trace");
 
 addCliParams(task("tracecall", "Traces a call"))
@@ -65,7 +65,11 @@ addCliParams(task("tracecall", "Traces a call"))
       args.blocknumber = await provider.getBlockNumber();
     }
 
-    console.warn("Activating mainnet fork at block", args.blocknumber);
+    console.warn(
+      "Activating mainnet fork at block",
+      args.rpc,
+      args.blocknumber
+    );
     await hre.network.provider.send("hardhat_reset", [
       {
         forking: {
@@ -74,6 +78,7 @@ addCliParams(task("tracecall", "Traces a call"))
         },
       },
     ]);
+    addRecorder(hre); // reset seems to clear all what we did to the provider
 
     try {
       debug("making call");
@@ -85,13 +90,18 @@ addCliParams(task("tracecall", "Traces a call"))
         gasPrice: args.gasPrice,
         from: args.from,
       });
-      console.log("result:", result);
-    } catch {}
+      console.log("eth_call result:", result);
+    } catch (e) {
+      console.error("eth_call error:", (e as any).error);
+    }
     // TODO try to do this properly
     // @ts-ignore
-    const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
+    const recorder = hre.tracer.recorder!;
 
     debug("printing trace");
+    if (!recorder.previousTraces || recorder.previousTraces.length === 0) {
+      throw new Error("[hardhat-tracer]: Failed to record the trace");
+    }
     await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
       artifacts: hre.artifacts,
       tracerEnv: hre.tracer,

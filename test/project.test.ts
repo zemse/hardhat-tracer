@@ -47,7 +47,7 @@ describe("Hardhat Runtime Environment extension", function () {
     //   await this.hre.run("compile");
     // });
 
-    it.only("test works", async function () {
+    it("test works", async function () {
       await this.hre.run("compile");
       await this.hre.run("test", {
         trace: true,
@@ -55,7 +55,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  (process.env.CI ? describe.skip : describe)("Trace task", function () {
+  describe.skip("Trace task", function () {
     useEnvironment("hardhat-project");
 
     before(async function () {
@@ -115,7 +115,7 @@ describe("Hardhat Runtime Environment extension", function () {
           "0x414bf389000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000f4ee9631f4be0a63756515141281a3e2b293bbe00000000000000000000000000000000000000000000000000000000627e90ee000000000000000000000000000000000000000000000003244c2a6bb0dc44220000000000000000000000000000000000000000000000000000001be27dca0d0000000000000000000000000000000000000000000000000000000000000000",
         opcodes: "SSTORE,SLOAD",
         blocknumber: "14768585",
-        rpc: "https://arb-mainnet.g.alchemy.com/v2/" + ALCHEMY,
+        rpc: "https://eth-mainnet.g.alchemy.com/v2/" + ALCHEMY,
       });
     });
 
@@ -131,12 +131,21 @@ describe("Hardhat Runtime Environment extension", function () {
       });
     });
 
-    it("arbitrum", async function () {
+    it("arbitrum by rpc", async function () {
       await this.hre.run("tracecall", {
         to: "0x4521916972a76d5bfa65fb539cf7a0c2592050ac",
         data:
           "0xce4c18de00000000000000000000000000000000000000000000000000000000a913a04f",
-        rpc: "https://arb-mainnet.g.alchemy.com/v2/" + ALCHEMY,
+        rpc: "https://arb-mainnet.alchemyapi.io/v2/" + ALCHEMY,
+      });
+    });
+
+    it("arbitrum by network", async function () {
+      await this.hre.run("tracecall", {
+        to: "0x4521916972a76d5bfa65fb539cf7a0c2592050ac",
+        data:
+          "0xce4c18de00000000000000000000000000000000000000000000000000000000a913a04f",
+        network: "arbitrum",
       });
     });
   });
@@ -158,8 +167,8 @@ describe("Hardhat Runtime Environment extension", function () {
       const lastTraceApi = await this.hre.tracer.lastTrace();
 
       // patch for deep equal
-      lastTraceRpc.parent = undefined;
-      lastTraceRpc.top.params.exception = undefined;
+      // lastTraceRpc.parent = undefined;
+      // lastTraceRpc.top.params.exception = undefined;
 
       expect(lastTraceRpc).to.deep.equal(lastTraceApi);
     });

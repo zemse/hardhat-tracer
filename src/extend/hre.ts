@@ -49,7 +49,12 @@ export async function addRecorder(hre: HardhatRuntimeEnvironment) {
 
     const vm = await getVMFromBaseProvider(provider);
 
-    hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+    if (!hre.tracer.recorder) {
+      hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
+    } else {
+      hre.tracer.recorder.vm = vm;
+    }
+
     if (hre.tracer.stateOverrides) {
       try {
         await applyStateOverrides(hre.tracer.stateOverrides, vm, hre.artifacts);

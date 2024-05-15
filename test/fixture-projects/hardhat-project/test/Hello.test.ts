@@ -33,13 +33,20 @@ describe("Hello", () => {
     // await signers[0].estimateGas({ ...tx });
 
     console.log("========> hello.hi2()");
-    await hello.hi2(
-      [
-        { id: 1, id2: 1 },
-        { id: 2, id2: 1 },
-      ],
-      { value: parseEther("1") }
-    );
+    try {
+      await hello.hi2(
+        [
+          { id: 1, id2: 1 },
+          { id: 2, id2: 1 },
+        ],
+        { value: parseEther("1") }
+      );
+      throw new Error("this should error");
+    } catch (e) {
+      expect((e as any).message).to.contain(
+        "VM Exception while processing transaction: reverted with reason string 'hello'"
+      );
+    }
   });
 
   it("should ignore next", async () => {
@@ -104,6 +111,16 @@ describe("Hello", () => {
         from: await contract.signer.getAddress(),
       }
     );
+  });
+
+  it("should print static call", async () => {
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+
+    await contract.iamview();
   });
 
   it("should do a delegate call under static call", async () => {
