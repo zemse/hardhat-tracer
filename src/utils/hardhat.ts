@@ -91,8 +91,9 @@ export function parseExec(execResult: MinimalExecResult) {
   const isReturn = success && reason === 1;
   const isSelfDestruct = success && reason === 2;
 
-  const isRevert = success && reason === undefined;
-  // TODO this is incorrect, currently is success is false then reason undefined
+  const isRevert = !success && reason === undefined;
+
+  const isException = !success && reason !== undefined;
   const isOutOfGas = !success && reason === 0;
   const isOpcodeNotFound = !success && reason === 1;
   const isInvalidFEOpcode = !success && reason === 2;
@@ -186,6 +187,7 @@ export function parseExec(execResult: MinimalExecResult) {
     isReturn,
     isSelfDestruct,
     isRevert,
+    isException,
     isOutOfGas,
     isOpcodeNotFound,
     isInvalidFEOpcode,

@@ -247,7 +247,7 @@ export class TraceRecorder {
       );
     }
 
-    let { errorStr, isRevert } = parseExec(evmResult.execResult);
+    let { errorStr, isException } = parseExec(evmResult.execResult);
     // TODO add support - not doing for now, will add if needed
     // if (isSelfDestruct) {
     //   const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
@@ -262,7 +262,7 @@ export class TraceRecorder {
     //   }
     // }
 
-    if (errorStr && !isRevert) {
+    if (isException) {
       debug("exception %s", errorStr);
       this.trace.insertItem({
         opcode: "EXCEPTION",

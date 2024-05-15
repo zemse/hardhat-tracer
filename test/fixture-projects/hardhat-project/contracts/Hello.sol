@@ -51,6 +51,8 @@ contract Hello {
     Child c = new Child(address(0));
     emit WhatsUp(c.hi());
     address(c).delegatecall(abi.encodeWithSignature("hi()"));
+    // exception OUT_OF_GAS
+    address(c).delegatecall{gas:0}(abi.encodeWithSignature("hi()"));
     address(c).delegatecall(abi.encodeWithSignature("unknown-function()"));
     Lib.add(1, 2);
     address(0xad51cE66B57Aa5349b1380b252EF43dF039ba29e).call{value: 1 ether}("");
@@ -242,7 +244,7 @@ contract Child {
     temp = hello;
   }
 
-  function hi() public pure returns (string memory) {
+  function hi() public payable returns (string memory) {
     return "Heya!";
   }
 
