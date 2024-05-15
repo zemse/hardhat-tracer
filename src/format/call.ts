@@ -92,7 +92,9 @@ export async function formatCall(
 
   const extra = [];
   if ((value = BigNumber.from(value)).gt(0)) {
-    extra.push(`value${SEPARATOR}${formatEther(value)}`);
+    extra.push(
+      `value${SEPARATOR}${formatParam(value, dependencies, { isEther: true })}`
+    );
   }
   if (
     (gasLimit = BigNumber.from(gasLimit)).gt(0) &&
@@ -150,6 +152,10 @@ export async function formatCall(
     }(${colorKey("input" + SEPARATOR)}${colorValue(input)}, ${colorKey(
       "ret" + SEPARATOR
     )}${colorValue(ret)})`;
+  } else if (input === "0x" && ret === "0x" && value.gt(0)) {
+    return `${colorFunction("EtherTransfer")}${
+      extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""
+    }(${colorKey("to" + SEPARATOR)}${colorValue(to)})`;
   } else {
     return `${colorFunction("UnknownContractAndFunction")}${
       extra.length !== 0 ? colorExtra(`{${extra.join(", ")}}`) : ""

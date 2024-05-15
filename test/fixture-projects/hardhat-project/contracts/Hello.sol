@@ -42,7 +42,7 @@ contract Hello {
     uint256 id2;
   }
 
-  function hi2(Info[] memory) public {
+  function hi2(Info[] memory) public payable {
     assembly {
       mstore(0, 0)
       let val := msize()
@@ -53,6 +53,7 @@ contract Hello {
     address(c).delegatecall(abi.encodeWithSignature("hi()"));
     address(c).delegatecall(abi.encodeWithSignature("unknown-function()"));
     Lib.add(1, 2);
+    address(0xad51cE66B57Aa5349b1380b252EF43dF039ba29e).call{value: 1 ether}("");
     revert("hello");
   }
 

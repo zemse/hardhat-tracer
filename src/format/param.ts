@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { getAddress } from "ethers/lib/utils";
+import { formatEther, getAddress } from "ethers/lib/utils";
 
 import { SEPARATOR } from "../constants";
 import { TracerDependencies } from "../types";
@@ -14,10 +14,15 @@ import {
 
 export function formatParam(
   value: any,
-  dependencies: TracerDependencies
+  dependencies: TracerDependencies,
+  options?: { isEther?: boolean }
 ): string {
   if (value?._isBigNumber) {
-    return colorValue(BigNumber.from(value).toString());
+    if (options?.isEther) {
+      return colorValue(formatEther(value));
+    } else {
+      return colorValue(BigNumber.from(value).toString());
+    }
   } else if (typeof value === "string" && value.slice(0, 2) !== "0x") {
     return colorValue(`"${value}"`);
   } else if (

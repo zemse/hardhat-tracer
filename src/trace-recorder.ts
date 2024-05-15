@@ -83,9 +83,9 @@ export class TraceRecorder {
     const isDelegateCall =
       !!message.to &&
       !!message.codeAddress &&
-      message.to != message.codeAddress;
+      !message.to.equals(message.codeAddress);
 
-    const isStaticCall = false; // TODO
+    const isStaticCall = message.isStaticCall;
     const salt = undefined; // TODO
 
     let item: Item<any>;
@@ -102,6 +102,7 @@ export class TraceRecorder {
           to: hexPrefix((message.codeAddress ?? message.to).toString()),
           inputData: hexPrefix(Buffer.from(message.data).toString("hex")),
           gasLimit: Number(message.gasLimit.toString()),
+          value: this.trace.parent?.params.value,
         },
         children: [],
       } as Item<DELEGATECALL>;
@@ -150,7 +151,6 @@ export class TraceRecorder {
       };
       console.error("handleBeforeMessage: message type not handled", message);
     }
-
     this.trace.insertItem(item, { increaseDepth: true });
     resolve?.();
   }
