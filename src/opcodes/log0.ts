@@ -1,7 +1,7 @@
 import { MinimalInterpreterStep } from "hardhat/internal/hardhat-network/provider/vm/types";
 
 import { Item } from "../types";
-import { hexPrefix, parseNumber, shallowCopyStack2 } from "../utils";
+import { memorySlice, parseNumber, shallowCopyStack2 } from "../utils";
 
 import { LOG } from "./log";
 
@@ -27,12 +27,7 @@ function parse(
   const dataOffset = parseNumber(stack.pop()!);
   const dataSize = parseNumber(stack.pop()!);
 
-  // const data = hexPrefix(
-  //   Buffer.from(step.memory.slice(dataOffset, dataOffset + dataSize)).toString(
-  //     "hex"
-  //   )
-  // );
-  const data = "0x"; // TODO fix this once memory support is added
+  const data = memorySlice(step.memory, dataOffset, dataSize);
 
   return {
     opcode: "LOG0",

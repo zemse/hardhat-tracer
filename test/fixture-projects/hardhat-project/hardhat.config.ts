@@ -28,7 +28,7 @@ const config: HardhatUserConfig = {
   paths: {},
   tracer: {
     enabled: true,
-    enableAllOpcodes: true,
+    // enableAllOpcodes: true,
     showAddresses: true,
     gasCost: true,
     // use4bytesDirectory: false,

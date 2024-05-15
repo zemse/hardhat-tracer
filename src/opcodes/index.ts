@@ -19,6 +19,7 @@ import mload from "./mload";
 import msize from "./msize";
 import mstore from "./mstore";
 import mstore8 from "./mstore8";
+import return_ from "./return";
 import revert from "./revert";
 import selfdestruct from "./selfdestruct";
 import sha3 from "./sha3";
@@ -59,6 +60,8 @@ export function parse(
       return sstore.parse(step);
     case "SHA3":
       return sha3.parse(step);
+    case "RETURN":
+      return return_.parse(step);
     case "REVERT":
       return revert.parse(step);
     default:

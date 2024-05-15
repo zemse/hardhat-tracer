@@ -1,5 +1,11 @@
 import { BigNumber, BigNumberish } from "ethers";
-import { arrayify, hexlify, hexStripZeros, hexZeroPad } from "ethers/lib/utils";
+import {
+  arrayify,
+  hexDataSlice,
+  hexlify,
+  hexStripZeros,
+  hexZeroPad,
+} from "ethers/lib/utils";
 
 /**
  * Ensures 0x prefix to a hex string which may or may not
@@ -39,4 +45,19 @@ export function shallowCopyStack2(stack: Array<bigint>): string[] {
 
 export function toAddr(val: BigNumberish) {
   return hexZeroPad(hexlify(val), 20);
+}
+
+export function memorySlice(
+  buffer?: Uint8Array,
+  offset?: number,
+  length?: number
+): string {
+  if (!buffer) {
+    throw new Error("memory is undefined");
+  }
+  if (offset !== undefined && length !== undefined) {
+    return hexDataSlice(buffer, offset, offset + length);
+  } else {
+    return "0x";
+  }
 }

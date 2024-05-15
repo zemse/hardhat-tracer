@@ -2,11 +2,11 @@ import { Address } from "@nomicfoundation/ethereumjs-util";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 import { EdrProviderWrapper } from "hardhat/internal/hardhat-network/provider/provider";
+import { MinimalExecResult } from "hardhat/internal/hardhat-network/provider/vm/types";
 
-export async function getVM(
-  hre: HardhatRuntimeEnvironment
+export async function getVMFromBaseProvider(
+  provider: EdrProviderWrapper
 ): Promise<MinimalEthereumJsVm> {
-  const provider = await getHardhatBaseProvider(hre);
   return (provider as any)._node._vm;
 }
 
@@ -77,3 +77,131 @@ export const toFancyAddress = (address: string): Address => {
 export const fromFancyAddress = (fancyAddress: Address): string => {
   return fancyAddress.toString();
 };
+
+/**
+ * Parses the result of an execution to be usable easily.
+ * @param execResult
+ * @returns Parsed exec result
+ */
+export function parseExec(execResult: MinimalExecResult) {
+  const success = execResult.success;
+  const reason = execResult.reason;
+
+  const isStop = success && reason === 0;
+  const isReturn = success && reason === 1;
+  const isSelfDestruct = success && reason === 2;
+
+  const isRevert = success && reason === undefined;
+  // TODO this is incorrect, currently is success is false then reason undefined
+  const isOutOfGas = !success && reason === 0;
+  const isOpcodeNotFound = !success && reason === 1;
+  const isInvalidFEOpcode = !success && reason === 2;
+  const isInvalidJump = !success && reason === 3;
+  const isNotActivated = !success && reason === 4;
+  const isStackUnderflow = !success && reason === 5;
+  const isStackOverflow = !success && reason === 6;
+  const isOutOfOffset = !success && reason === 7;
+  const isCreateCollision = !success && reason === 8;
+  const isPrecompileError = !success && reason === 9;
+  const isNonceOverflow = !success && reason === 10;
+  const isCreateContractSizeLimit = !success && reason === 11;
+  const isCreateContractStartingWithEF = !success && reason === 12;
+  const isCreateInitCodeSizeLimit = !success && reason === 13;
+
+  let successStr = "";
+  if (success) {
+    switch (reason) {
+      case 0:
+        successStr = "STOP";
+        break;
+      case 1:
+        successStr = "RETURN";
+        break;
+      case 2:
+        successStr = "SELFDESTRUCT";
+        break;
+      default:
+        successStr = "UNKNOWN";
+        break;
+    }
+  }
+
+  let errorStr = "";
+  if (!success) {
+    switch (reason) {
+      case 0:
+        errorStr = "OUT_OF_GAS";
+        break;
+      case 1:
+        errorStr = "OPCODE_NOT_FOUND";
+        break;
+      case 2:
+        errorStr = "INVALID_FE_OPCODE";
+        break;
+      case 3:
+        errorStr = "INVALID_JUMP";
+        break;
+      case 4:
+        errorStr = "NOT_ACTIVATED";
+        break;
+      case 5:
+        errorStr = "STACK_UNDERFLOW";
+        break;
+      case 6:
+        errorStr = "STACK_OVERFLOW";
+        break;
+      case 7:
+        errorStr = "OUT_OF_OFFSET";
+        break;
+      case 8:
+        errorStr = "CREATE_COLLISION";
+        break;
+      case 9:
+        errorStr = "PRECOMPILE_ERROR";
+        break;
+      case 10:
+        errorStr = "NONCE_OVERFLOW";
+        break;
+      case 11:
+        errorStr = "CREATE_CONTRACT_SIZE_LIMIT";
+        break;
+      case 12:
+        errorStr = "CREATE_CONTRACT_STARTING_WITH_EF";
+        break;
+      case 13:
+        errorStr = "CREATE_INIT_CODE_SIZE_LIMIT";
+        break;
+      default:
+        errorStr = "UNKNOWN";
+        break;
+    }
+  }
+
+  let reasonStr = success ? successStr : errorStr;
+
+  return {
+    reason,
+    success,
+    isStop,
+    isReturn,
+    isSelfDestruct,
+    isRevert,
+    isOutOfGas,
+    isOpcodeNotFound,
+    isInvalidFEOpcode,
+    isInvalidJump,
+    isNotActivated,
+    isStackUnderflow,
+    isStackOverflow,
+    isOutOfOffset,
+    isCreateCollision,
+    isPrecompileError,
+    isNonceOverflow,
+    isCreateContractSizeLimit,
+    isCreateContractStartingWithEF,
+    isCreateInitCodeSizeLimit,
+    successStr,
+    errorStr,
+    reasonStr,
+  };
+}

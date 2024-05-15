@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.4;
 
 import {Lib} from "./Lib.sol";
 
@@ -49,7 +49,9 @@ contract Hello {
       mstore8(0, val)
     }
     Child c = new Child(address(0));
+    emit WhatsUp(c.hi());
     address(c).delegatecall(abi.encodeWithSignature("hi()"));
+    address(c).delegatecall(abi.encodeWithSignature("unknown-function()"));
     Lib.add(1, 2);
     revert("hello");
   }

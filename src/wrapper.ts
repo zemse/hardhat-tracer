@@ -32,13 +32,6 @@ class TracerWrapper extends ProviderWrapper {
     const isEthCall = args.method === "eth_call";
     const isEstimateGas = args.method === "eth_estimateGas";
 
-    if (
-      this.dependencies.tracerEnv.recorder &&
-      (isSendTransaction || isSendRawTransaction || isEthCall || isEstimateGas)
-    ) {
-      this.dependencies.tracerEnv.recorder.handleBeforeTx();
-    }
-
     try {
       result = await this.dependencies.provider.send(
         args.method,
@@ -46,13 +39,6 @@ class TracerWrapper extends ProviderWrapper {
       );
     } catch (_error) {
       error = _error;
-    }
-
-    if (
-      this.dependencies.tracerEnv.recorder &&
-      (isSendTransaction || isSendRawTransaction || isEthCall || isEstimateGas)
-    ) {
-      this.dependencies.tracerEnv.recorder.handleAfterTx();
     }
 
     const isSendTransactionFailed = isSendTransaction && !!error;
@@ -100,8 +86,15 @@ class TracerWrapper extends ProviderWrapper {
       } else {
         const lastTrace = this.dependencies.tracerEnv.lastTrace();
         if (lastTrace) {
+          // TODO first check if this trace is what we want to print, i.e. tally the transaction hash.
           this.dependencies.tracerEnv.printNext = false;
           await print(lastTrace, this.dependencies);
+        } else {
+          console.warn(
+            `Hardhat Tracer wanted to print trace, but lastTrace is undefined. 
+This only works on hardhat network, if you are running your script over RPC provider then VM data is not available.
+If you think this is a bug please create issue at https://github.com/zemse/hardhat-tracer`
+          );
         }
       }
     }

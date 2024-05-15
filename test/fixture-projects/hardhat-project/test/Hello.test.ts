@@ -16,7 +16,7 @@ describe("Hello", () => {
   });
 
   it("should run a test", async () => {
-    hre.tracer.enabled = false;
+    // hre.tracer.enabled = false;
     // const HelloFactory = await hre.ethers.getContractFactory("Hello", {
     //   libraries: {
     //     Lib: "0x0000000000000000000000000000000000000001",
@@ -32,7 +32,6 @@ describe("Hello", () => {
     // const signers = await hre.ethers.getSigners();
     // await signers[0].estimateGas({ ...tx });
 
-    hre.tracer.enabled = true;
     console.log("========> hello.hi2()");
     await hello.hi2([
       { id: 1, id2: 1 },
@@ -140,7 +139,7 @@ describe("Hello", () => {
       "0x0000000000000000000000000000001234567890",
       wallet
     );
-    hre.tracer.printNext = true;
+    // hre.tracer.printNext = true;
     await contract.precompiles({
       gasLimit: 10_000_000,
     });

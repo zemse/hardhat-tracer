@@ -9,6 +9,9 @@ export function checkIfOpcodesAreValid(
   opcodes: Map<string, boolean>,
   vm: MinimalEthereumJsVm
 ) {
+  // TODO add a list of all valid opcodes, need to keep it up to date
+  // this is just for sanity purpose
+  //
   // TODO fix this code
   // fetch the opcodes which work on this VM
   // const activeOpcodesMap = new Map<string, boolean>();

@@ -41,7 +41,7 @@
     "@types/readable-stream": "^2.3.14",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
-    "hardhat": "^2.21.0-dev.0",
+    "hardhat": "2.23.0-dev.2",
     "hardhat-deploy": "^0.11.25",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",

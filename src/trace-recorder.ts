@@ -25,6 +25,7 @@ import {
   MinimalInterpreterStep,
   MinimalMessage,
 } from "hardhat/internal/hardhat-network/provider/vm/types";
+import { parseExec } from "./utils";
 const debug = createDebug("hardhat-tracer:trace-recorder");
 
 interface NewContractEvent {
@@ -50,12 +51,12 @@ export class TraceRecorder {
     this.awaitedItems = [];
     this.addressStack = [];
 
-    // vm.evm.events.on("beforeTx", this.handleBeforeTx.bind(this));
+    vm.events.on("beforeTx", this.handleBeforeTx.bind(this));
     vm.evm.events?.on("beforeMessage", this.handleBeforeMessage.bind(this));
     // vm.evm.events?.on("newContract", this.handleNewContract.bind(this));
     vm.evm.events?.on("step", this.handleStep.bind(this));
     vm.evm.events?.on("afterMessage", this.handleAfterMessage.bind(this));
-    // vm.events.on("afterTx", this.handleAfterTx.bind(this));
+    vm.events.on("afterTx", this.handleAfterTx.bind(this));
   }
 
   public handleBeforeTx(
@@ -154,26 +155,24 @@ export class TraceRecorder {
     resolve?.();
   }
 
-  public handleNewContract(
-    contract: NewContractEvent,
+  // This is now called in handleAfterMessage
+  // prev: public handleNewContract(
+  newContract(
+    contractAddress: string,
     resolve?: ((result?: any) => void) | undefined
   ) {
-    debug("handleNewContract %s", contract.address.toString());
+    debug("handleNewContract %s", contractAddress);
     if (!this.trace || !this.trace.parent) {
       console.error("handleNewContract: trace.parent not present");
     } else {
       switch (this.trace.parent.opcode) {
         case "CREATE":
           const createItem = (this.trace.parent as unknown) as Item<CREATE>;
-          createItem.params.deployedAddress = hexPrefix(
-            contract.address.toString()
-          );
+          createItem.params.deployedAddress = hexPrefix(contractAddress);
           break;
         case "CREATE2":
           const create2Item = (this.trace.parent as unknown) as Item<CREATE2>;
-          create2Item.params.deployedAddress = hexPrefix(
-            contract.address.toString()
-          );
+          create2Item.params.deployedAddress = hexPrefix(contractAddress);
           break;
         default:
           console.log(this.trace.parent);
@@ -183,7 +182,7 @@ export class TraceRecorder {
       }
     }
 
-    this.addressStack.push(contract.address.toString());
+    this.addressStack.push(contractAddress);
 
     resolve?.();
   }
@@ -248,8 +247,9 @@ export class TraceRecorder {
       );
     }
 
-    // TODO add support
-    // if (evmResult.execResult.selfdestruct) {
+    let { errorStr, isRevert } = parseExec(evmResult.execResult);
+    // TODO add support - not doing for now, will add if needed
+    // if (isSelfDestruct) {
     //   const selfdestructs = Object.entries(evmResult.execResult.selfdestruct);
     //   for (const [address, beneficiary] of selfdestructs) {
     //     debug("self destruct %s", address);
@@ -262,25 +262,27 @@ export class TraceRecorder {
     //   }
     // }
 
-    // if (
-    //   evmResult?.execResult.exceptionError &&
-    //   evmResult.execResult.exceptionError.error !== "revert"
-    // ) {
-    //   debug("exception %s", evmResult.execResult.exceptionError.error);
-    //   this.trace.insertItem({
-    //     opcode: "EXCEPTION",
-    //     params: {
-    //       error: evmResult.execResult.exceptionError.error,
-    //       type: evmResult.execResult.exceptionError.errorType,
-    //     },
-    //   } as Item<EXCEPTION>);
-    // }
+    if (errorStr && !isRevert) {
+      debug("exception %s", errorStr);
+      this.trace.insertItem({
+        opcode: "EXCEPTION",
+        params: {
+          error: errorStr,
+          type: "EvmError",
+        },
+      } as Item<EXCEPTION>);
+    }
 
-    // this.trace.returnCurrentCall(
-    //   "0x" + Buffer.from(evmResult.execResult.returnValue).toString("hex"),
-    //   Number(evmResult?.execResult.executionGasUsed),
-    //   evmResult?.execResult.exceptionError
-    // );
+    if (evmResult.execResult.contractAddress) {
+      this.newContract(evmResult.execResult.contractAddress.toString());
+    }
+
+    this.trace.returnCurrentCall(
+      hexPrefix(evmResult.execResult.output?.toString("hex") ?? "0x"),
+      Number(evmResult?.execResult.executionGasUsed),
+      errorStr
+    );
+
     this.addressStack.pop();
 
     resolve?.();

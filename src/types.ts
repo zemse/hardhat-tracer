@@ -104,6 +104,7 @@ export interface Item<Params> {
   parent?: Item<Params>;
   children?: Array<Item<Params>>;
   format?: () => string;
+  noFormat?: boolean;
 }
 
 export interface AwaitedItem<T> {

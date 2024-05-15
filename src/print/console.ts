@@ -24,7 +24,9 @@ async function printCall(
 
   if (!!item.children) {
     for (const childItem of item.children) {
-      await printCall(dependencies, depth + 1, childItem);
+      if (!childItem.noFormat) {
+        await printCall(dependencies, depth + 1, childItem);
+      }
     }
   }
 }

@@ -9,7 +9,7 @@ export interface CALL {
   inputData: string;
   value: string;
   returnData?: string;
-  exception?: any; // EvmError; // TODO: import EvmError from ethereumjs-vm
+  exception?: string;
   gasLimit: number;
   gasUsed?: number;
   success?: boolean;

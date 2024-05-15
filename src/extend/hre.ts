@@ -6,7 +6,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types/runtime";
 import { Decoder } from "../decoder";
 import { TraceRecorder } from "../trace-recorder";
 import { TracerEnv } from "../types";
-import { applyStateOverrides, getVM } from "../utils";
+import {
+  applyStateOverrides,
+  getHardhatBaseProvider,
+  getVMFromBaseProvider,
+} from "../utils";
 const debug = createDebug("hardhat-tracer:extend:hre");
 
 declare module "hardhat/types/runtime" {
@@ -39,7 +43,11 @@ extendEnvironment((hre) => {
 export async function addRecorder(hre: HardhatRuntimeEnvironment) {
   // wait for VM to be initialized
   try {
-    const vm = await getVM(hre);
+    const provider = await getHardhatBaseProvider(hre);
+    // @ts-ignore
+    await provider._setVerboseTracing(true);
+
+    const vm = await getVMFromBaseProvider(provider);
 
     hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
     if (hre.tracer.stateOverrides) {
