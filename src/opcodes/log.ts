@@ -7,7 +7,7 @@ import { parse } from ".";
 export interface LOG {
   data: string;
   topics: string[];
-  address: string;
+  address: { value: string };
 }
 
 async function format(
@@ -19,7 +19,7 @@ async function format(
       data: item.params.data,
       topics: item.params.topics,
     },
-    item.params.address,
+    item.params.address.value,
     dependencies
   )}`;
 }

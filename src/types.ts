@@ -110,7 +110,10 @@ export interface Item<Params> {
 export interface AwaitedItem<T> {
   isAwaitedItem: true;
   next: number;
-  parse: (step: MinimalInterpreterStep, currentAddress?: string) => Item<T>;
+  parse: (
+    step: MinimalInterpreterStep,
+    currentAddress?: { value: string }
+  ) => Item<T>;
 }
 
 export interface CallItem extends Item<CALL> {

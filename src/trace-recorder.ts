@@ -40,7 +40,7 @@ export class TraceRecorder {
   public previousOpcode: string | undefined;
   public tracerEnv: TracerEnv;
   public awaitedItems: Array<AwaitedItem<any>>;
-  public addressStack: string[];
+  public addressStack: { value: string }[]; // object is used to allow lazy assignment to value in CREATE/2
 
   constructor(vm: MinimalEthereumJsVm, tracerEnv: TracerEnv) {
     this.vm = vm;
@@ -131,6 +131,7 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CREATE>;
+      this.addressStack.push({ value: "lazy" });
     } else if (message.to === undefined && salt !== undefined) {
       item = {
         opcode: "CREATE2",
@@ -143,9 +144,10 @@ export class TraceRecorder {
         },
         children: [],
       } as Item<CREATE2>;
+      this.addressStack.push({ value: "lazy" });
     } else {
       item = {
-        opcode: "UNKNOWN",
+        opcode: "UNKNOWN_MESSAGE",
         params: {},
         children: [],
       };
@@ -182,7 +184,8 @@ export class TraceRecorder {
       }
     }
 
-    this.addressStack.push(contractAddress);
+    let ptr = this.addressStack[this.addressStack.length - 1];
+    ptr.value = contractAddress;
 
     resolve?.();
   }

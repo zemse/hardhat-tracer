@@ -16,7 +16,7 @@ export interface LOG4 extends LOG {
 
 function parse(
   step: MinimalInterpreterStep,
-  currentAddress?: string
+  currentAddress?: { value: string }
 ): Item<LOG4> {
   if (!currentAddress) {
     throw new Error(

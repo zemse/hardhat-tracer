@@ -29,7 +29,7 @@ import staticcall from "./staticcall";
 
 export function parse(
   step: MinimalInterpreterStep,
-  currentAddress: string
+  currentAddress: { value: string }
 ): Item<any> | AwaitedItem<any> | undefined {
   switch (step.opcode.name) {
     case "EXTCODESIZE":
