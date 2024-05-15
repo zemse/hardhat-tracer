@@ -6,6 +6,7 @@ export interface DELEGATECALL {
   from: string;
   to: string;
   inputData: string;
+  value: string;
   returnData?: string;
   gasLimit: number;
   gasUsed?: number;
@@ -24,7 +25,7 @@ async function format(
       item.params.inputData,
       // TODO refactor these input types or order
       item.params.returnData ?? "0x",
-      0, // TODO show some how that msg.value
+      item.params.value,
       item.params.gasUsed ?? 0,
       item.params.gasLimit,
       item.params.success ?? true, // if we don't have success, assume it was successful
