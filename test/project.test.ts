@@ -55,7 +55,7 @@ describe("Hardhat Runtime Environment extension", function () {
     });
   });
 
-  describe.skip("Trace task", function () {
+  describe("Trace task", function () {
     useEnvironment("hardhat-project");
 
     before(async function () {

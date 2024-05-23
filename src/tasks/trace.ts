@@ -1,24 +1,11 @@
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-// import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
-import { assert } from "console";
 import createDebug from "debug";
 import { ethers } from "ethers";
 import { task } from "hardhat/config";
-// import { ForkBlockchain } from "hardhat/internal/hardhat-network/provider/fork/ForkBlockchain";
-// import { HardhatNode } from "hardhat/internal/hardhat-network/provider/node";
-// import { FakeSenderAccessListEIP2930Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderAccessListEIP2930Transaction";
-// import { FakeSenderEIP1559Transaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderEIP1559Transaction";
-// import { FakeSenderTransaction } from "hardhat/internal/hardhat-network/provider/transactions/FakeSenderTransaction";
-// import { HttpNetworkUserConfig } from "hardhat/types";
 
 import { print } from "../print";
-import { TraceRecorder } from "../trace-recorder";
-import {
-  addCliParams,
-  applyCliArgsToTracer,
-  applyStateOverrides,
-} from "../utils";
-import { getHardhatBaseProvider } from "../utils/hardhat";
+import { addCliParams, applyCliArgsToTracer } from "../utils";
+import { HttpNetworkUserConfig } from "hardhat/types";
+import { addRecorder } from "../extend/hre";
 const debug = createDebug("hardhat-tracer:tasks:trace");
 
 // TODO
@@ -47,123 +34,128 @@ const debug = createDebug("hardhat-tracer:tasks:trace");
 addCliParams(task("trace", "Traces a transaction hash"))
   .addParam("hash", "transaction hash to view trace of")
   .addOptionalParam("rpc", "archive node")
-  .setAction(async (args: any, hre: any, runSuper: any) => {
+  .setAction(async (args, hre, runSuper) => {
     applyCliArgsToTracer(args, hre);
 
-    throw new Error(
-      "trace transaction is currently not supported for hardhat EDR"
-    );
+    // throw new Error(
+    //   "trace transaction is currently not supported for hardhat EDR"
+    // );
 
-    // if (!args.nocompile) {
-    //   await hre.run("compile");
-    // }
+    if (!args.nocompile) {
+      await hre.run("compile");
+    }
 
-    // debug("fetch tx from provider");
-    // const tx = await hre.network.provider.send("eth_getTransactionByHash", [
-    //   args.hash,
-    // ]);
+    debug("fetch tx from provider");
+    const tx = await hre.network.provider.send("eth_getTransactionByHash", [
+      args.hash,
+    ]);
 
-    // // if tx is not on hardhat local, then use rpc
-    // if (tx == null) {
-    //   debug("tx not on provider");
-    //   // try using url specified in network as rpc url
-    //   if (args.network) {
-    //     const userNetworks = hre.userConfig.networks;
-    //     if (userNetworks === undefined) {
-    //       throw new Error(
-    //         "[hardhat-tracer]: No networks found in hardhat config"
-    //       );
-    //     }
-    //     if (userNetworks[args.network] === undefined) {
-    //       throw new Error(
-    //         `[hardhat-tracer]: Network ${args.network} not found in hardhat config`
-    //       );
-    //     }
-    //     const url = (userNetworks[args.network] as HttpNetworkUserConfig).url;
-    //     if (url === undefined) {
-    //       throw new Error(
-    //         `[hardhat-tracer]: Url not found in hardhat-config->networks->${args.network}`
-    //       );
-    //     }
-    //     if (args.rpc === undefined) {
-    //       args.rpc = url;
-    //     }
-    //   }
+    // if tx is not on hardhat local, then use rpc
+    if (tx == null) {
+      debug("tx not on provider");
+      // try using url specified in network as rpc url
+      if (args.network) {
+        const userNetworks = hre.userConfig.networks;
+        if (userNetworks === undefined) {
+          throw new Error(
+            "[hardhat-tracer]: No networks found in hardhat config"
+          );
+        }
+        if (userNetworks[args.network] === undefined) {
+          throw new Error(
+            `[hardhat-tracer]: Network ${args.network} not found in hardhat config`
+          );
+        }
+        const url = (userNetworks[args.network] as HttpNetworkUserConfig).url;
+        if (url === undefined) {
+          throw new Error(
+            `[hardhat-tracer]: Url not found in hardhat-config->networks->${args.network}`
+          );
+        }
+        if (args.rpc === undefined) {
+          args.rpc = url;
+        }
+      }
 
-    //   // try using current mainnet fork url as rpc url
-    //   const mainnetForkUrl = (hre.network.config as any).forking?.url;
-    //   if (mainnetForkUrl && args.rpc === undefined) {
-    //     args.rpc = mainnetForkUrl;
-    //   }
+      // try using current mainnet fork url as rpc url
+      const mainnetForkUrl = (hre.network.config as any).forking?.url;
+      if (mainnetForkUrl && args.rpc === undefined) {
+        args.rpc = mainnetForkUrl;
+      }
 
-    //   if (!args.rpc) {
-    //     // TODO add auto-detect network
-    //     throw new Error(
-    //       "[hardhat-tracer]: rpc url not provided, please either use --network <network-name> or --rpc <rpc-url>"
-    //     );
-    //   }
-    //   debug("fetch tx from rpc %s", args.rpc);
-    //   const provider = new ethers.providers.StaticJsonRpcProvider(args.rpc);
-    //   const txFromRpc = await provider.getTransaction(args.hash);
+      if (!args.rpc) {
+        // TODO add auto-detect network
+        throw new Error(
+          "[hardhat-tracer]: rpc url not provided, please either use --network <network-name> or --rpc <rpc-url>"
+        );
+      }
+      debug("fetch tx from rpc %s", args.rpc);
+      const provider = new ethers.providers.StaticJsonRpcProvider(args.rpc);
+      const txFromRpc = await provider.getTransaction(args.hash);
 
-    //   if (txFromRpc == null) {
-    //     throw new Error(
-    //       "[hardhat-tracer]: Transaction not found on rpc. Are you sure the transaction is confirmed on this network?"
-    //     );
-    //   }
+      if (txFromRpc == null) {
+        throw new Error(
+          "[hardhat-tracer]: Transaction not found on rpc. Are you sure the transaction is confirmed on this network?"
+        );
+      }
 
-    //   if (!txFromRpc.blockNumber) {
-    //     throw new Error(
-    //       "[hardhat-tracer]: Transaction is not mined yet, please wait for it to be mined"
-    //     );
-    //   }
+      if (!txFromRpc.blockNumber) {
+        throw new Error(
+          "[hardhat-tracer]: Transaction is not mined yet, please wait for it to be mined"
+        );
+      }
 
-    //   // TODO add support for decoding using debug_tt on the RPC if present, otherwise use hardhat mainnet fork
-    //   if (false) {
-    //     // decode response of debug_traceTransaction
-    //     // print
-    //     return; // should halt execution here
-    //   }
+      // TODO add support for decoding using debug_tt on the RPC if present, otherwise use hardhat mainnet fork
+      if (false) {
+        // decode response of debug_traceTransaction
+        // print
+        return; // should halt execution here
+      }
 
-    //   console.warn("Activating mainnet fork at block", txFromRpc.blockNumber);
-    //   await hre.network.provider.send("hardhat_reset", [
-    //     {
-    //       forking: {
-    //         jsonRpcUrl: args.rpc,
-    //         blockNumber: txFromRpc.blockNumber,
-    //       },
-    //     },
-    //   ]);
+      console.warn("Activating mainnet fork at block", txFromRpc.blockNumber);
+      await hre.network.provider.send("hardhat_reset", [
+        {
+          forking: {
+            jsonRpcUrl: args.rpc,
+            blockNumber: txFromRpc.blockNumber,
+          },
+        },
+      ]);
+      addRecorder(hre); // reset seems to clear all what we did to the provider
+      // after the above hardhat reset, tx should be present on the local node
+    }
 
-    //   // after the above hardhat reset, tx should be present on the local node
-    // }
-
-    // debug("get VM");
+    debug("get VM");
     // const node = await getNode(hre);
 
-    // // we cant use this resp because stack and memory is not there (takes up lot of memory if enabled)
-    // // await node.traceTransaction(Buffer.from(args.hash.slice(2), "hex"), {
-    // //   disableStorage: true,
-    // //   disableMemory: true,
-    // //   disableStack: true,
-    // // });
-
-    // debug("trace transaction");
-    // await traceTransctionWithProgress(node, args.hash);
-
-    // // TODO try to do this properly
-    // // @ts-ignore
-    // const recorder = (global?._hardhat_tracer_recorder as unknown) as TraceRecorder;
-
-    // debug("printing trace");
-    // await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
-    //   artifacts: hre.artifacts,
-    //   tracerEnv: hre.tracer,
-    //   provider: hre.ethers.provider,
+    // we cant use this resp because stack and memory is not there (takes up lot of memory if enabled)
+    // await node.traceTransaction(Buffer.from(args.hash.slice(2), "hex"), {
+    //   disableStorage: true,
+    //   disableMemory: true,
+    //   disableStack: true,
     // });
 
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // return;
+    debug("trace transaction");
+    // const txFinal = await hre.ethers.provider.getTransaction(args.hash);
+    // if (!txFinal) {
+    //   throw new Error("Transaction is still null, this should not happen");
+    // }
+    console.log(args.hash);
+    await hre.network.provider.send("debug_traceTransaction", [args.hash]);
+    // await traceTransctionWithProgress(node, args.hash);
+
+    // TODO try to do this properly
+    const recorder = hre.tracer.recorder!;
+
+    debug("printing trace");
+    await print(recorder.previousTraces[recorder.previousTraces.length - 1], {
+      artifacts: hre.artifacts,
+      tracerEnv: hre.tracer,
+      provider: hre.ethers.provider,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return;
   });
 
 // async function traceTransctionWithProgress(node: HardhatNode, hash: string) {
