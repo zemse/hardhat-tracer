@@ -74,7 +74,7 @@ describe("Hardhat Runtime Environment extension", function () {
         rpc: "https://eth-mainnet.alchemyapi.io/v2/" + ALCHEMY,
         v: true,
         // opcodes: ["SSTORE", "SLOAD"].join(","),
-        print: "json",
+        // print: "json",
         // nocompile: true,
       });
     });
