@@ -63,6 +63,7 @@ export class TraceRecorder {
     // tx: any, // TypedTransaction,
     resolve?: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     debug("handleBeforeTx");
     this.trace = new TransactionTrace();
     // this.trace.hash = hexPrefix(Buffer.from(tx.hash()).toString("hex"));
@@ -74,6 +75,7 @@ export class TraceRecorder {
     message: MinimalMessage,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     debug("handleBeforeMessage");
     if (!this.trace) {
       throw new Error(
@@ -163,6 +165,7 @@ export class TraceRecorder {
     contractAddress: string,
     resolve?: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     debug("handleNewContract %s", contractAddress);
     if (!this.trace || !this.trace.parent) {
       console.error("handleNewContract: trace.parent not present");
@@ -194,6 +197,7 @@ export class TraceRecorder {
     step: MinimalInterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     // debug("handleStep %s", step.opcode.name);
     if (!this.trace) {
       throw new Error("[hardhat-tracer]: trace is undefined in handleStep");
@@ -243,6 +247,7 @@ export class TraceRecorder {
     evmResult: MinimalEVMResult,
     resolve: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     debug("handleAfterMessage");
     if (!this.trace) {
       throw new Error(
@@ -295,6 +300,7 @@ export class TraceRecorder {
     // _tx: any, // AfterTxEvent,
     resolve?: ((result?: any) => void) | undefined
   ) {
+    if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     debug("handleAfterTx");
     if (this.tracerEnv.enabled) {
       if (!this.trace) {

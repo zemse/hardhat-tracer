@@ -32,6 +32,18 @@ class TracerWrapper extends ProviderWrapper {
     const isEthCall = args.method === "eth_call";
     const isEstimateGas = args.method === "eth_estimateGas";
 
+    const shouldTrace =
+      this.dependencies.tracerEnv.enabled &&
+      (isSendTransaction ||
+        isSendRawTransaction ||
+        isEthCall ||
+        isEstimateGas) &&
+      (!!this.dependencies.tracerEnv.printNext ||
+        this.dependencies.tracerEnv.verbosity > 2);
+
+    if (shouldTrace) {
+      await this.dependencies.tracerEnv.switch!.enable();
+    }
     try {
       result = await this.dependencies.provider.send(
         args.method,
@@ -39,6 +51,9 @@ class TracerWrapper extends ProviderWrapper {
       );
     } catch (_error) {
       error = _error;
+    }
+    if (shouldTrace) {
+      await this.dependencies.tracerEnv.switch!.disable();
     }
 
     const isSendTransactionFailed = isSendTransaction && !!error;

@@ -7,6 +7,7 @@ import { Decoder } from "./decoder";
 import { CALL } from "./opcodes/call";
 import { TraceRecorder } from "./trace-recorder";
 import { TransactionTrace } from "./transaction-trace";
+import { Switch } from "./switch";
 
 type PrintMode = "console" | "json";
 
@@ -47,6 +48,7 @@ export interface TracerEnv {
       | "already printed";
   };
   recorder?: TraceRecorder;
+  switch?: Switch;
   lastTrace: () => TransactionTrace | undefined;
   decoder?: Decoder;
   stateOverrides?: StateOverrides;

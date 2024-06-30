@@ -80,6 +80,8 @@ addCliParams(task("tracecall", "Traces a call"))
     ]);
     addRecorder(hre); // reset seems to clear all what we did to the provider
 
+    await hre.tracer.switch!.enable();
+
     try {
       debug("making call");
       const result = await hre.ethers.provider.call({
@@ -95,7 +97,6 @@ addCliParams(task("tracecall", "Traces a call"))
       console.error("eth_call error:", (e as any).error);
     }
     // TODO try to do this properly
-    // @ts-ignore
     const recorder = hre.tracer.recorder!;
 
     debug("printing trace");

@@ -140,6 +140,9 @@ addCliParams(task("trace", "Traces a transaction hash"))
     // if (!txFinal) {
     //   throw new Error("Transaction is still null, this should not happen");
     // }
+
+    await hre.tracer.switch!.enable();
+
     console.log(args.hash);
     await hre.network.provider.send("debug_traceTransaction", [args.hash]);
     // await traceTransctionWithProgress(node, args.hash);

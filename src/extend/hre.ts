@@ -11,6 +11,7 @@ import {
   getHardhatBaseProvider,
   getVMFromBaseProvider,
 } from "../utils";
+import { Switch } from "../switch";
 const debug = createDebug("hardhat-tracer:extend:hre");
 
 declare module "hardhat/types/runtime" {
@@ -35,7 +36,11 @@ extendEnvironment((hre) => {
   // @ts-ignore
   global.hreArtifacts = hre.artifacts;
 
-  addRecorder(hre).catch(console.error);
+  getHardhatBaseProvider(hre)
+    .then((provider) => (hre.tracer.switch = new Switch(provider)))
+    .then(() => {
+      addRecorder(hre).catch(console.error);
+    });
 
   debug("environment extended!");
 });
@@ -43,11 +48,7 @@ extendEnvironment((hre) => {
 export async function addRecorder(hre: HardhatRuntimeEnvironment) {
   // wait for VM to be initialized
   try {
-    const provider = await getHardhatBaseProvider(hre);
-    // @ts-ignore
-    await provider._setVerboseTracing(true);
-
-    const vm = await getVMFromBaseProvider(provider);
+    const vm = await getVMFromBaseProvider(hre.tracer.switch!.edrProvider);
 
     if (!hre.tracer.recorder) {
       hre.tracer.recorder = new TraceRecorder(vm, hre.tracer);
