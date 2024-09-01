@@ -10,10 +10,9 @@ ERROR
 This version of "hardhat-tracer" only works with versions of
 Hardhat previous to 2.21.0.
 
-A new version compatible with the latest Hardhat will be released soon.
+Please update "hardhat" and "hardhat-tracer" to latest version.
 
-In the meantime, downgrade Hardhat to 2.20.1, or remove "hardhat-tracer"
-from your Hardhat config.
+npm install hardhat@latest hardhat-tracer@latest
 `
   );
   process.exit(1);
