@@ -49,7 +49,12 @@ export interface TracerEnv {
   };
   recorder?: TraceRecorder;
   switch?: Switch;
+  /// Recently occured trace
   lastTrace: () => TransactionTrace | undefined;
+  /// Last N traces, latest first
+  lastTraces: (count: number) => TransactionTrace[] | never;
+  /// All traces, oldest first
+  allTraces: () => TransactionTrace[];
   decoder?: Decoder;
   stateOverrides?: StateOverrides;
 }

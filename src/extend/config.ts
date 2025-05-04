@@ -67,6 +67,20 @@ extendConfig(
           ];
         }
       },
+      lastTraces(count: number) {
+        let traces = this.allTraces();
+        if (count > traces.length) {
+          throw new Error(
+            "[hardhat-tracer]: count is greater than traces available in the recorder"
+          );
+        }
+        let tracesSlice = traces.slice(traces.length - count, traces.length);
+        tracesSlice = tracesSlice.reverse();
+        return tracesSlice;
+      },
+      allTraces() {
+        return this.recorder?.previousTraces ?? [];
+      },
       stateOverrides: userConfigTracer?.stateOverrides, // immutable
     };
 

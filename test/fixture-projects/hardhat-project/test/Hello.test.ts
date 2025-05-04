@@ -203,5 +203,11 @@ describe("Hello", () => {
 
     const tx2 = await contract.sample("hello2");
     expect(hre.tracer.lastTrace()?.hash).to.eq(tx2.hash);
+
+    expect(hre.tracer.allTraces().length).to.eq(18);
+    expect(hre.tracer.lastTraces(2).map((t) => t.hash)).to.deep.eq([
+      tx2.hash,
+      tx1.hash,
+    ]);
   });
 });
