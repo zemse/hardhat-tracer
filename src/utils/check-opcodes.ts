@@ -6,7 +6,7 @@
 import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 
 export function checkIfOpcodesAreValid(
-  opcodes: Map<string, boolean>,
+  opcodes: Set<string>,
   vm: MinimalEthereumJsVm
 ) {
   // TODO add a list of all valid opcodes, need to keep it up to date

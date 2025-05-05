@@ -26,6 +26,7 @@ import sha3 from "./sha3";
 import sload from "./sload";
 import sstore from "./sstore";
 import staticcall from "./staticcall";
+import * as math from './math'
 
 export function parse(
   step: MinimalInterpreterStep,
@@ -64,9 +65,11 @@ export function parse(
       return return_.parse(step);
     case "REVERT":
       return revert.parse(step);
-    default:
-      return;
   }
+  if (math.ops.has(step.opcode.name as math.Math2Opcode)) {
+    return math.parse(step);
+  }
+  return
 }
 
 export async function format(
@@ -115,6 +118,9 @@ export async function format(
     case "EXCEPTION":
       return exception.format(item);
     default:
+      if (math.ops.has(item.opcode as math.MathOpcode)) {
+        return math.format(item);
+      }
       return item.opcode + " not implemented";
   }
 }

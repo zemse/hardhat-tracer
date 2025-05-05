@@ -20,7 +20,7 @@ task(TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS).setAction(
           debug("error updating artifacts %s", e.message);
           console.log(
             "[hardhat-tracer]: error while updating decoder artifacts after TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS: " +
-              e.message
+            e.message
           );
         });
     }
@@ -38,7 +38,7 @@ task(TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS).setAction(
           debug("error applying state overrides %s", e.message);
           console.log(
             "[hardhat-tracer]: error while applying state overrides after TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS: " +
-              e.message
+            e.message
           );
         });
     }

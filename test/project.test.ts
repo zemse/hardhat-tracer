@@ -38,6 +38,10 @@ describe("Hardhat Runtime Environment extension", function () {
       await this.hre.run("compile");
       await this.hre.run("run", { script: "scripts/deploy.ts", trace: true });
     });
+    it("opcodes print", async function () {
+      await this.hre.run("compile");
+      await this.hre.run("run", { script: "scripts/opcodes.ts", trace: true });
+    });
   });
 
   describe("Test task", function () {

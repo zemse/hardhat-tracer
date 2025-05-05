@@ -27,7 +27,7 @@ import {
 } from "hardhat/internal/hardhat-network/provider/vm/types";
 import { parseExec } from "./utils";
 const debug = createDebug("hardhat-tracer:trace-recorder");
-
+// let logged = false
 interface NewContractEvent {
   address: Address;
   code: Uint8Array;
@@ -210,6 +210,10 @@ export class TraceRecorder {
     step: MinimalInterpreterStep,
     resolve: ((result?: any) => void) | undefined
   ) {
+    // if (!logged) {
+    //   console.log('%o', [...this.tracerEnv.opcodes.keys()])
+    //   logged = true
+    // }
     if (!this.tracerEnv.switch!.verboseEnabled) return resolve?.();
     // debug("handleStep %s", step.opcode.name);
     if (!this.trace) {
@@ -234,7 +238,7 @@ export class TraceRecorder {
 
     if (
       this.tracerEnv.enableAllOpcodes ||
-      this.tracerEnv.opcodes.get(step.opcode.name)
+      this.tracerEnv.opcodes.has(step.opcode.name)
     ) {
       const result = parse(
         step,
@@ -248,6 +252,8 @@ export class TraceRecorder {
           debug("parsed step awaited %s", step.opcode.name);
           this.awaitedItems.push(result);
         }
+        // } else {
+        //   debug('failed to parse step %s', step.opcode.name)
       }
     }
 

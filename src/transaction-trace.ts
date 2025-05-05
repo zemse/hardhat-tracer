@@ -29,7 +29,7 @@ export class TransactionTrace {
       // set the parent of the item
       item.parent = this.parent;
 
-      // // if the item is a call, then further items should be it's children
+      // if the item is a call, then further items should be it's children
       if (options?.increaseDepth) {
         item.children = [];
         this.parent = (item as unknown) as CallItem;

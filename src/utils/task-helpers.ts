@@ -101,13 +101,13 @@ export function applyCliArgsToTracer(
   }
 
   for (const opcode of opcodesToActivate) {
-    hre.tracer.opcodes.set(opcode, true);
+    hre.tracer.opcodes.add(opcode);
   }
 
   if (args.opcodes) {
     // hre.tracer.opcodes = [hre.tracer.opcodes, ...args.opcodes.split(",")];
     for (const opcode of args.opcodes.split(",")) {
-      hre.tracer.opcodes.set(opcode, true);
+      hre.tracer.opcodes.add(opcode);
     }
 
     // if recorder was already created, then check opcodes, else it will be checked later

@@ -23,7 +23,7 @@ extendConfig(
     debug("extending config...");
     const userConfigTracer = _userConfig.tracer || {};
 
-    const opcodes = new Map<string, boolean>();
+    const opcodes = new Set<string>();
 
     // always active opcodes
     const opcodesToActivate = [];
@@ -36,7 +36,7 @@ extendConfig(
       opcodesToActivate.push(...userConfigTracer.opcodes);
     }
     for (const opcode of opcodesToActivate) {
-      opcodes.set(opcode, true);
+      opcodes.add(opcode);
     }
 
     const cache = new TracerCache();

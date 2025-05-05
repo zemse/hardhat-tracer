@@ -18,6 +18,7 @@ export const colorMload = chalk.blueBright;
 export const colorMstore = chalk.redBright;
 export const colorNameTag = chalk.italic;
 export const colorIndexed = chalk.italic;
+export const colorMath = chalk.green;
 
 export const colorWarning = chalk.yellow;
 
@@ -27,3 +28,4 @@ export function removeColor(str: string) {
     ""
   );
 }
+
