@@ -42,7 +42,7 @@
     "@types/semver": "^7.5.8",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
-    "hardhat": "2.22.5",
+    "hardhat": "^2.24.1",
     "hardhat-deploy": "^0.11.25",
     "mocha": "^7.1.2",
     "prettier": "2.0.5",

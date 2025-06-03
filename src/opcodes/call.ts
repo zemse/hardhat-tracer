@@ -1,4 +1,3 @@
-// import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
 import { formatCall } from "../format/call";
 import { Item, TracerDependencies } from "../types";
 import { colorLabel } from "../utils";

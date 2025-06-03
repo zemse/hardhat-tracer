@@ -1,8 +1,3 @@
-// import {
-//   getOpcodesForHF,
-//   Opcode,
-// } from "@nomicfoundation/ethereumjs-evm/dist/cjs/opcodes";
-// import { VM } from "@nomicfoundation/ethereumjs-vm";
 import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 
 export function checkIfOpcodesAreValid(

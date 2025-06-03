@@ -1,4 +1,3 @@
-import { Address } from "@nomicfoundation/ethereumjs-util";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 import { EdrProviderWrapper } from "hardhat/internal/hardhat-network/provider/provider";
@@ -18,7 +17,7 @@ export async function getVMFromBaseProvider(
  * this series of providers is the "HardhatNetworkProvider":
  * https://github.com/nomiclabs/hardhat/blob/master/packages/hardhat-core/src/internal/hardhat-network/provider/provider.ts
  * This object has direct access to the node (provider._node), which in turn has direct access to
- * the ethereumjs-vm instance (provider._node._vm). So it's quite useful to be able to find this
+ * the vm instance (provider._node._vm). So it's quite useful to be able to find this
  * object reliably!
  *
  * Credits: this code adapted from smock.
@@ -58,26 +57,6 @@ export const getHardhatBaseProvider = async (
   // TODO: Figure out a reliable way to do a type check here. Source for inspiration:
   // https://github.com/nomiclabs/hardhat/blob/master/packages/hardhat-core/src/internal/hardhat-network/provider/provider.ts
   return provider;
-};
-
-/**
- * Converts a string into the fancy new address thing that ethereumjs-vm v6 expects
- *
- * @param address String address to convert into the fancy new address type.
- * @returns Fancified address.
- */
-export const toFancyAddress = (address: string): Address => {
-  return Address.fromString(address);
-};
-
-/**
- * Same as toFancyAddress but in the opposite direction.
- *
- * @param fancyAddress Fancy address to turn into a string.
- * @returns Way more boring address.
- */
-export const fromFancyAddress = (fancyAddress: Address): string => {
-  return fancyAddress.toString();
 };
 
 /**

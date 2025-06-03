@@ -1,11 +1,3 @@
-// import {
-//   EVMResult,
-//   InterpreterStep,
-//   Message,
-// } from "@nomicfoundation/ethereumjs-evm";
-import { TypedTransaction } from "@nomicfoundation/ethereumjs-tx";
-import { Address } from "@nomicfoundation/ethereumjs-util";
-// import { AfterTxEvent, VM } from "@nomicfoundation/ethereumjs-vm";
 import { MinimalEthereumJsVm } from "hardhat/internal/hardhat-network/provider/vm/minimal-vm";
 import createDebug from "debug";
 
@@ -27,11 +19,6 @@ import {
 } from "hardhat/internal/hardhat-network/provider/vm/types";
 import { parseExec } from "./utils";
 const debug = createDebug("hardhat-tracer:trace-recorder");
-
-interface NewContractEvent {
-  address: Address;
-  code: Uint8Array;
-}
 
 export class TraceRecorder {
   public vm: MinimalEthereumJsVm;

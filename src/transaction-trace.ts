@@ -1,5 +1,3 @@
-// import { EvmError } from "@nomicfoundation/ethereumjs-evm/src/exceptions";
-
 import { CallItem, Item } from "./types";
 
 export class TransactionTrace {
