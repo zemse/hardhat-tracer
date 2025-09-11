@@ -4,6 +4,8 @@ import { config } from "dotenv";
 import { TASK_NODE_GET_PROVIDER } from "hardhat/builtin-tasks/task-names";
 
 import { useEnvironment } from "./helpers";
+import { TransactionTrace } from "../src/transaction-trace";
+import { printConsole } from "../src/print/console";
 config();
 
 const ALCHEMY = process.env.ALCHEMY;
@@ -184,6 +186,36 @@ describe("Hardhat Runtime Environment extension", function () {
       // lastTraceRpc.top.params.exception = undefined;
 
       expect(lastTraceRpc).to.deep.equal(lastTraceApi);
+    });
+  });
+
+  describe("TransactionTrace.fromTraceCall", () => {
+    useEnvironment("hardhat-project");
+
+    it("works", async function () {
+      const json = require("./trace-example.json");
+      const result = TransactionTrace.fromTraceCall(json);
+      await printConsole(result, {
+        tracerEnv: this.hre.tracer,
+        artifacts: this.hre.artifacts,
+        provider: this.hre.ethers.provider,
+      });
+    });
+
+    it("works through task - input", async function () {
+      const json = require("./trace-example.json");
+
+      await this.hre.run("tracedecode", {
+        input: JSON.stringify(json),
+      });
+    });
+
+    it("works through task - path", async function () {
+      const json = require("./trace-example.json");
+
+      await this.hre.run("tracedecode", {
+        input: "../../trace-example.json",
+      });
     });
   });
 

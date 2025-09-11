@@ -4,9 +4,10 @@ import { task } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 
 import { print } from "../print";
-import { addCliParams, applyCliArgsToTracer, colorError } from "../utils";
+import { addCliParams, applyCliArgsToTracer } from "../utils";
 import { addRecorder } from "../extend/hre";
-const debug = createDebug("hardhat-tracer:tasks:trace");
+
+const debug = createDebug("hardhat-tracer:tasks:tracecall");
 
 addCliParams(task("tracecall", "Traces a call"))
   .addParam("to", "destination address")

@@ -1,4 +1,4 @@
-import { CallItem, Item } from "./types";
+import { CALL_OPCODES, CallItem, Item, TraceCallItem } from "./types";
 
 export class TransactionTrace {
   public hash?: string;
@@ -50,5 +50,53 @@ export class TransactionTrace {
     this.parent.params.success = !exception;
     this.parent.params.exception = exception;
     this.parent = this.parent.parent as CallItem;
+  }
+
+  static fromTraceCall(items: TraceCallItem[]): TransactionTrace {
+    let topCallItem: CallItem | undefined;
+    for (const item of items) {
+      const callItem: CallItem = {
+        opcode: item.action.callType.toUpperCase() as CALL_OPCODES,
+        params: {
+          from: item.action.from,
+          to: item.action.to,
+          value: item.action.value,
+          inputData: item.action.input,
+          gasLimit: parseInt(item.action.gas),
+          success: !item.error,
+        },
+        children: [],
+      };
+      if (item.result) {
+        callItem.params.returnData = item.result.output;
+        callItem.params.exception = item.error;
+        callItem.params.gasUsed = parseInt(item.result.gasUsed);
+        callItem.params.success = !item.error;
+      }
+
+      if (item.traceAddress.length === 0) {
+        // this is the top level call
+        topCallItem = callItem;
+      } else {
+        let ptr = topCallItem;
+        for (let i = 0; i < item.traceAddress.length; i++) {
+          const idx = item.traceAddress[i];
+          const isLast = i === item.traceAddress.length - 1;
+          if (isLast) {
+            if (ptr?.children.length !== idx) {
+              throw new Error(
+                `[hardhat-tracer]: trace is not sorted. TraceAddress: ${item.traceAddress}, cannot insert at index ${idx}, current level has ${ptr?.children.length} entries already.`
+              );
+            }
+            ptr?.children.push(callItem);
+          } else {
+            ptr = ptr?.children?.[idx] as CallItem;
+          }
+        }
+      }
+    }
+    const trace = new TransactionTrace();
+    trace.top = topCallItem;
+    return trace;
   }
 }

@@ -5,3 +5,4 @@ import "./node";
 import "./test";
 import "./trace";
 import "./tracecall";
+import "./tracedecode";

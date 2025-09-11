@@ -85,6 +85,29 @@ export interface StructLog {
   storage: {};
 }
 
+export interface TraceCallItem {
+  action: {
+    from: string;
+    callType: "call" | "delegatecall" | "staticcall" | "callcode";
+    gas: string;
+    input: string;
+    to: string;
+    value: string;
+  };
+  blockHash: string;
+  blockNumber: number;
+  result?: {
+    gasUsed: string;
+    output: string;
+  };
+  subtraces: number;
+  traceAddress: number[];
+  transactionHash: string;
+  transactionPosition: number;
+  type: "call";
+  error?: string;
+}
+
 export interface StateOverrides {
   [address: string]: {
     storage?: {
