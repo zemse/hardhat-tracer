@@ -20,6 +20,7 @@ const debug = createDebug("hardhat-tracer:wrapper");
 class TracerWrapper extends ProviderWrapper {
   public dependencies: TracerDependencies;
   public txPrinted: { [key: string]: boolean } = {};
+  concurrentCalls = 0;
 
   constructor(dependencies: TracerDependencies) {
     super((dependencies.provider as unknown) as EIP1193Provider);
@@ -58,7 +59,10 @@ class TracerWrapper extends ProviderWrapper {
       (!!tracerEnv.printNext || tracerEnv.verbosity > 0);
 
     if (shouldTrace) {
-      await tracerEnv.switch!.enable();
+      this.concurrentCalls += 1;
+      if (this.concurrentCalls == 1) {
+        await tracerEnv.switch!.enable();
+      }
       debug("Tracing switch enabled");
     }
 
@@ -72,8 +76,11 @@ class TracerWrapper extends ProviderWrapper {
     }
 
     if (shouldTrace) {
-      await tracerEnv.switch!.disable();
+      if (this.concurrentCalls == 1) {
+        await tracerEnv.switch!.disable();
+      }
       debug("Tracing switch disabled");
+      this.concurrentCalls -= 1;
     }
 
     // infer tx hash and store in the trace

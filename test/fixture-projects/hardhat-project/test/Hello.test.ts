@@ -210,4 +210,17 @@ describe("Hello", () => {
       tx1.hash,
     ]);
   });
+
+  it("not using await", async () => {
+    const wallet = hre.ethers.provider.getSigner(0);
+
+    const contract = await hre.ethers.getContractAt(
+      "Hello",
+      "0x0000000000000000000000000000001234567890",
+      wallet
+    );
+
+    contract.sample("hello1");
+    await contract.sample("hello2");
+  });
 });
